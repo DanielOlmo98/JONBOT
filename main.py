@@ -11,11 +11,12 @@ TOKEN = os.getenv('DISCORD_TOKEN')
 
 rick_server_id = 94440780738854912
 
-rick = commands.Bot(command_prefix='rick')
-client = discord.Client
+rick = commands.Bot(command_prefix='rick ')
+
 
 @rick.event
 async def on_message(message):
+    await rick.process_commands(message)
     if message.author.bot:
         return
     else:
@@ -35,6 +36,13 @@ async def on_raw_reaction_add(payload):
         reaction = get(message.reactions, emoji=payload.emoji.name)
     if reaction and reaction.count == 4:
         await message.delete()
+
+
+@rick.command()  #command for seeing quotes from specific people
+async def quote(ctx, arg):
+    personquote = arg
+
+    await ctx.send("assets/quotes/loodle/loodle1.png")
 
 
 rick.run(TOKEN)
