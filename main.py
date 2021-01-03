@@ -1,5 +1,4 @@
 import os
-import discord
 from replies import rick_reply
 from dotenv import load_dotenv
 from discord.ext import commands
@@ -10,7 +9,7 @@ TOKEN = os.getenv('DISCORD_TOKEN')
 rick_server_id = 94440780738854912
 
 rick = commands.Bot(command_prefix='rick')
-client = discord.Client
+
 
 @rick.event
 async def on_message(message):
@@ -25,7 +24,4 @@ async def on_message(message):
         # await rick.process_commands(message)
 
 
-@client.event
-async def on_reaction_add(reaction, user):
-    await   client.delete_message(reaction.message)
 rick.run(TOKEN)
