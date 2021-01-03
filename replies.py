@@ -33,3 +33,4 @@ def rick_reply(message):
             reply = None
 
     return reply
+
