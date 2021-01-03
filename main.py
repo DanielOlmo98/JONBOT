@@ -5,9 +5,13 @@ from discord.utils import get
 from replies import rick_reply
 from dotenv import load_dotenv
 from discord.ext import commands
+# from youtubesearchpython import VideosSearch
+from youtube_api import YouTubeDataAPI
+# from youtube_search import YoutubeSearch
 
 load_dotenv()
 TOKEN = os.getenv('DISCORD_TOKEN')
+YT_API = os.getenv('YT_API')
 
 rick_server_id = 94440780738854912
 
@@ -36,6 +40,14 @@ async def on_raw_reaction_add(payload):
         reaction = get(message.reactions, emoji=payload.emoji.name)
     if reaction and reaction.count == 4:
         await message.delete()
+
+
+@rick.command()
+async def yt(ctx, arg):
+    yt = YouTubeDataAPI(YT_API)
+    vid_search = yt.search(arg)
+    await ctx.send("https://www.youtube.com/watch?v=" + vid_search[0]["video_id"])
+
 
 
 @rick.command()  #command for seeing quotes from specific people
