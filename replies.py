@@ -1,18 +1,30 @@
-
-
 reply_dict = {
     "cock": "cock",
     "cock and ball": "torture",
-    "based": ["based on what?", 1]
+    "based": ["based on what?", 0.1],
+    "vtubers": ["cringe", 0.5],
 }
+
+random_replies = ["cringe",
+                  "yikes",
+                  "based",
+                  "thats kinda cringe bro",
+                  "ok buddy",
+                  "cock"
+                  ]
 
 
 def rick_reply(message):
-    import random
+    from random import random, choice
     try:
         reply = reply_dict[message.content]
     except KeyError:
-        return None
+        if random() < 0.1:
+            return choice(random_replies)
+        else:
+            if random() < 0.5:
+                return "<@" + str(message.author.id) + "> I LOVE YOU"
+            return None
 
     if type(reply) is list:
         if random() < reply[1]:
@@ -21,5 +33,4 @@ def rick_reply(message):
             reply = None
 
     return reply
-
 

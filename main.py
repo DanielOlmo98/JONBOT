@@ -25,16 +25,7 @@ async def on_message(message):
         # await rick.process_commands(message)
 
 
-@rick.event
-async def on_message(message):
-    args = message.content.split(" ")[1:]
-    if message.content.startswith("say"):
-        await message.delete(message)
-        await rick.send_message(message.channel, " ".join(args))
-
-
-
-
-
-
+@client.event
+async def on_reaction_add(reaction, user):
+    await   client.delete_message(reaction.message)
 rick.run(TOKEN)
