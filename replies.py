@@ -8,5 +8,5 @@ def rick_reply(message):
     try:
         reply = reply_dict[message.content]
     except KeyError:
-        return none
+        return None
     return reply
