@@ -5,5 +5,8 @@ reply_dict = {
 
 
 def rick_reply(message):
-
-    return reply_dict[message]
+    try:
+        reply = reply_dict[message.content]
+    except KeyError:
+        return none
+    return reply
