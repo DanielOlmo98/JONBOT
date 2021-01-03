@@ -7,6 +7,7 @@ from dotenv import load_dotenv
 from discord.ext import commands
 # from youtubesearchpython import VideosSearch
 from youtube_api import YouTubeDataAPI
+
 # from youtube_search import YoutubeSearch
 
 load_dotenv()
@@ -32,7 +33,7 @@ async def on_message(message):
         # await rick.process_commands(message)
 
 
-@rick.event  #command for deleting a message when a set amount of reactions have been added
+@rick.event  # command for deleting a message when a set amount of reactions have been added
 async def on_raw_reaction_add(payload):
     channel = await rick.fetch_channel(payload.channel_id)
     message = await channel.fetch_message(payload.message_id)
@@ -49,12 +50,14 @@ async def yt(ctx, arg):
     await ctx.send("https://www.youtube.com/watch?v=" + vid_search[0]["video_id"])
 
 
-
-@rick.command()  #command for seeing quotes from specific people
+@rick.command()  # command for seeing quotes from specific people
 async def quote(ctx, arg):
-    personquote = arg
+    personquote = os.listdir("assets/quotes/" + arg)
 
-    await ctx.send("assets/quotes/loodle/loodle1.png")
+    from random import choice
+    filename = choice(personquote)
 
+
+    await ctx.send(file=discord.File(r'assets/quotes/' + arg + "/" + filename))
 
 rick.run(TOKEN)
