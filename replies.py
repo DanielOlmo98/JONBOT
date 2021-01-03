@@ -22,7 +22,7 @@ def rick_reply(message):
         if random() < 0.1:
             return choice(random_replies)
         else:
-            if random() < 0.5:
+            if random() < 0.01:
                 return "<@" + str(message.author.id) + "> I LOVE YOU"
             return None
 
