@@ -54,18 +54,18 @@ async def yt(ctx, arg):
 
 @rick.command()  # command for seeing quotes from specific people
 async def quote(ctx, *, arg: str = None):
+    quote_path = "assets/quotes/"
     if arg is None:
+        quotable_user_list = os.listdir(quote_path)
         return await ctx.send(
-            "The current available quotes are Reimu, Nibba, Zenith, Pseunition, Shini, GabrielB, Zack, Surd, Shoujo, Pseu and Kuuko")
+            "The current available quotes are: " + (", ".join(quotable_user_list)))
     try:
-        folder = os.listdir("assets/quotes/" + arg)
+        quote_list = os.listdir(quote_path + arg)
+        from random import choice
+        filename = choice(quote_list)
+        await ctx.send(file=discord.File(quote_path + arg + "/" + filename))
     except FileNotFoundError:
         return await ctx.send(arg + " is not a quotable person, buddy")
-
-    finally:
-        from random import choice
-        filename = choice(folder)
-        await ctx.send(file=discord.File(r'assets/quotes/' + arg + "/" + filename))
 
 
 # Alternate no quote arg solution
