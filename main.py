@@ -5,6 +5,8 @@ from discord.utils import get
 from replies import rick_reply
 from dotenv import load_dotenv
 from discord.ext import commands
+from discord.ext.commands.errors import MissingRequiredArgument
+
 # from youtubesearchpython import VideosSearch
 from youtube_api import YouTubeDataAPI
 
@@ -16,7 +18,7 @@ YT_API = os.getenv('YT_API')
 
 rick_server_id = 94440780738854912
 
-rick = commands.Bot(command_prefix='rick ')
+rick = commands.Bot(command_prefix='-')
 
 
 @rick.event
@@ -51,13 +53,21 @@ async def yt(ctx, arg):
 
 
 @rick.command()  # command for seeing quotes from specific people
-async def quote(ctx, arg):
-    personquote = os.listdir("assets/quotes/" + arg)
+async def quote(ctx, *, arg: str = None):
 
-    from random import choice
-    filename = choice(personquote)
+    if arg is None:
+        return await ctx.send("The current available quotes are Reimu, Nibba, Zenith, Pseunition, Shini, GabrielB, Zack, Surd, Shoujo, Pseu and Kuuko")
+    try:
+        folder = os.listdir("assets/quotes/" + arg)
+    except FileNotFoundError:
+        return await ctx.send(arg + " is not a quotable person, buddy")
+
+    finally:
+        from random import choice
+        filename = choice(folder)
+        await ctx.send(file=discord.File(r'assets/quotes/' + arg + "/" + filename))
 
 
-    await ctx.send(file=discord.File(r'assets/quotes/' + arg + "/" + filename))
+
 
 rick.run(TOKEN)
