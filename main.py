@@ -67,12 +67,33 @@ async def quote(ctx, *, arg: str = None):
     except FileNotFoundError:
         return await ctx.send(arg + " is not a quotable person, buddy")
 
-
 # Alternate no quote arg solution
 # @quote.error
 # async def hello_error(ctx, error):
 #     if isinstance(error, discord.ext.commands.errors.MissingRequiredArgument):
 #         await ctx.send("say something after !hello")
+
+
+@rick.command()  # Command for adding the bot to your own server
+async def invite(ctx):
+    return await ctx.send(
+        "https://discord.com/oauth2/authorize?client_id=795358168946442294&permissions=8&scope=bot"
+    )
+
+
+@rick.command()
+async def subscribe(ctx):
+    return await ctx.send(file=discord.File("assets/meme/subscribe.png"))
+
+
+@rick.command()
+async def gamers(ctx):
+    gamer_path = "assets/gamers/"
+    gamerimages = os.listdir(gamer_path)
+    from random import choice
+    filename = choice(gamerimages)
+    await ctx.send(file=discord.File(gamer_path + filename))
+
 
 
 rick.run(TOKEN)
