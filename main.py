@@ -35,14 +35,16 @@ async def on_message(message):
         # await rick.process_commands(message)
 
 
-@rick.event  # command for deleting a message when a set amount of reactions have been added
+@rick.event  # Starboard command
 async def on_raw_reaction_add(payload):
     channel = await rick.fetch_channel(payload.channel_id)
+    starboardChannel = await rick.fetch_channel(795797646119141377)
     message = await channel.fetch_message(payload.message_id)
     if payload.emoji.name == "❌":
         reaction = get(message.reactions, emoji=payload.emoji.name)
-    if reaction and reaction.count == 4:
-        await message.delete()
+    if reaction and reaction.count == 1:
+        await starboardChannel.send(
+            message.content + "\n Sent by " + str(message.author) + " in " + message.channel.name + "\n this message had " + str(reaction.count) + " reactions")
 
 
 @rick.command()
