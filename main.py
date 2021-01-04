@@ -54,9 +54,9 @@ async def yt(ctx, arg):
 
 @rick.command()  # command for seeing quotes from specific people
 async def quote(ctx, *, arg: str = None):
-
     if arg is None:
-        return await ctx.send("The current available quotes are Reimu, Nibba, Zenith, Pseunition, Shini, GabrielB, Zack, Surd, Shoujo, Pseu and Kuuko")
+        return await ctx.send(
+            "The current available quotes are Reimu, Nibba, Zenith, Pseunition, Shini, GabrielB, Zack, Surd, Shoujo, Pseu and Kuuko")
     try:
         folder = os.listdir("assets/quotes/" + arg)
     except FileNotFoundError:
@@ -68,6 +68,11 @@ async def quote(ctx, *, arg: str = None):
         await ctx.send(file=discord.File(r'assets/quotes/' + arg + "/" + filename))
 
 
+# Alternate no quote arg solution
+# @quote.error
+# async def hello_error(ctx, error):
+#     if isinstance(error, discord.ext.commands.errors.MissingRequiredArgument):
+#         await ctx.send("say something after !hello")
 
 
 rick.run(TOKEN)
