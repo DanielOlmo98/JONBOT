@@ -1,7 +1,9 @@
 import os
 import discord
 
+
 from discord.utils import get
+import music
 from replies import rick_reply
 from dotenv import load_dotenv
 from discord.ext import commands
@@ -97,5 +99,8 @@ async def gamers(ctx):
     await ctx.send(file=discord.File(gamer_path + filename))
 
 
+@rick.command()
+async def play(ctx):
+    return music.summon()
 
 rick.run(TOKEN)
