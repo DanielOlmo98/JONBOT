@@ -1,15 +1,32 @@
+# -*- coding: utf-8 -*-
+
+"""
+Copyright (c) 2019 Valentin B.
+
+A simple music bot written in discord.py using youtube-dl.
+
+Though it's a simple example, music bots are complex and require much time and knowledge until they work perfectly.
+Use this as an example or a base for your own bot and extend it as you want. If there are any bugs, please let me know.
+
+Requirements:
+
+Python 3.5+
+pip install -U discord.py pynacl youtube-dl
+
+You also need FFmpeg in your PATH environment variable or the FFmpeg.exe binary in your bot's directory on Windows.
+"""
+import os
 import asyncio
 import functools
 import itertools
 import math
 import random
-import os
 
 import discord
 import youtube_dl
 from async_timeout import timeout
 from discord.ext import commands
-
+from dotenv import load_dotenv
 # Silence useless bug reports messages
 youtube_dl.utils.bug_reports_message = lambda: ''
 
@@ -348,7 +365,7 @@ class Music(commands.Cog):
     async def _pause(self, ctx: commands.Context):
         """Pauses the currently playing song."""
 
-        if ctx.voice_state.is_playing and ctx.voice_state.voice.is_playing():
+        if not ctx.voice_state.is_playing and ctx.voice_state.voice.is_playing():
             ctx.voice_state.voice.pause()
             await ctx.message.add_reaction('⏯')
 
@@ -357,7 +374,7 @@ class Music(commands.Cog):
     async def _resume(self, ctx: commands.Context):
         """Resumes a currently paused song."""
 
-        if ctx.voice_state.is_playing and ctx.voice_state.voice.is_paused():
+        if not ctx.voice_state.is_playing and ctx.voice_state.voice.is_paused():
             ctx.voice_state.voice.resume()
             await ctx.message.add_reaction('⏯')
 
@@ -368,7 +385,7 @@ class Music(commands.Cog):
 
         ctx.voice_state.songs.clear()
 
-        if ctx.voice_state.is_playing:
+        if not ctx.voice_state.is_playing:
             ctx.voice_state.voice.stop()
             await ctx.message.add_reaction('⏹')
 
@@ -458,7 +475,7 @@ class Music(commands.Cog):
         await ctx.message.add_reaction('✅')
 
     @commands.command(name='play')
-    async def play(self, ctx: commands.Context, *, search: str):
+    async def _play(self, ctx: commands.Context, *, search: str):
         """Plays a song.
 
         If there are songs in the queue, this will be queued until the
@@ -483,7 +500,7 @@ class Music(commands.Cog):
                 await ctx.send('Enqueued {}'.format(str(source)))
 
     @_join.before_invoke
-    @play.before_invoke
+    @_play.before_invoke
     async def ensure_voice_state(self, ctx: commands.Context):
         if not ctx.author.voice or not ctx.author.voice.channel:
             raise commands.CommandError('You are not connected to any voice channel.')
@@ -493,12 +510,9 @@ class Music(commands.Cog):
                 raise commands.CommandError('Bot is already in a voice channel.')
 
 
-bot = commands.Bot('music.', description='Yet another music bot.')
+bot = commands.Bot('-', description='Yet another music bot.')
 bot.add_cog(Music(bot))
 
-
-@bot.event
-async def on_ready():
-    print('Logged in as:\n{0.user.name}\n{0.user.id}'.format(bot))
-
-
+load_dotenv()
+TOKEN = os.getenv('DISCORD_TOKEN')
+bot.run(TOKEN)
