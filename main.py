@@ -99,8 +99,7 @@ async def gamers(ctx):
     await ctx.send(file=discord.File(gamer_path + filename))
 
 
-@rick.command()
-async def play(ctx):
-    return music.summon()
-
+@rick.event
+async def on_ready():
+    print('Logged in as:\n{0.user.name}\n{0.user.id}'.format(rick))
 rick.run(TOKEN)
