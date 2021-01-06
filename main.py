@@ -1,13 +1,17 @@
 import os
 import discord
-from music import commands
+import json
+import embeds
+
+from economy import Economy
+from music import Music
 from discord.utils import get
-import music
 from replies import rick_reply
 from dotenv import load_dotenv
 from discord.ext import commands
 from discord.ext.commands.errors import MissingRequiredArgument
 
+os.chdir("C:\\Users\\test2\\PycharmProjects\\JONBOT")
 
 # from youtubesearchpython import VideosSearch
 from youtube_api import YouTubeDataAPI
@@ -20,8 +24,12 @@ YT_API = os.getenv('YT_API')
 
 rick_server_id = 94440780738854912
 
-rick = commands.Bot(command_prefix='-')
+rick = commands.Bot(command_prefix='-', help_command=None, case_insensitive=True)
 
+
+@rick.event
+async def on_ready():
+    print('Logged in as:\n{0.user.name}\n{0.user.id}'.format(rick))
 
 
 @rick.event
@@ -41,13 +49,12 @@ async def on_message(message):
 @rick.event  # Starboard command
 async def on_raw_reaction_add(payload):
     channel = await rick.fetch_channel(payload.channel_id)
-    starboardChannel = await rick.fetch_channel(795797646119141377)
+    starboard_channel = await rick.fetch_channel(795797646119141377)
     message = await channel.fetch_message(payload.message_id)
     if payload.emoji.name == "❌":
         reaction = get(message.reactions, emoji=payload.emoji.name)
-    if reaction and reaction.count == 1:
-        await starboardChannel.send(
-            message.content + "\n Sent by " + str(message.author) + " in " + message.channel.name + "\n this message had " + str(reaction.count) + " reactions")
+        if reaction.count == 1:
+            await starboard_channel.send(embed=embeds.starboard_embed(message))
 
 
 @rick.command()
@@ -72,6 +79,7 @@ async def quote(ctx, *, arg: str = None):
     except FileNotFoundError:
         return await ctx.send(arg + " is not a quotable person, buddy")
 
+
 # Alternate no quote arg solution
 # @quote.error
 # async def hello_error(ctx, error):
@@ -94,23 +102,18 @@ async def subscribe(ctx):
 @rick.command()
 async def gamers(ctx):
     gamer_path = "assets/gamers/"
-    gamerimages = os.listdir(gamer_path)
+    gamer_images = os.listdir(gamer_path)
     from random import choice
-    filename = choice(gamerimages)
+    filename = choice(gamer_images)
     await ctx.send(file=discord.File(gamer_path + filename))
 
 
+@rick.command()
+async def help(ctx):
+    await ctx.send(embed=embeds.help_embed())
 
 
-
-
-
-
-
-@rick.event
-async def on_ready():
-    print('Logged in as:\n{0.user.name}\n{0.user.id}'.format(rick))
+rick.add_cog(Music(rick))
+rick.add_cog(Economy(rick))
 
 rick.run(TOKEN)
-
-
