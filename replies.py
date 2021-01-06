@@ -10,7 +10,6 @@ random_replies = ["cringe",
                   "based",
                   "thats kinda cringe bro",
                   "ok buddy",
-                  "cock"
                   ]
 
 
@@ -19,10 +18,10 @@ def rick_reply(message):
     try:
         reply = reply_dict[message.content]
     except KeyError:
-        if random() < 0.1:
+        if random() < 0.01:
             return choice(random_replies)
         else:
-            if random() < 0.01:
+            if random() < 0.001:
                 return "<@" + str(message.author.id) + "> I LOVE YOU"
             return None
 
