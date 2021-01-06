@@ -15,7 +15,7 @@ pip install -U discord.py pynacl youtube-dl
 
 You also need FFmpeg in your PATH environment variable or the FFmpeg.exe binary in your bot's directory on Windows.
 """
-import os
+
 import asyncio
 import functools
 import itertools
@@ -26,7 +26,7 @@ import discord
 import youtube_dl
 from async_timeout import timeout
 from discord.ext import commands
-from dotenv import load_dotenv
+
 # Silence useless bug reports messages
 youtube_dl.utils.bug_reports_message = lambda: ''
 
@@ -510,9 +510,11 @@ class Music(commands.Cog):
                 raise commands.CommandError('Bot is already in a voice channel.')
 
 
-bot = commands.Bot('-', description='Yet another music bot.')
+bot = commands.Bot('music.', description='Yet another music bot.')
 bot.add_cog(Music(bot))
 
-load_dotenv()
-TOKEN = os.getenv('DISCORD_TOKEN')
-bot.run(TOKEN)
+
+@bot.event
+async def on_ready():
+    print('Logged in as:\n{0.user.name}\n{0.user.id}'.format(bot))
+

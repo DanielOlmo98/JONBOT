@@ -1,13 +1,13 @@
 import os
 import discord
-
-
+from music import commands
 from discord.utils import get
 import music
 from replies import rick_reply
 from dotenv import load_dotenv
 from discord.ext import commands
 from discord.ext.commands.errors import MissingRequiredArgument
+
 
 # from youtubesearchpython import VideosSearch
 from youtube_api import YouTubeDataAPI
@@ -21,6 +21,7 @@ YT_API = os.getenv('YT_API')
 rick_server_id = 94440780738854912
 
 rick = commands.Bot(command_prefix='-')
+
 
 
 @rick.event
@@ -99,7 +100,17 @@ async def gamers(ctx):
     await ctx.send(file=discord.File(gamer_path + filename))
 
 
+
+
+
+
+
+
+
 @rick.event
 async def on_ready():
     print('Logged in as:\n{0.user.name}\n{0.user.id}'.format(rick))
+
 rick.run(TOKEN)
+
+
