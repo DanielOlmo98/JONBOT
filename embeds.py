@@ -1,6 +1,7 @@
 import discord
 import random
-
+import re
+import asyncio
 colors = [0x4ab224, 0xebac00, 0xff0544, 0xff00c8, 0x00ffee]
 
 
@@ -19,7 +20,25 @@ def help_embed():
 
 
 def starboard_embed(message):
-    embed = discord.Embed(title=message.author.name, colour=random.choice(colors))
-    embed.set_author(name=message.author.name,
+    if message.embeds:
+        if message.embeds[0].url.endswith(("jpg", "png")):
+            embed = discord.Embed(description=re.sub(r'http\S+', '', message.content), colour=random.choice(colors))
+            embed.set_author(name=message.author.name + " in " + "#" + message.channel.name,
+                             icon_url=message.author.avatar_url)
+            embedURL = message.embeds[0].url
+            embed.set_image(url=embedURL)
+            return embed
+
+    if message.attachments:
+        embed = discord.Embed(description=message.content, colour=random.choice(colors))
+        embed.set_author(name=message.author.name + " in " + "#" + message.channel.name,
                      icon_url=message.author.avatar_url)
-    return embed
+        attachmentURL = message.attachments[0].url
+        embed.set_image(url=attachmentURL)
+        return embed
+    else:
+        f = await message.attachments[0].to_file()
+        embed = discord.Embed(description=message.content, colour=random.choice(colors))
+        embed.set_author(name=message.author.name + " in " + "#" + message.channel.name, icon_url=message.author.avatar_url)
+
+        return embed + f
