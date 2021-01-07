@@ -1,7 +1,9 @@
 import discord
 import random
 import re
-import asyncio
+
+from discord.utils import get
+
 colors = [0x4ab224, 0xebac00, 0xff0544, 0xff00c8, 0x00ffee]
 
 
@@ -21,24 +23,48 @@ def help_embed():
 
 def starboard_embed(message):
     if message.embeds:
+        print("e")
+
         if message.embeds[0].url.endswith(("jpg", "png")):
             embed = discord.Embed(description=re.sub(r'http\S+', '', message.content), colour=random.choice(colors))
             embed.set_author(name=message.author.name + " in " + "#" + message.channel.name,
                              icon_url=message.author.avatar_url)
             embedURL = message.embeds[0].url
             embed.set_image(url=embedURL)
+            embed.set_footer(text=":pushpin:" + str(get(message.reactions, emoji="❌").count))
+
             return embed
 
     if message.attachments:
-        embed = discord.Embed(description=message.content, colour=random.choice(colors))
-        embed.set_author(name=message.author.name + " in " + "#" + message.channel.name,
-                     icon_url=message.author.avatar_url)
-        attachmentURL = message.attachments[0].url
-        embed.set_image(url=attachmentURL)
-        return embed
-    else:
-        f = await message.attachments[0].to_file()
-        embed = discord.Embed(description=message.content, colour=random.choice(colors))
-        embed.set_author(name=message.author.name + " in " + "#" + message.channel.name, icon_url=message.author.avatar_url)
+        if message.attachments[0].url.endswith(("jpg", "png")):
 
-        return embed + f
+            embed = discord.Embed(description=message.content, colour=random.choice(colors))
+            embed.set_author(name=message.author.name + " in " + "#" + message.channel.name,
+                             icon_url=message.author.avatar_url)
+            attachmentURL = message.attachments[0].url
+            embed.set_image(url=attachmentURL)
+            embed.set_footer(text=":pushpin:" + str(get(message.reactions, emoji="❌").count))
+
+            return embed
+        else:
+            print("file not image")
+            embed = discord.Embed(
+                description="**Content**\n" + message.content + "\n\n**File**\n" + message.attachments[0].url,
+                colour=random.choice(colors))
+            embed.set_author(name=message.author.name + " in " + "#" + message.channel.name,
+                             icon_url=message.author.avatar_url)
+            embed.set_footer(text=":pushpin:" + str(get(message.reactions, emoji="❌").count))
+
+            return embed
+    else:
+        print("message")
+        embed = discord.Embed(
+            description=message.content,
+            colour=random.choice(colors))
+        embed.set_author(name=message.author.name + " in " + "#" + message.channel.name,
+                         icon_url=message.author.avatar_url)
+        date = message.created_at.strftime("%Y-%m-%d at %H:%M")
+        embed.set_footer(text=str(get(message.reactions, emoji="❌").count) + "   |   " + str(date),
+                         icon_url="https://cdn2.iconfinder.com/data/icons/objects-23/50/1F4CC-pushpin-128.png")
+
+        return embed
