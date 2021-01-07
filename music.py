@@ -331,7 +331,7 @@ class Music(commands.Cog):
         ctx.voice_state.voice = await destination.connect()
 
     @commands.command(name='leave', aliases=['disconnect'])
-    @commands.has_permissions(manage_guild=True)
+
     async def _leave(self, ctx: commands.Context):
         """Clears the queue and leaves the voice channel."""
 
@@ -407,6 +407,8 @@ class Music(commands.Cog):
             ctx.voice_state.skip_votes.add(voter.id)
             total_votes = len(ctx.voice_state.skip_votes)
 
+            if ctx.message.author.id is 540175819033542666:
+                ctx.voice_state.skip()
             if total_votes >= 3:
                 await ctx.message.add_reaction('⏭')
                 ctx.voice_state.skip()

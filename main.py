@@ -2,6 +2,9 @@ import os
 import discord
 import json
 import embeds
+import time
+import asyncio
+
 
 from economy import Economy
 from music import Music
@@ -12,6 +15,7 @@ from discord.ext import commands
 from discord.ext.commands.errors import MissingRequiredArgument
 
 os.chdir("C:\\Users\\test2\\PycharmProjects\\JONBOT")
+ffmpeg_path = "C:/Users/test2/PycharmProjects/JONBOT/venv/Lib/site-packages/ffmpeg-binaries/bin/ffmpeg.exe"
 
 # from youtubesearchpython import VideosSearch
 from youtube_api import YouTubeDataAPI
@@ -24,7 +28,7 @@ YT_API = os.getenv('YT_API')
 
 rick_server_id = 94440780738854912
 
-rick = commands.Bot(command_prefix='-', help_command=None, case_insensitive=True)
+rick = commands.Bot(command_prefix='.', help_command=None, case_insensitive=True)
 
 
 @rick.event
@@ -54,6 +58,8 @@ async def on_raw_reaction_add(payload):
     if payload.emoji.name == "❌":
         reaction = get(message.reactions, emoji=payload.emoji.name)
         if reaction.count == 1:
+            await asyncio.sleep(10)
+            message = await channel.fetch_message(payload.message_id)
             await starboard_channel.send(embed=embeds.starboard_embed(message))
 
 
@@ -106,6 +112,34 @@ async def gamers(ctx):
     from random import choice
     filename = choice(gamer_images)
     await ctx.send(file=discord.File(gamer_path + filename))
+
+
+@rick.command()
+async def sound(ctx, *, arg: str = None):
+    sounds_path = "assets/sounds/"
+    if arg is None:
+        sounds_list = os.listdir(sounds_path)
+        return await ctx.send(
+            "The current available sounds are: " + (", ".join(sounds_list).replace('/(.*)\.[^.]+$/', '')))
+    global vc
+    voice_channel = ctx.author.voice.channel
+    channel = None
+
+    # Check if user is in a voice channel
+    if voice_channel is not None:
+        channel = voice_channel.name
+        print(f"Voice Channel: {voice_channel}")
+        vc = await voice_channel.connect()
+        try:
+            sounds_list = os.listdir(sounds_path + arg)
+            from random import choice
+            filename = choice(sounds_list)
+        except FileNotFoundError:
+            return await ctx.send(arg + " is not a quotable person, buddy")
+        vc.play(discord.FFmpegPCMAudio("assets/sounds/" + arg + "/" + filename), after=lambda e: print('done', e))
+
+    else:
+        await ctx.send("Use -summon first")
 
 
 @rick.command()
