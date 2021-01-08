@@ -31,7 +31,9 @@ def starboard_embed(message):
                              icon_url=message.author.avatar_url)
             embedURL = message.embeds[0].url
             embed.set_image(url=embedURL)
-            embed.set_footer(text=":pushpin:" + str(get(message.reactions, emoji="❌").count))
+            date = message.created_at.strftime("%Y-%m-%d at %H:%M")
+            embed.set_footer(text=":pushpin:" + str(get(message.reactions, emoji="❌").count) +  "   |   " + str(date),
+                            icon_url="https://cdn2.iconfinder.com/data/icons/objects-23/50/1F4CC-pushpin-128.png")
 
             return embed
 
@@ -43,7 +45,9 @@ def starboard_embed(message):
                              icon_url=message.author.avatar_url)
             attachmentURL = message.attachments[0].url
             embed.set_image(url=attachmentURL)
-            embed.set_footer(text=":pushpin:" + str(get(message.reactions, emoji="❌").count))
+            date = message.created_at.strftime("%Y-%m-%d at %H:%M")
+            embed.set_footer(text=":pushpin:" + str(get(message.reactions, emoji="📌").count) + "   |   " + str(date),
+                         icon_url="https://cdn2.iconfinder.com/data/icons/objects-23/50/1F4CC-pushpin-128.png")
 
             return embed
         else:
@@ -53,7 +57,9 @@ def starboard_embed(message):
                 colour=random.choice(colors))
             embed.set_author(name=message.author.name + " in " + "#" + message.channel.name,
                              icon_url=message.author.avatar_url)
-            embed.set_footer(text=":pushpin:" + str(get(message.reactions, emoji="❌").count))
+            date = message.created_at.strftime("%Y-%m-%d at %H:%M")
+            embed.set_footer(text=":pushpin:" + str(get(message.reactions, emoji="❌").count) + "   |   " + str(date),
+                         icon_url="https://cdn2.iconfinder.com/data/icons/objects-23/50/1F4CC-pushpin-128.png")
 
             return embed
     else:

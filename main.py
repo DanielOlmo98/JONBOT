@@ -5,7 +5,6 @@ import embeds
 import time
 import asyncio
 
-
 from economy import Economy
 from music import Music
 from discord.utils import get
@@ -55,9 +54,9 @@ async def on_raw_reaction_add(payload):
     channel = await rick.fetch_channel(payload.channel_id)
     starboard_channel = await rick.fetch_channel(795797646119141377)
     message = await channel.fetch_message(payload.message_id)
-    if payload.emoji.name == "❌":
+    if payload.emoji.name == "📌":
         reaction = get(message.reactions, emoji=payload.emoji.name)
-        if reaction.count == 1:
+        if reaction.count == 4:
             await asyncio.sleep(10)
             message = await channel.fetch_message(payload.message_id)
             await starboard_channel.send(embed=embeds.starboard_embed(message))
@@ -121,25 +120,34 @@ async def sound(ctx, *, arg: str = None):
         sounds_list = os.listdir(sounds_path)
         return await ctx.send(
             "The current available sounds are: " + (", ".join(sounds_list).replace('/(.*)\.[^.]+$/', '')))
-    global vc
-    voice_channel = ctx.author.voice.channel
-    channel = None
 
+    voice_channel = ctx.author.voice.channel
     # Check if user is in a voice channel
+    channel = voice_channel.name
     if voice_channel is not None:
-        channel = voice_channel.name
-        print(f"Voice Channel: {voice_channel}")
-        vc = await voice_channel.connect()
+        if ctx.voice_client is None:
+            vc = await voice_channel.connect()
+            print(f"Voice Channel: {voice_channel}")
+
+        elif voice_channel is not ctx.voice_client.channel:
+            await ctx.voice_client.move_to(voice_channel)
+            vc = ctx.voice_client
+
+        else:
+            vc = ctx.voice_client
+            print(f"Voice Channel: {voice_channel}")
+
         try:
             sounds_list = os.listdir(sounds_path + arg)
             from random import choice
             filename = choice(sounds_list)
         except FileNotFoundError:
-            return await ctx.send(arg + " is not a quotable person, buddy")
-        vc.play(discord.FFmpegPCMAudio("assets/sounds/" + arg + "/" + filename), after=lambda e: print('done', e))
+            return await ctx.send(arg + " is not a sound buddy")
+        await asyncio.sleep(2)
+        vc.play(discord.FFmpegPCMAudio("assets/sounds/" + arg + "/" + filename), after=lambda e: print('done'))
 
     else:
-        await ctx.send("Use -summon first")
+        await ctx.send("join a channel retard")
 
 
 @rick.command()
