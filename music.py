@@ -519,3 +519,7 @@ bot.add_cog(Music(bot))
 async def on_ready():
     print('Logged in as:\n{0.user.name}\n{0.user.id}'.format(bot))
 
+
+users = {
+    "111": {"pocker": 123, "bank": 123}
+}
