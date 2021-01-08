@@ -14,7 +14,7 @@ class Economy(commands.Cog):
         await self.open_account(ctx.author)
 
         balance = self.users[str(ctx.message.author.id)]["Pocket"]
-        await ctx.send("You have " + str(balance) + "💰 my nigga")
+        await ctx.send("You have " + str(balance) + "💰")
 
     async def open_account(self, user):
 
