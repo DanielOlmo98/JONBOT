@@ -3,3 +3,5 @@
 .env
 /.idea/
 .idea
+!/.env
+__pycache__/
