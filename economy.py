@@ -41,8 +41,13 @@ class Economy(commands.Cog):
 
     @commands.command(name='fish', invoke_without_subcommand=True)
     async def fish(self, message):
-        self.users[str(message.author.id)]["Pocket"] = self.users[str(message.author.id)]["Pocket"] - 10
-        await message.channel.send("fishing.. ( -10💰 )")
+
+        if self.users[str(message.author.id)]["Pocket"] < 10:
+            await message.channel.send("get some more jonbucks man,"
+                                       " ( you have " + str(self.users[str(message.author.id)]["Pocket"]) + " )")
+        else:
+            self.users[str(message.author.id)]["Pocket"] = self.users[str(message.author.id)]["Pocket"] - 10
+            await message.channel.send("fishing.. ( -10💰 )")
 
     @commands.command(name='award', invoke_without_subcommand=True)
     async def award(self, message, arg1, arg2):
