@@ -4,7 +4,7 @@ import json
 import embeds
 import time
 import asyncio
-
+from subscribe import Subscribe
 from economy import Economy
 from music import Music
 from discord.utils import get
@@ -16,9 +16,9 @@ from discord.ext import commands
 from discord.ext.commands.errors import MissingRequiredArgument
 from discord.ext.commands.errors import CommandInvokeError
 
-
-os.chdir("C:\\Users\\test2\\PycharmProjects\\JONBOT")
-ffmpeg_path = "C:/Users/test2/PycharmProjects/JONBOT/venv/Lib/site-packages/ffmpeg-binaries/bin/ffmpeg.exe"
+#
+# os.chdir("C:\\Users\\test2\\PycharmProjects\\JONBOT")
+# ffmpeg_path = "C:/Users/test2/PycharmProjects/JONBOT/venv/Lib/site-packages/ffmpeg-binaries/bin/ffmpeg.exe"
 
 # from youtubesearchpython import VideosSearch
 from youtube_api import YouTubeDataAPI
@@ -26,6 +26,7 @@ from youtube_api import YouTubeDataAPI
 # from youtube_search import YoutubeSearch
 
 load_dotenv()
+ffmpeg_path = str(os.getenv('FFMPEG'))
 TOKEN = os.getenv('DISCORD_TOKEN')
 YT_API = os.getenv('YT_API')
 
@@ -44,7 +45,6 @@ async def on_message(message):
     await rick.process_commands(message)
 
 
-
 @rick.event
 async def on_message(message):
     await rick.process_commands(message)
@@ -52,16 +52,17 @@ async def on_message(message):
         await message.add_reaction("🤢")
 
     if message.author.bot:
-       return
+        return
     else:
+        if any(word in message.content for word in sick):
+            await message.add_reaction("🤢")
+
         reply = rick_reply(message)
         if reply is None:
             return
         else:
-           await message.channel.send(reply)
+            await message.channel.send(reply)
     # await rick.process_commands(message)
-
-
 
 
 @rick.event  # Starboard command
@@ -115,11 +116,6 @@ async def invite(ctx):
 
 
 @rick.command()
-async def subscribe(ctx):
-    return await ctx.send(file=discord.File("assets/meme/subscribe.png"))
-
-
-@rick.command()
 async def gamers(ctx):
     gamer_path = "assets/gamers/"
     gamer_images = os.listdir(gamer_path)
@@ -135,7 +131,6 @@ async def sound(ctx, *, arg: str = None):
         sounds_list = os.listdir(sounds_path)
         return await ctx.send(
             "The current available sounds are: " + (", ".join(sounds_list).replace('/(.*)\.[^.]+$/', '')))
-
 
     voice_channel = ctx.author.voice.channel
     # Check if user is in a voice channel
@@ -176,6 +171,7 @@ async def help(ctx):
 
 
 rick.add_cog(Music(rick))
+rick.add_cog(Subscribe(rick))
 rick.add_cog(Economy(rick))
 
 rick.run(TOKEN)
