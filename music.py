@@ -406,7 +406,7 @@ class Music(commands.Cog):
             ctx.voice_state.skip_votes.add(voter.id)
             total_votes = len(ctx.voice_state.skip_votes)
 
-            if ctx.message.author.id is 540175819033542666:
+            if ctx.message.author.id == 540175819033542666:
                 ctx.voice_state.skip()
             if total_votes >= 3:
                 await ctx.message.add_reaction('⏭')
@@ -508,7 +508,7 @@ class Music(commands.Cog):
 
         if ctx.voice_client:
             if ctx.voice_client.channel != ctx.author.voice.channel:
-                raise commands.CommandError('Bot is already in a voice channel.')
+                ctx.send('already playing')
 
 
 bot = commands.Bot('music.', description='Yet another music bot.')

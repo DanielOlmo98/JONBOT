@@ -3,6 +3,7 @@
 .env
 /.idea/
 .idea
+bank.json
 !/.env
 __pycache__/
 

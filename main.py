@@ -9,9 +9,13 @@ from economy import Economy
 from music import Music
 from discord.utils import get
 from replies import rick_reply
+from replies import listToString
+from replies import sick
 from dotenv import load_dotenv
 from discord.ext import commands
 from discord.ext.commands.errors import MissingRequiredArgument
+from discord.ext.commands.errors import CommandInvokeError
+
 
 os.chdir("C:\\Users\\test2\\PycharmProjects\\JONBOT")
 ffmpeg_path = "C:/Users/test2/PycharmProjects/JONBOT/venv/Lib/site-packages/ffmpeg-binaries/bin/ffmpeg.exe"
@@ -38,15 +42,26 @@ async def on_ready():
 @rick.event
 async def on_message(message):
     await rick.process_commands(message)
+
+
+
+@rick.event
+async def on_message(message):
+    await rick.process_commands(message)
+    if any(word in message.content for word in sick):
+        await message.add_reaction("🤢")
+
     if message.author.bot:
-        return
+       return
     else:
         reply = rick_reply(message)
         if reply is None:
             return
         else:
-            await message.channel.send(reply)
-        # await rick.process_commands(message)
+           await message.channel.send(reply)
+    # await rick.process_commands(message)
+
+
 
 
 @rick.event  # Starboard command
@@ -56,14 +71,14 @@ async def on_raw_reaction_add(payload):
     message = await channel.fetch_message(payload.message_id)
     if payload.emoji.name == "📌":
         reaction = get(message.reactions, emoji=payload.emoji.name)
-        if reaction.count == 4:
-            await asyncio.sleep(10)
+        if reaction.count == 1:
+            await asyncio.sleep(0)
             message = await channel.fetch_message(payload.message_id)
             await starboard_channel.send(embed=embeds.starboard_embed(message))
 
 
 @rick.command()
-async def yt(ctx, arg):
+async def yt(ctx, *, arg):
     yt = YouTubeDataAPI(YT_API)
     vid_search = yt.search(arg)
     await ctx.send("https://www.youtube.com/watch?v=" + vid_search[0]["video_id"])
@@ -121,10 +136,13 @@ async def sound(ctx, *, arg: str = None):
         return await ctx.send(
             "The current available sounds are: " + (", ".join(sounds_list).replace('/(.*)\.[^.]+$/', '')))
 
+
     voice_channel = ctx.author.voice.channel
     # Check if user is in a voice channel
     channel = voice_channel.name
-    if voice_channel is not None:
+
+    if ctx.author.voice.channel() is not None:
+        voice_channel = ctx.author.voice.channel
         if ctx.voice_client is None:
             vc = await voice_channel.connect()
             print(f"Voice Channel: {voice_channel}")
@@ -143,6 +161,8 @@ async def sound(ctx, *, arg: str = None):
             filename = choice(sounds_list)
         except FileNotFoundError:
             return await ctx.send(arg + " is not a sound buddy")
+        except commands.errors.CommandInvokeError:
+            return await ctx.send("join a vc pls")
         await asyncio.sleep(2)
         vc.play(discord.FFmpegPCMAudio("assets/sounds/" + arg + "/" + filename), after=lambda e: print('done'))
 

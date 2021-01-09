@@ -3,6 +3,8 @@ reply_dict = {
     "cock and ball": "torture",
     "based": ["based on what?", 0.1],
     "vtubers": ["cringe", 0.5],
+    "party rockers in the hou": "se tonight",
+    "party rock is in the hou": "se tonight"
 }
 
 random_replies = ["cringe",
@@ -11,6 +13,24 @@ random_replies = ["cringe",
                   "thats kinda cringe bro",
                   "ok buddy",
                   ]
+
+sick = ["vtuber",
+        "virtual youtuber",
+        "v-tuber",
+        "v-tuber",
+        "vtyber",
+        "vtiber",
+        "btuber",
+        "ctuber",
+        "pekora",
+        "gura",
+        "korone",
+        "coco",
+        "rushia",
+        "hololive",
+        "watame",
+        "watson-amelia",
+        ]
 
 
 def rick_reply(message):
@@ -33,3 +53,11 @@ def rick_reply(message):
 
     return reply
 
+
+def listToString(s):
+    str1 = ""
+
+    for ele in s:
+        str1 += ele
+
+    return str1
