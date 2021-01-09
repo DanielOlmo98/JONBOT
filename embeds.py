@@ -24,22 +24,27 @@ def help_embed():
 def starboard_embed(message):
     if message.embeds:
         print(message.embeds[0].url)
+        jump = message.jump_url
         if message.embeds[0].url.endswith(("jpg", "png", "gif")):
-            embed = discord.Embed(description=re.sub(r'http\S+', '', message.content), colour=random.choice(colors))
+            embed = discord.Embed(description=re.sub(r'http\S+', '\n', message.content), colour=random.choice(colors))
             embed.set_author(name=message.author.name + " in " + "#" + message.channel.name,
                              icon_url=message.author.avatar_url)
             embedURL = message.embeds[0].url
             embed.set_image(url=embedURL)
             date = message.created_at.strftime("%Y-%m-%d at %H:%M")
+            embed.add_field(name="​", value="[[Jump to message]](" + jump + ")", inline=False)
             embed.set_footer(text=str(get(message.reactions, emoji="📌").count) + "   |   " + str(date),
                             icon_url="https://cdn2.iconfinder.com/data/icons/objects-23/50/1F4CC-pushpin-128.png")
             print("e")
             return embed
 
     if message.attachments:
+        jump = message.jump_url
         if message.attachments[0].url.endswith(("jpg", "png", "gif")):
 
-            embed = discord.Embed(description=message.content, colour=random.choice(colors))
+            embed = discord.Embed(description=message.content +
+                                  "\n\n" + "[[Jump to message]](" + jump + ")",
+                                  colour=random.choice(colors))
             embed.set_author(name=message.author.name + " in " + "#" + message.channel.name,
                              icon_url=message.author.avatar_url)
             attachmentURL = message.attachments[0].url
@@ -51,12 +56,14 @@ def starboard_embed(message):
             return embed
         else:
             print("file not image")
+            jump = message.jump_url
             embed = discord.Embed(
                 description="**Content**\n" + message.content + "\n\n**File**\n" + message.attachments[0].url,
                 colour=random.choice(colors))
             embed.set_author(name=message.author.name + " in " + "#" + message.channel.name,
                              icon_url=message.author.avatar_url)
             date = message.created_at.strftime("%Y-%m-%d at %H:%M")
+            embed.add_field(name="​", value="[[Jump to message]](" + jump + ")", inline=False)
             embed.set_footer(text=str(get(message.reactions, emoji="📌").count) + "   |   " + str(date),
                          icon_url="https://cdn2.iconfinder.com/data/icons/objects-23/50/1F4CC-pushpin-128.png")
 
@@ -65,12 +72,12 @@ def starboard_embed(message):
         print(message.jump_url)
         jump = message.jump_url
         embed = discord.Embed(
-            description=message.content,
+            description=message.content + "\n" + "[[Jump to message]](" + jump + ")",
             colour=random.choice(colors))
         embed.set_author(name=message.author.name + " in " + "#" + message.channel.name,
                          icon_url=message.author.avatar_url)
         date = message.created_at.strftime("%Y-%m-%d at %H:%M")
-        embed.add_field(name="​", value="[Jump](" + jump + ")" + "\n​", inline=False)
+        embed.add_field(name="​", value="[[Jump to message]](" + jump + ")", inline=False)
         embed.set_footer(text=str(get(message.reactions, emoji="📌").count) + "   |   " + str(date),
                          icon_url="https://cdn2.iconfinder.com/data/icons/objects-23/50/1F4CC-pushpin-128.png")
 
