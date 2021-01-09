@@ -1,12 +1,19 @@
 import json
 from discord.ext import commands
+from os import path
 
 
 class Economy(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
-        with open("bank.json", "r") as f:
-            self.users = json.load(f)
+
+        if path.exists("bank.json"):
+            with open("bank.json", "r") as f:
+                self.users = json.load(f)
+        else:
+            self.users = dict()
+            with open("bank.json", "w") as self.f:
+                json.dump(self.users, self.f)
 
     @commands.command(name='balance', invoke_without_subcommand=True)
     async def balance(self, ctx):
@@ -31,4 +38,3 @@ class Economy(commands.Cog):
     async def on_message(self, message):
         if str(message.author.id) in self.users:
             self.users[str(message.author.id)]["Pocket"] = self.users[str(message.author.id)]["Pocket"] + 1
-

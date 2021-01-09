@@ -35,9 +35,15 @@ sick = ["vtuber",
 
         ]
 
+sick = [
+    "vtuber",
+    "poop"
+]
+
 
 def rick_reply(message):
     from random import random, choice
+
     try:
         reply = reply_dict[message.content]
     except KeyError:
