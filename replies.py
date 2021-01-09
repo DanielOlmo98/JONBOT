@@ -1,5 +1,6 @@
 reply_dict = {
     "cock": "cock",
+    "test": "icles",
     "cock and ball": "torture",
     "based": ["based on what?", 0.1],
     "vtubers": ["cringe", 0.5],
@@ -30,6 +31,8 @@ sick = ["vtuber",
         "hololive",
         "watame",
         "watson-amelia",
+        "ころね"
+
         ]
 
 
@@ -41,7 +44,7 @@ def rick_reply(message):
         if random() < 0.01:
             return choice(random_replies)
         else:
-            if random() < 0.001:
+            if random() < 0.00001:
                 return "<@" + str(message.author.id) + "> I LOVE YOU"
             return None
 
