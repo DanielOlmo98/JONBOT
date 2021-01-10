@@ -44,42 +44,38 @@ async def on_ready():
 @rick.event
 async def on_message(message):
     await rick.process_commands(message)
-    if any(word in message.content.lower() for word in sick):
-        await message.add_reaction("🤢")
-    if message.attachments:
-
-        if any(word in message.attachments[0].url.lower() for word in sick):
-            await message.add_reaction("🤢")
-
-        elif any(word in message.attachments[0].url for word in img_extensions):
-            if await get_vtuber(message.attachments[0].url):
-                await message.add_reaction("🤢")
-
-    if message.embeds:
-        if message.embeds[0].url is str:
-            if any(word in message.embeds[0].url.lower() for word in sick):
-                await message.add_reaction("🤢")
-
-        elif any(word in message.embeds[0].url for word in img_extensions):
-            if await get_vtuber(message.embeds[0].url):
-                await message.add_reaction("🤢")
-
-    if any(word in message.content for word in img_extensions):
-        if await get_vtuber(message.content):
-            await message.add_reaction("🤢")
-
     if message.author.bot:
         return
     else:
-        if any(word in message.content for word in sick):
+        if any(word in message.content.lower() for word in sick):
             await message.add_reaction("🤢")
+
+        if message.attachments:
+            if any(word in message.attachments[0].url.lower() for word in sick):
+                await message.add_reaction("🤢")
+
+            elif any(word in message.attachments[0].url for word in img_extensions):
+                if await get_vtuber(message.attachments[0].url):
+                    await message.add_reaction("🤢")
+
+        if message.embeds:
+            if message.embeds[0].url is str:
+                if any(word in message.embeds[0].url.lower() for word in sick):
+                    await message.add_reaction("🤢")
+
+            elif any(word in message.embeds[0].url for word in img_extensions):
+                if await get_vtuber(message.embeds[0].url):
+                    await message.add_reaction("🤢")
+
+        if any(word in message.content for word in img_extensions):
+            if await get_vtuber(message.content):
+                await message.add_reaction("🤢")
 
         reply = rick_reply(message)
         if reply is None:
             return
         else:
             await message.channel.send(reply)
-    # await rick.process_commands(message)
 
 
 @rick.event  # Starboard command

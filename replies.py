@@ -40,9 +40,10 @@ def rick_reply(message):
     from random import random, choice
 
     try:
-        reply = reply_dict[message.content]
+        # any(word in message.content for word in reply_dict)
+        reply = reply_dict[(message.content.lower())]
     except KeyError:
-        if random() < 0.01:
+        if random() < 0.005:
             return choice(random_replies)
         else:
             if random() < 0.00001:
