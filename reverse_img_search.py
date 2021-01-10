@@ -11,7 +11,6 @@ img_extensions = [
 
 # adapted from https://github.com/Pruffer-zz/discord-tagger-bot/tree/4c2353b01dea23d70b8d10ed6a150e9331b2eac4
 async def get_vtuber(url):
-    print("cock")
     res = requests.get('https://iqdb.org/?url=' + url)
     soup = BeautifulSoup(res.text, 'html.parser')
     elems = soup.select("a[href*=danbooru] > img")
