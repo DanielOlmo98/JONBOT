@@ -7,3 +7,4 @@ bank.json
 !/.env
 __pycache__/
 
+!/ - Copy.env
