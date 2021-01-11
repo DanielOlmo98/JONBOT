@@ -2,6 +2,7 @@ import discord
 import random
 import re
 
+from tenorscrap import Tenor
 from discord.utils import get
 
 colors = [0x00ffee, 0xfea601, 0x644fff, 0x206694]
@@ -68,8 +69,26 @@ def starboard_embed(message):
                          icon_url="https://cdn2.iconfinder.com/data/icons/objects-23/50/1F4CC-pushpin-128.png")
 
             return embed
+
+    if "tenor.com/view" in message.content:
+        tenor = Tenor()
+        search_term = re.sub(r'(?:https://tenor.com/view/?)', '', message.content)
+        search = tenor.search(search_term, limit=1)
+        result = search.result(mode='dict')
+        jump = message.jump_url
+        embed = discord.Embed(
+            description=re.sub(r'http\S+', '\n', message.content),
+            colour=random.choice(colors))
+        embed.set_author(name=message.author.name + " in " + "#" + message.channel.name,
+                         icon_url=message.author.avatar_url)
+        embed.set_image(url=result[0]['src'])
+        date = message.created_at.strftime("%Y-%m-%d at %H:%M")
+        embed.add_field(name="​", value="[[Jump to message]](" + jump + ")", inline=False)
+        embed.set_footer(text=str(get(message.reactions, emoji="📌").count) + "   |   " + str(date),
+                         icon_url="https://cdn2.iconfinder.com/data/icons/objects-23/50/1F4CC-pushpin-128.png")
+
+        return embed
     else:
-        print(message.jump_url)
         jump = message.jump_url
         embed = discord.Embed(
             description=message.content + "\n" + "[[Jump to message]](" + jump + ")",
@@ -77,7 +96,6 @@ def starboard_embed(message):
         embed.set_author(name=message.author.name + " in " + "#" + message.channel.name,
                          icon_url=message.author.avatar_url)
         date = message.created_at.strftime("%Y-%m-%d at %H:%M")
-        embed.add_field(name="​", value="[[Jump to message]](" + jump + ")", inline=False)
         embed.set_footer(text=str(get(message.reactions, emoji="📌").count) + "   |   " + str(date),
                          icon_url="https://cdn2.iconfinder.com/data/icons/objects-23/50/1F4CC-pushpin-128.png")
 
