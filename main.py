@@ -4,6 +4,11 @@ import json
 import embeds
 import time
 import asyncio
+import TenGiphPy
+import tenor_api
+import re
+
+from tenorscrap import Tenor
 from reverse_img_search import get_vtuber, img_extensions
 from subscribe import Subscribe
 from economy import Economy
@@ -30,6 +35,7 @@ load_dotenv()
 ffmpeg_path = str(os.getenv('FFMPEG'))
 TOKEN = os.getenv('DISCORD_TOKEN')
 YT_API = os.getenv('YT_API')
+TENOR_API = os.getenv('TENOR_API')
 
 rick_server_id = 94440780738854912
 
@@ -76,17 +82,18 @@ async def on_message(message):
             return
         else:
             await message.channel.send(reply)
+    # await rick.process_commands(message)
 
 
 @rick.event  # Starboard command
 async def on_raw_reaction_add(payload):
     channel = await rick.fetch_channel(payload.channel_id)
-    starboard_channel = await rick.fetch_channel(795797646119141377)  # 504624278696755211
+    starboard_channel = discord.utils.get(payload.member.guild.text_channels, name="pins")
     message = await channel.fetch_message(payload.message_id)
     if payload.emoji.name == "📌":
         reaction = get(message.reactions, emoji=payload.emoji.name)
-        if reaction.count == 1:
-            await asyncio.sleep(1)
+        if reaction.count == 4:
+            await asyncio.sleep(10)
             message = await channel.fetch_message(payload.message_id)
             await starboard_channel.send(embed=embeds.starboard_embed(message))
             await message.add_reaction("🌟")
@@ -97,6 +104,27 @@ async def yt(ctx, *, arg):
     yt = YouTubeDataAPI(YT_API)
     vid_search = yt.search(arg)
     await ctx.send("https://www.youtube.com/watch?v=" + vid_search[0]["video_id"])
+
+
+@rick.command()
+async def roll(ctx, arg1: str = None, arg2: str = None):
+    from random import randint
+    if arg2 is None and arg1 is None:
+        return await ctx.send("```.roll 1000 would roll 1-1000\n.roll 100 1000 would roll 100-1000```")
+    if arg2 is None:
+        end = randint(1, int(arg1))
+        await ctx.send(end)
+    else:
+        end = randint(int(arg1), int(arg2))
+        await ctx.send(end)
+
+
+@rick.command()
+async def tenor2(ctx, arg1):
+    t = TenGiphPy.Tenor(token=TENOR_API)
+    g = TenGiphPy.Giphy(token=TENOR_API)
+    # print()t.random(arg)
+    await ctx.send(t.random(tag=arg1))
 
 
 @rick.command()  # command for seeing quotes from specific people
@@ -136,6 +164,14 @@ async def gamers(ctx):
     from random import choice
     filename = choice(gamer_images)
     await ctx.send(file=discord.File(gamer_path + filename))
+
+
+@rick.command()
+async def tenor(ctx, arg):
+    tenor = Tenor()
+    search = tenor.search(arg, limit=1)
+    result = search.result(mode='dict')
+    await ctx.send(result[0]['src'])
 
 
 @rick.command()
