@@ -1,6 +1,7 @@
 import json
 from discord.ext import commands
 from os import path
+import asyncio
 
 
 class Economy(commands.Cog):
@@ -14,6 +15,8 @@ class Economy(commands.Cog):
             self.users = dict()
             with open("bank.json", "w") as self.f:
                 json.dump(self.users, self.f)
+
+        self.autosave = asyncio.create_task(self.bank_autosave())
 
     @commands.command(name='balance', invoke_without_subcommand=True)
     async def balance(self, ctx, *, arg: str = None):
@@ -52,7 +55,7 @@ class Economy(commands.Cog):
     @commands.command(name='award', invoke_without_subcommand=True)
     async def award(self, message, arg1, arg2):
         if message.author.id != 540175819033542666:
-            return "Nice try"
+            return await message.channel.send("Nice try")
         if message.author.id == message.message.mentions[0].id:
             mention = message.message.mentions[0].id
             self.users[str(mention)]["Pocket"] = self.users[str(mention)]["Pocket"] + int(arg2)
@@ -62,9 +65,16 @@ class Economy(commands.Cog):
             self.users[str(mention)]["Pocket"] = self.users[str(mention)]["Pocket"] + int(arg2)
             await message.channel.send("you gave " + str(arg2) + "💰 jonbucks to " + str(arg1))
 
-
-
     @commands.Cog.listener()
     async def on_message(self, message):
         if str(message.author.id) in self.users:
             self.users[str(message.author.id)]["Pocket"] = self.users[str(message.author.id)]["Pocket"] + 1
+
+    async def bank_autosave(self):
+        while True:
+            await asyncio.sleep(300)
+            await self.bank_save()
+
+    async def bank_save(self):
+        with open("bank.json", "w") as f:
+            json.dump(self.users, f)
