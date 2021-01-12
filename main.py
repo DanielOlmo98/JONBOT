@@ -5,7 +5,7 @@ import embeds
 import time
 import asyncio
 import TenGiphPy
-import tenor_api
+# import tenor_api
 import re
 
 from tenorscrap import Tenor

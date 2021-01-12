@@ -16,7 +16,8 @@ class Economy(commands.Cog):
             with open("bank.json", "w") as self.f:
                 json.dump(self.users, self.f)
 
-        self.autosave = asyncio.create_task(self.bank_autosave())
+        loop = asyncio.get_event_loop()
+        loop.create_task(self.bank_autosave())
 
     @commands.command(name='balance', invoke_without_subcommand=True)
     async def balance(self, ctx, *, arg: str = None):
@@ -44,13 +45,19 @@ class Economy(commands.Cog):
 
     @commands.command(name='fish', invoke_without_subcommand=True)
     async def fish(self, message):
+        if str(message.author.id) in self.users:
 
-        if self.users[str(message.author.id)]["Pocket"] < 10:
-            await message.channel.send("get some more jonbucks man,"
-                                       " ( you have " + str(self.users[str(message.author.id)]["Pocket"]) + " )")
-        else:
-            self.users[str(message.author.id)]["Pocket"] = self.users[str(message.author.id)]["Pocket"] - 10
-            await message.channel.send("fishing.. ( -10💰 )")
+            if message.author.id == 237541845557706752:
+                return await message.channel.send("SFTU LOODLE")
+
+            if self.users[str(message.author.id)]["Pocket"] < 10:
+                await message.channel.send("get some more jonbucks man,"
+                                           " ( you have " + str(self.users[str(message.author.id)]["Pocket"]) + " )")
+            else:
+                self.users[str(message.author.id)]["Pocket"] = self.users[str(message.author.id)]["Pocket"] - 10
+                await message.channel.send("fishing.. ( -10💰 )")
+        elif str(message.author.id) not in self.users:
+            await message.channel.send("You need to create an account first (.balance)")
 
     @commands.command(name='award', invoke_without_subcommand=True)
     async def award(self, message, arg1, arg2):
