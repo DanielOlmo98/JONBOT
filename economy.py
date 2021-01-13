@@ -2,6 +2,7 @@ import json
 from discord.ext import commands
 from os import path
 import asyncio
+from tabulate import tabulate
 
 
 class Economy(commands.Cog):
@@ -21,7 +22,7 @@ class Economy(commands.Cog):
 
     @commands.command(name='balance', invoke_without_subcommand=True)
     async def balance(self, ctx, *, arg: str = None):
-        await self.open_account(ctx.author)
+        await self.open_account(ctx)
         if ctx.message.mentions:
             mention = ctx.message.mentions[0].id
             balance = self.users[str(mention)]["Pocket"]
@@ -32,11 +33,25 @@ class Economy(commands.Cog):
             balance = self.users[str(ctx.author.id)]["Pocket"]
             await ctx.send("You have " + str(balance) + "💰 jonbucks")
 
-    async def open_account(self, user):
+        if str(arg).lower() == "all":
+            sorted_user_balance_dict = dict()
+            for user in self.users:
+                username = await self.bot.fetch_user(user)
+                sorted_user_balance_dict[username.display_name] = self.users[user]["Pocket"]
+
+            sorted_user_balance_dict = sorted(sorted_user_balance_dict.items(),
+                                              key=lambda kv: (kv[1], kv[0]), reverse=True)
+            table = tabulate(sorted_user_balance_dict, headers=["User:", "Balance:"],
+                             tablefmt="plain", numalign="right")
+            await ctx.message.channel.send("```\n" + table + "\n```")
+
+    async def open_account(self, ctx):
+        user = ctx.author
 
         if str(user.id) in self.users:
             return False
         else:
+            await ctx.message.channel.send("Creating account for " + str(ctx.author.nick))
             self.users[str(user.id)] = {"Pocket": 0}
 
         with open("bank.json", "w") as f:
@@ -61,7 +76,9 @@ class Economy(commands.Cog):
 
     @commands.command(name='award', invoke_without_subcommand=True)
     async def award(self, message, arg1, arg2):
-        if message.author.id != 540175819033542666:
+        award_perms = [540175819033542666, 90182404404170752]
+
+        if message.author.id not in award_perms:
             return await message.channel.send("Nice try")
         if message.author.id == message.message.mentions[0].id:
             mention = message.message.mentions[0].id
