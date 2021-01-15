@@ -82,7 +82,7 @@ class Economy(commands.Cog):
     async def fish(self, message):
         from random import choice
         from random import random
-        rarity = 0.9920
+        rarity = random()
 
         if str(message.author.id) not in self.users:
             return await message.channel.send("You need to create an account first (.balance)")
