@@ -77,7 +77,7 @@ class Economy(commands.Cog):
             json.dump(self.users, f)
         return True
 
-    @commands.cooldown(1, 20.0, commands.BucketType.user)
+    @commands.cooldown(1, 15.0, commands.BucketType.user)
     @commands.command(name='fish', invoke_without_subcommand=True)
     async def fish(self, message):
         from random import choice
@@ -92,33 +92,33 @@ class Economy(commands.Cog):
             self.users[str(message.author.id)]["Pocket"] = self.users[str(message.author.id)]["Pocket"] - 10
 
             if rarity < 0.55:
-                await message.channel.send("fishing.. ( -10💰 )")
+                await message.channel.send("fishing.. ( -10💰 )", delete_after=5)
                 await asyncio.sleep(5)
                 await message.channel.send("🎣 | <@" + str(message.author.id) + ">, you caught: " + choice(trash_array))
                 self.users[str(message.author.id)]["trash"] = self.users[str(message.author.id)]["trash"] + 1
             elif rarity < 0.89:
-                await message.channel.send("fishing.. ( -10💰 )")
+                await message.channel.send("fishing.. ( -10💰 )", delete_after=5)
                 await asyncio.sleep(5)
                 await message.channel.send("🎣 | <@" + str(message.author.id) + ">, you caught: 🐟")
                 self.users[str(message.author.id)]["common"] = self.users[str(message.author.id)]["common"] + 1
             elif rarity < 0.99:
-                await message.channel.send("fishing.. ( -10💰 )")
+                await message.channel.send("fishing.. ( -10💰 )", delete_after=5)
                 await asyncio.sleep(5)
                 await message.channel.send("🎣 | <@" + str(message.author.id) + ">, you caught: 🐠")
                 self.users[str(message.author.id)]["uncommon"] = self.users[str(message.author.id)]["uncommon"] + 1
-            elif rarity < 0.9915:
+            elif rarity < 0.9950:
                 rare_fish = choice(rare_array)
-                await message.channel.send("fishing.. ( -10💰 )")
+                await message.channel.send("fishing.. ( -10💰 )", delete_after=5)
                 await asyncio.sleep(5)
                 await message.channel.send(f'🎣 | <@{str(message.author.id)}>, you caught: {rare_fish} \n nice')
                 self.users[str(message.author.id)][rare_fish] = self.users[str(message.author.id)][rare_fish] + 1
-            elif rarity < 0.9920:
-                await message.channel.send("fishing.. ( -10💰 )")
+            elif rarity < 0.9960:
+                await message.channel.send("fishing.. ( -10💰 )", delete_after=5)
                 await asyncio.sleep(5)
                 await message.channel.send("🎣 | <@" + str(message.author.id) + ">, you caught: 👽 ayy lmao!")
                 self.users[str(message.author.id)]["alien"] = self.users[str(message.author.id)]["alien"] + 1
-            elif rarity < 0.9921:
-                await message.channel.send("fishing.. ( -10💰 )")
+            elif rarity < 0.9965:
+                await message.channel.send("fishing.. ( -10💰 )", delete_after=5)
                 await asyncio.sleep(5)
                 await message.channel.send("huh?")
                 await asyncio.sleep(5)
@@ -144,10 +144,11 @@ class Economy(commands.Cog):
 
                 self.users[str(message.author.id)]["elder_god"] = self.users[str(message.author.id)]["elder_god"] + 1
             else:
-                await message.channel.send("throw longer retard")
+                await message.channel.send("throw longer retard", delete_after=5)
         else:
             await message.channel.send(f'get some more jonbucks man,'
-                                       f' ( you have {str(self.users[str(message.author.id)]["Pocket"])} )')
+                                       f' ( you have {str(self.users[str(message.author.id)]["Pocket"])} )',
+                                       delete_after=5)
 
     @fish.error
     async def cd_error(self, error, ctx):
@@ -190,7 +191,7 @@ class Economy(commands.Cog):
 
         await message.channel.send(embed=rarefish_embed())
 
-    @commands.command(name='fishsecret', invoke_without_subcommand=True)
+    @commands.command(name='secretfish', invoke_without_subcommand=True)
     async def secret_fish(self, message):
 
         if str(message.author.id) not in self.users:
