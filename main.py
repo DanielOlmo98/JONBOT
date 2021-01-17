@@ -186,7 +186,7 @@ async def sound(ctx, *, arg: str = None):
     # Check if user is in a voice channel
     channel = voice_channel.name
 
-    if ctx.author.voice.channel() is not None:
+    if ctx.author.voice.channel is not None:
         voice_channel = ctx.author.voice.channel
         if ctx.voice_client is None:
             vc = await voice_channel.connect()
