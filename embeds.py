@@ -22,6 +22,14 @@ def help_embed():
     return embed
 
 
+def sellfish_embed():
+    embed = discord.Embed(title="Sell your fish using:",
+                          description=".sellfish (fish) (amount)"
+                                      "\nTrash = 6 💰 🐟 = 25 💰 🐠 = 55 💰",
+                          colour=0x5AD0CB)
+    embed.set_footer(text="Brought to you by reimu aka dav#3945 and IZpixl5#5264")
+    return embed
+
 def starboard_embed(message):
     if message.embeds:
         print(message.embeds[0].url)
