@@ -45,6 +45,8 @@ rick = commands.Bot(command_prefix='.', help_command=None, case_insensitive=True
 @rick.event
 async def on_ready():
     print('Logged in as:\n{0.user.name}\n{0.user.id}'.format(rick))
+    await rick.change_presence(activity=discord.Activity(type=discord.ActivityType.watching,
+                                                         name=".help  🌶️"))
 
 
 @rick.event
@@ -99,11 +101,39 @@ async def on_raw_reaction_add(payload):
             await message.add_reaction("🌟")
 
 
+@rick.event
+async def on_message_delete(message):
+    def delete_log_embed():
+        embed = discord.Embed(description=f"**Message sent by** {message.author.mention} "
+                                          f"**was deleted in** <#{message.channel.id}>\n "
+                                          f"(Message ID: {message.id})\n\n**Message**\n{message.content}\n ",
+                              colour=0xff4000)
+        embed.set_thumbnail(
+            url=message.author.avatar_url)
+
+        embed.set_footer(text="Brought to you by Dav#3945 and IZpixl5#5264")
+        embed.timestamp = message.created_at
+        return embed
+    if message.author.bot:
+        logs_channel = await rick.fetch_channel(718399485616717894)  # jonbot-logs-bots
+        return await logs_channel.send(embed=delete_log_embed())
+    logs_channel = await rick.fetch_channel(568434065582325770)  # jonbot-logs
+    await logs_channel.send(embed=delete_log_embed())
+
+
+
+
 @rick.command()
 async def yt(ctx, *, arg):
     yt = YouTubeDataAPI(YT_API)
     vid_search = yt.search(arg)
     await ctx.send("https://www.youtube.com/watch?v=" + vid_search[0]["video_id"])
+
+
+@rick.command()
+async def say(ctx, *, message):
+    perms = [540175819033542666, 90182404404170752]
+    await ctx.send(message)
 
 
 @rick.command()
@@ -216,8 +246,13 @@ async def sound(ctx, *, arg: str = None):
 
 
 @rick.command()
-async def help(ctx):
-    await ctx.send(embed=embeds.help_embed())
+async def help(ctx, arg: str = None):
+    if arg is None:
+        await ctx.send(embed=embeds.help_embed())
+    if arg == "fish":
+        await ctx.send(embed=embeds.fish_help_embed())
+
+
 
 
 rick.add_cog(Music(rick))
