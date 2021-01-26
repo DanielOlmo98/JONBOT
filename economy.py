@@ -84,14 +84,15 @@ class Economy(commands.Cog):
     @commands.command(name='leaderboard')
     async def leaderboard(self, ctx):
         async with ctx.typing():
-            sorted_leaderboard_dict = dict()
-        for user in self.users:
-            username = await self.bot.fetch_user(user)
-            sorted_leaderboard_dict[username.display_name] = self.users[user]["Level"]
+            sorted_user_level_dict = dict()
+            sorted_user_id = sorted(self.users.keys(),
+                                    key=lambda x: (self.users[x]["Level"]), reverse=True)
 
-        sorted_leaderboard_dict = sorted(sorted_leaderboard_dict.items(),
-                                         key=lambda kv: (kv[1], kv[0]), reverse=True)
-        table = tabulate(sorted_leaderboard_dict[:10], headers=["User:", "Level:", ],
+            for user_id in sorted_user_id[:10]:
+                username = await self.bot.fetch_user(user_id)
+                sorted_user_level_dict[username.display_name] = self.users[user_id]["Level"]
+
+        table = tabulate(sorted_user_level_dict[:10], headers=["User:", "Level:", ],
                          tablefmt="plain", numalign="right")
         await ctx.message.channel.send("```\n" + table + "\n```")
 
@@ -116,7 +117,6 @@ class Economy(commands.Cog):
             sorted_user_balance_dict = dict()
             sorted_user_id = sorted(self.users.keys(),
                                     key=lambda x: (self.users[x]["Pocket"]), reverse=True)
-
 
             for user_id in sorted_user_id[:10]:
                 username = await self.bot.fetch_user(user_id)
@@ -170,11 +170,12 @@ class Economy(commands.Cog):
         from random import random
         rarity = random()
         if "trash" not in str(message.author.id) not in self.users:
-            self.users[str(message.author.id)].update({"trash": 0, "common": 0, "uncommon": 0,'🐳': 0, '🐧': 0, '🦑': 0,
-                                                       '🐙': 0, '🐬': 0, '🐢': 0,'🦀': 0, '🦐': 0, '🦈': 0, '🐊': 0,'👽': 0,
-                                                       '<:r_tentacle:799786836595048469> <:jontron1:568424285027303434>'
-                                                       '<:jontron2:568424284947480586> '
-                                                       '<:l_tentacle:799786690864349204>': 0, '🐉': 0, })
+            self.users[str(message.author.id)].update(
+                {"trash": 0, "common": 0, "uncommon": 0, '🐳': 0, '🐧': 0, '🦑': 0,
+                 '🐙': 0, '🐬': 0, '🐢': 0, '🦀': 0, '🦐': 0, '🦈': 0, '🐊': 0, '👽': 0,
+                 '<:r_tentacle:799786836595048469> <:jontron1:568424285027303434>'
+                 '<:jontron2:568424284947480586> '
+                 '<:l_tentacle:799786690864349204>': 0, '🐉': 0, })
         if str(message.author.id) not in self.users:
             return await message.channel.send("You need to create an account first (.balance)")
 
