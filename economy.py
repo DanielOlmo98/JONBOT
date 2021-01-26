@@ -112,15 +112,17 @@ class Economy(commands.Cog):
     @balance.command()
     async def top(self, ctx):
 
-        sorted_user_balance_dict = dict()
         async with ctx.typing():
-            for user in self.users:
-                username = await self.bot.fetch_user(user)
-                sorted_user_balance_dict[username.display_name] = self.users[user]["Pocket"]
+            sorted_user_balance_dict = dict()
+            sorted_user_id = sorted(self.users.keys(),
+                                    key=lambda x: (self.users[x]["Pocket"]), reverse=True)
 
-            sorted_user_balance_dict = sorted(sorted_user_balance_dict.items(),
-                                              key=lambda kv: (kv[1], kv[0]), reverse=True)
-            table = tabulate(sorted_user_balance_dict[:10], headers=["User:", "Balance:"],
+
+            for user_id in sorted_user_id[:10]:
+                username = await self.bot.fetch_user(user_id)
+                sorted_user_balance_dict[username.display_name] = self.users[user_id]["Pocket"]
+
+            table = tabulate(sorted_user_balance_dict.items(), headers=["User:", "Balance:"],
                              tablefmt="plain", numalign="right")
             await ctx.message.channel.send("```\n" + table + "\n```")
 
