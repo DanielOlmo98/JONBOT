@@ -11,8 +11,9 @@ colors = [0x00ffee, 0xfea601, 0x644fff, 0x206694]
 def help_embed():
     embed = discord.Embed(title="Commands and what they do", colour=random.choice(colors))
     embed.set_thumbnail(
-        url="https://cdn.discordapp.com/attachments/118433598071242753/796436695519461396/13gpny7ajo961.png")
+        url="https://i.imgur.com/j8kcLlc.png")
     embed.add_field(name="Yt", value="searches youtube for a specific video", inline=True)
+    embed.add_field(name="help fish", value="List of fishing commands", inline=True)
     embed.add_field(name="Subscribe", value="lets you subscribe", inline=False)
     embed.add_field(name="Invite", value="Sends an invite for adding the bot to a server", inline=True)
     embed.add_field(name="Quote (arg)",
@@ -25,11 +26,12 @@ def help_embed():
 def fish_help_embed():
     embed = discord.Embed(title="Fishing commands", colour=random.choice(colors))
     embed.set_thumbnail(
-        url="https://cdn.discordapp.com/attachments/118433598071242753/796436695519461396/13gpny7ajo961.png")
-    embed.add_field(name="fish 🎣", value="Cast yer line", inline=True)
-    embed.add_field(name="sell (fish) 💰", value="sell your fish", inline=False)
-    embed.add_field(name="rarefish ⭐", value="Display your rare collection", inline=True)
-    embed.add_field(name="secretfish ❔", value="Display your super secret fish",inline=False)
+        url="https://i.imgur.com/UzzlTec.png")
+    embed.add_field(name="🎣 fish ", value="Cast yer line", inline=True)
+    embed.add_field(name="💰 sell (fish)", value="sell your fish", inline=False)
+    embed.add_field(name="🪣 fishinv", value="Check your stash of fish", inline=False)
+    embed.add_field(name="⭐ fishinv rare ", value="Display your rare collection", inline=True)
+    embed.add_field(name="❔ fishinv secret ", value="Display your super secret fish",inline=False)
     embed.set_footer(text="Brought to you by reimu aka dav#3945 and IZpixl5#5264")
     return embed
 
@@ -126,3 +128,71 @@ def starboard_embed(message):
         embed.timestamp = message.created_at
 
         return embed
+
+
+def log_delete_embed(message):
+    if message.attachments:
+        if message.attachments[0].url.endswith(("jpg", "png", "gif")):
+            print("attachment jpg,png,gif")
+            attachment_url = message.attachments[0].proxy_url
+            embed = discord.Embed(description=re.sub(r'http\S+', '\n', f"**Message sent by** {message.author.mention} "
+                                                     f"**was deleted in** <#{message.channel.id}>\n "
+                                                     f"(Message ID: {message.id})\n\n"
+                                                     f"**Message**\n{message.content}\n\n**Image** "),
+                                  colour=0xff4000)
+            embed.set_thumbnail(url=message.author.avatar_url)
+            embed.set_image(url=attachment_url)
+            embed.set_footer(text="Brought to you by Dav#3945 and IZpixl5#5264")
+            embed.timestamp = message.created_at
+            return embed
+        else:
+            print("attachment no image")
+            embed = discord.Embed(description=f"**Message sent by** {message.author.mention} "
+                                              f"**was deleted in** <#{message.channel.id}>\n "
+                                              f"(Message ID: {message.id})\n\n**Message**\n{message.content}\n\n"
+                                              f"**Attachment** {message.attachments[0].proxy_url}",
+                                  colour=0xff4000)
+            embed.set_thumbnail(url=message.author.avatar_url)
+            embed.set_footer(text="Brought to you by Dav#3945 and IZpixl5#5264")
+            embed.timestamp = message.created_at
+            return embed
+    if message.embeds:
+        if message.embeds[0].url.endswith(("jpg", "png", "gif")):
+            print("embed image")
+            embed = discord.Embed(description=re.sub(r'http\S+', '\n', f"**Message sent by** {message.author.mention} "
+                                                     f"**was deleted in** <#{message.channel.id}>\n "
+                                                     f"(Message ID: {message.id})\n\n"
+                                                     f"**Message**\n{message.content}\n\n"
+                                                     f"**Image**"),
+                                  colour=0xff4000)
+            embed.set_thumbnail(url=message.author.avatar_url)
+            embed.set_image(url=message.embeds[0].url)
+            embed.set_footer(text="Brought to you by Dav#3945 and IZpixl5#5264")
+            embed.timestamp = message.created_at
+            return embed
+        else:
+            print("embed no image")
+            embed = discord.Embed(description=f"**Message sent by** {message.author.mention} "
+                                              f"**was deleted in** <#{message.channel.id}>\n "
+                                              f"(Message ID: {message.id})\n\n**Message**\n{message.content}\n\n",
+                                  colour=0xff4000)
+            embed.set_thumbnail(url=message.author.avatar_url)
+            embed.set_footer(text="Brought to you by Dav#3945 and IZpixl5#5264")
+            embed.timestamp = message.created_at
+            return embed
+    else:
+        print("message")
+        embed = discord.Embed(description=f"**Message sent by** {message.author.mention} "
+                                            f"**was deleted in** <#{message.channel.id}>\n "
+                                            f"(Message ID: {message.id})\n\n**Message**\n{message.content}\n\n",
+                              colour=0xff4000)
+        embed.set_thumbnail(url=message.author.avatar_url)
+        embed.set_footer(text="Brought to you by Dav#3945 and IZpixl5#5264")
+        embed.timestamp = message.created_at
+        return embed
+
+
+
+
+
+

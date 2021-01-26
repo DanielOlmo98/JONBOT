@@ -37,7 +37,8 @@ class Economy(commands.Cog):
     @commands.Cog.listener()
     async def on_command_error(self, ctx, error):
         if isinstance(error, commands.CommandOnCooldown):
-            await ctx.send('Wait %.2fs ' % error.retry_after, delete_after=error.retry_after)
+            await ctx.send('Wait %.2fs ' % error.retry_after + 'before using ' + ctx.message.content + " again",
+                           delete_after=error.retry_after)
 
         elif isinstance(error, commands.CommandNotFound, ):
             return
@@ -63,7 +64,7 @@ class Economy(commands.Cog):
                 self.users[str(message.author.id)]["Pocket"] = self.users[str(message.author.id)]["Pocket"] + 2
                 self.users[str(message.author.id)]["Exp"] = self.users[str(message.author.id)]["Exp"] - randint(10, 20)
             if self.users[str(message.author.id)]["Exp"] <= 0:
-                level_exp = (self.users[str(message.author.id)]["Level"] + 1) ** 2 * 50
+                level_exp = (self.users[str(message.author.id)]["Level"] + 1) ** 2 * 35
                 print(level_exp)
                 await message.channel.send("Level up pog")
                 self.users[str(message.author.id)]["Exp"] = self.users[str(message.author.id)]["Exp"] + int(level_exp)
@@ -79,6 +80,7 @@ class Economy(commands.Cog):
         await ctx.send(f"Level: {self.users[str(ctx.message.author.id)]['Level']}\n"
                        f"Exp to next level: {level_up_exp}")
 
+    @commands.cooldown(1, 30)
     @commands.command(name='leaderboard')
     async def leaderboard(self, ctx):
         async with ctx.typing():
@@ -89,24 +91,29 @@ class Economy(commands.Cog):
 
         sorted_leaderboard_dict = sorted(sorted_leaderboard_dict.items(),
                                          key=lambda kv: (kv[1], kv[0]), reverse=True)
-        table = tabulate(sorted_leaderboard_dict[:10], headers=["User:", "Level:",],
+        table = tabulate(sorted_leaderboard_dict[:10], headers=["User:", "Level:", ],
                          tablefmt="plain", numalign="right")
         await ctx.message.channel.send("```\n" + table + "\n```")
 
-    @commands.command(name='balance', invoke_without_subcommand=True)
-    async def balance(self, ctx, *, arg: str = None):
+    @rick.group()
+    async def balance(self, ctx):
         await self.open_account(ctx)
+
         if ctx.message.mentions:
-            mention = ctx.message.mentions[0].id
-            balance = self.users[str(mention)]["Pocket"]
-            await ctx.send(arg + " has " + str(balance) + "💰 jonbucks")
+            mention_id = ctx.message.mentions[0].id
+            mention_nick = ctx.message.mentions[0].nick
+            balance = self.users[str(mention_id)]["Pocket"]
+            return await ctx.send(str(mention_nick) + " has " + str(balance) + "💰 jonbucks")
 
-        if arg is None:
+        if ctx.invoked_subcommand is None:
             balance = self.users[str(ctx.author.id)]["Pocket"]
-            await ctx.send("You have " + str(balance) + "💰 jonbucks")
+            return await ctx.send("You have " + str(balance) + "💰 jonbucks")
 
-        if str(arg).lower() == "top":
-            sorted_user_balance_dict = dict()
+    @balance.command()
+    async def top(self, ctx):
+
+        sorted_user_balance_dict = dict()
+        async with ctx.typing():
             for user in self.users:
                 username = await self.bot.fetch_user(user)
                 sorted_user_balance_dict[username.display_name] = self.users[user]["Pocket"]
@@ -148,7 +155,7 @@ class Economy(commands.Cog):
     async def payday(self, ctx, user: str = None, amount: str = None):
         mention = ctx.message.mentions[0]
         if user is None or amount is None:
-            return await ctx.send("cock")
+            return await ctx.send(".give (user) (amount)")
         else:
             self.users[str(ctx.author.id)]["Pocket"] = self.users[str(ctx.author.id)]["Pocket"] - int(amount)
             self.users[str(mention.id)]["Pocket"] = self.users[str(mention.id)]["Pocket"] + int(amount)
@@ -160,7 +167,12 @@ class Economy(commands.Cog):
         from random import choice
         from random import random
         rarity = random()
-
+        if "trash" not in str(message.author.id) not in self.users:
+            self.users[str(message.author.id)].update({"trash": 0, "common": 0, "uncommon": 0,'🐳': 0, '🐧': 0, '🦑': 0,
+                                                       '🐙': 0, '🐬': 0, '🐢': 0,'🦀': 0, '🦐': 0, '🦈': 0, '🐊': 0,'👽': 0,
+                                                       '<:r_tentacle:799786836595048469> <:jontron1:568424285027303434>'
+                                                       '<:jontron2:568424284947480586> '
+                                                       '<:l_tentacle:799786690864349204>': 0, '🐉': 0, })
         if str(message.author.id) not in self.users:
             return await message.channel.send("You need to create an account first (.balance)")
 
@@ -218,13 +230,13 @@ class Economy(commands.Cog):
                                            "<:l_tentacle:799786690864349204>"
                                            " zhro sgn'wahl llll syha'h uln hrii phlegeth uh'e ch',"
                                            " R'lyeh llll bug f'vulgtm shogg y-llll uaaahog hrii.")
-                self.users[str(message.author.id)]["<:r_tentacle:799786836595048469> " 
-                                                   "<:jontron1:568424285027303434> " 
-                                                   "<:jontron2:568424284947480586> " 
+                self.users[str(message.author.id)]["<:r_tentacle:799786836595048469> "
+                                                   "<:jontron1:568424285027303434> "
+                                                   "<:jontron2:568424284947480586> "
                                                    "<:l_tentacle:799786690864349204>"] = \
-                    self.users[str(message.author.id)]["<:r_tentacle:799786836595048469> " 
-                                                       "<:jontron1:568424285027303434> " 
-                                                       "<:jontron2:568424284947480586> " 
+                    self.users[str(message.author.id)]["<:r_tentacle:799786836595048469> "
+                                                       "<:jontron1:568424285027303434> "
+                                                       "<:jontron2:568424284947480586> "
                                                        "<:l_tentacle:799786690864349204>"] + 1
             elif rarity < 0.9975:
                 await message.channel.send("fishing.. ( -10💰 )", delete_after=5)
@@ -249,25 +261,26 @@ class Economy(commands.Cog):
         if isinstance(error, errors.CommandOnCooldown):
             await ctx.send(str(error.retry_after))
 
+    @rick.group(name='fishinv', invoke_without_subcommand=True)
+    async def fishinv(self, ctx):
+        if ctx.invoked_subcommand is None:
+            if str(ctx.message.author.id) not in self.users:
+                return await ctx.message.channel.send("You need to create an account first (.balance)")
 
-    @commands.command(name='fishinv', invoke_without_subcommand=True)
-    async def fishinv(self, message):
-        if str(message.author.id) not in self.users:
-            return await message.channel.send("You need to create an account first (.balance)")
+            def fishinv_embed():
+                author_id = ctx.message.author.id
+                embed = discord.Embed(title="Your fishes", colour=0x5AD0CB)
+                embed.set_thumbnail(url=ctx.message.author.avatar_url)
+                embed.add_field(name=" 📰 Trash", value=str(self.users[str(author_id)]["trash"]))
+                embed.add_field(name=" 🐟 Common", value=str(self.users[str(author_id)]["common"]))
+                embed.add_field(name=" 🐠 Uncommon", value=str(self.users[str(author_id)]["uncommon"]))
+                embed.set_footer(text="Brought to you by reimu aka dav#3945 and IZpixl5#5264")
+                return embed
 
-        def fishinv_embed():
-            embed = discord.Embed(title="Your fishes", colour=0x5AD0CB)
-            embed.set_thumbnail(url=message.author.avatar_url)
-            embed.add_field(name=" 📰 Trash", value=str(self.users[str(message.author.id)]["trash"]))
-            embed.add_field(name=" 🐟 Common", value=str(self.users[str(message.author.id)]["common"]))
-            embed.add_field(name=" 🐠 Uncommon", value=str(self.users[str(message.author.id)]["uncommon"]))
-            embed.set_footer(text="Brought to you by reimu aka dav#3945 and IZpixl5#5264")
-            return embed
+            await ctx.message.channel.send(embed=fishinv_embed())
 
-        await message.channel.send(embed=fishinv_embed())
-
-    @commands.command(name='rarefish', invoke_without_subcommand=True)
-    async def rarefish(self, message):
+    @fishinv.command(name='rare')
+    async def rare(self, message):
 
         if str(message.author.id) not in self.users:
             return await message.channel.send("You need to create an account first (.balance)")
@@ -286,7 +299,7 @@ class Economy(commands.Cog):
 
         await message.channel.send(embed=rarefish_embed())
 
-    @commands.command(name='secretfish', invoke_without_subcommand=True)
+    @fishinv.command(name='secret')
     async def secret_fish(self, message):
 
         if str(message.author.id) not in self.users:

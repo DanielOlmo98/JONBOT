@@ -103,22 +103,11 @@ async def on_raw_reaction_add(payload):
 
 @rick.event
 async def on_message_delete(message):
-    def delete_log_embed():
-        embed = discord.Embed(description=f"**Message sent by** {message.author.mention} "
-                                          f"**was deleted in** <#{message.channel.id}>\n "
-                                          f"(Message ID: {message.id})\n\n**Message**\n{message.content}\n ",
-                              colour=0xff4000)
-        embed.set_thumbnail(
-            url=message.author.avatar_url)
-
-        embed.set_footer(text="Brought to you by Dav#3945 and IZpixl5#5264")
-        embed.timestamp = message.created_at
-        return embed
     if message.author.bot:
         logs_channel = await rick.fetch_channel(718399485616717894)  # jonbot-logs-bots
-        return await logs_channel.send(embed=delete_log_embed())
+        return await logs_channel.send(embed=embeds.log_delete_embed(message))
     logs_channel = await rick.fetch_channel(568434065582325770)  # jonbot-logs
-    await logs_channel.send(embed=delete_log_embed())
+    await logs_channel.send(embed=embeds.log_delete_embed(message))
 
 
 
@@ -206,6 +195,7 @@ async def tenor(ctx, arg):
 
 @rick.command()
 async def sound(ctx, *, arg: str = None):
+
     sounds_path = "assets/sounds/"
     if arg is None:
         sounds_list = os.listdir(sounds_path)
@@ -230,6 +220,7 @@ async def sound(ctx, *, arg: str = None):
             vc = ctx.voice_client
             print(f"Voice Channel: {voice_channel}")
 
+
         try:
             sounds_list = os.listdir(sounds_path + arg)
             from random import choice
@@ -239,10 +230,23 @@ async def sound(ctx, *, arg: str = None):
         except commands.errors.CommandInvokeError:
             return await ctx.send("join a vc pls")
         await asyncio.sleep(2)
-        vc.play(discord.FFmpegPCMAudio("assets/sounds/" + arg + "/" + filename), after=lambda e: print('done'))
 
+        def my_after(error):
+
+            coro = ctx.voice_client.disconnect()
+            fut = asyncio.run_coroutine_threadsafe(coro, ctx.voice_client.loop)
+            try:
+                fut.result()
+            except:
+                # an error happened sending the message
+                pass
+        vc.play(discord.FFmpegPCMAudio("assets/sounds/" + arg + "/" + filename), after=my_after)
     else:
         await ctx.send("join a channel retard")
+
+
+
+
 
 
 @rick.command()
