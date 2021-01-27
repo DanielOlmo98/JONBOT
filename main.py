@@ -5,6 +5,7 @@ import embeds
 import time
 import asyncio
 import TenGiphPy
+
 # import tenor_api
 import re
 
@@ -109,8 +110,40 @@ async def on_message_delete(message):
     logs_channel = await rick.fetch_channel(568434065582325770)  # jonbot-logs
     await logs_channel.send(embed=embeds.log_delete_embed(message))
 
+@rick.command()
+@commands.cooldown(1, 15)
+async def tts(ctx, *, arg):
+    from gtts import gTTS
+    tts = gTTS(text=arg, lang="en")
+    tts.save("good.mp3")
+    os.system("mpg321 good.mp3")
+    vc = ctx.voice_client
+    vc.play(discord.FFmpegPCMAudio("good.mp3"))
 
 
+@rick.command()
+@commands.cooldown(1, 15)
+async def brian(ctx, *, arg):
+    from selenium import webdriver
+    import selenium
+    from selenium.webdriver.support.ui import WebDriverWait
+    if ctx.voice_client is None:
+        return await ctx.send("summon me to a vc first, .join or .summon (vc name)")
+    if len(ctx.message.content) > 400:
+        return await ctx.send("a bit too long, buddy")
+    vc = ctx.voice_client
+    options = webdriver.ChromeOptions()
+    options.add_argument('headless')
+    options.add_argument("--mute-audio")
+    prefs = {"download.default_directory": "C:\\Users\\test2\\PycharmProjects\\JONBOT\\assets\\tts"}
+    options.add_experimental_option("prefs", prefs)
+    driver = webdriver.Chrome("C:\Program Files (x86)\chromedriver\chromedriver.exe", options=options)
+    driver.get("http://www.elunduscore.com")
+    driver.find_element_by_id("text").send_keys(arg)
+    driver.find_element_by_css_selector("button[type='submit']").click()
+    WebDriverWait(driver, timeout=20).until(lambda d: driver.find_element_by_link_text('Download'))
+    driver.find_element_by_link_text('Download').click()
+    vc.play(discord.FFmpegPCMAudio('assets\\tts\\voice.mp3'), after=lambda e: os.remove("assets\\tts\\voice.mp3"))
 
 @rick.command()
 async def yt(ctx, *, arg):

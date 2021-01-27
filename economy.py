@@ -37,7 +37,9 @@ class Economy(commands.Cog):
     @commands.Cog.listener()
     async def on_command_error(self, ctx, error):
         if isinstance(error, commands.CommandOnCooldown):
-            await ctx.send('Wait %.2fs ' % error.retry_after + 'before using ' + ctx.message.content + " again",
+            all_words = ctx.message.content.split()
+            first_word = all_words[0]
+            await ctx.send('Wait %.2fs ' % error.retry_after + 'before using ' + first_word+ " again",
                            delete_after=error.retry_after)
 
         elif isinstance(error, commands.CommandNotFound, ):
@@ -92,7 +94,7 @@ class Economy(commands.Cog):
                 username = await self.bot.fetch_user(user_id)
                 sorted_user_level_dict[username.display_name] = self.users[user_id]["Level"]
 
-        table = tabulate(sorted_user_level_dict[:10], headers=["User:", "Level:", ],
+        table = tabulate(sorted_user_level_dict.items(), headers=["User:", "Level:", ],
                          tablefmt="plain", numalign="right")
         await ctx.message.channel.send("```\n" + table + "\n```")
 
