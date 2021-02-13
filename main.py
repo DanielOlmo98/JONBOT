@@ -9,7 +9,7 @@ import TenGiphPy
 # import tenor_api
 import re
 
-from tenorscrap import Tenor
+from tenorscrap import Tenor # https://github.com/suarasiy/tenorscrap
 from reverse_img_search import get_vtuber, img_extensions
 from subscribe import Subscribe
 from economy import Economy

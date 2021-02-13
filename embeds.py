@@ -2,7 +2,7 @@ import discord
 import random
 import re
 
-from tenorscrap import Tenor
+from tenorscrap import Tenor # https://github.com/suarasiy/tenorscrap
 from discord.utils import get
 
 colors = [0x00ffee, 0xfea601, 0x644fff, 0x206694]
