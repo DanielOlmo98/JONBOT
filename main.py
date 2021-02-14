@@ -32,6 +32,8 @@ from youtube_api import YouTubeDataAPI
 
 # from youtube_search import YoutubeSearch
 
+print("Starting JONBOT...")
+
 load_dotenv()
 ffmpeg_path = str(os.getenv('FFMPEG'))
 TOKEN = os.getenv('DISCORD_TOKEN')
