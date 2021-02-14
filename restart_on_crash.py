@@ -4,7 +4,7 @@ import sys
 
 # https://stackoverflow.com/questions/44112399/automatically-restart-a-python-program-if-its-killed
 filename = 'main.py'
-os.chdir(os.path.dirname(__file__))
+os.chdir(os.path.dirname(os.path.abspath(__file__)))
 try:
     while True:
         """However, you should be careful with the '.wait()'"""
