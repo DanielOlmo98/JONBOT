@@ -59,18 +59,18 @@ async def on_message(message):
             if any(word in message.attachments[0].url.lower() for word in sick):
                 await message.add_reaction("🤢")
 
-        elif any(word in message.attachments[0].url for word in img_extensions):
-            if await get_vtuber(message.attachments[0].url):
-                await message.add_reaction("🤢")
+            elif any(word in message.attachments[0].url for word in img_extensions):
+                if await get_vtuber(message.attachments[0].url):
+                    await message.add_reaction("🤢")
 
         if message.embeds:
             if message.embeds[0].url is str:
                 if any(word in message.embeds[0].url.lower() for word in sick):
                     await message.add_reaction("🤢")
 
-        elif any(word in message.embeds[0].url for word in img_extensions):
-            if await get_vtuber(message.embeds[0].url):
-                await message.add_reaction("🤢")
+            elif any(word in message.embeds[0].url for word in img_extensions):
+                if await get_vtuber(message.embeds[0].url):
+                    await message.add_reaction("🤢")
 
         if any(word in message.content for word in img_extensions):
             if await get_vtuber(message.content):
