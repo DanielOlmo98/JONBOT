@@ -9,7 +9,7 @@ import TenGiphPy
 # import tenor_api
 import re
 
-from tenorscrap import Tenor
+from tenorscrap import Tenor # https://github.com/suarasiy/tenorscrap
 from reverse_img_search import get_vtuber, img_extensions
 from subscribe import Subscribe
 from economy import Economy
@@ -31,6 +31,8 @@ from discord.ext.commands.errors import CommandInvokeError
 from youtube_api import YouTubeDataAPI
 
 # from youtube_search import YoutubeSearch
+
+print("Starting JONBOT...")
 
 load_dotenv()
 ffmpeg_path = str(os.getenv('FFMPEG'))
