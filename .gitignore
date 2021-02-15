@@ -8,3 +8,4 @@ bank.json
 __pycache__/
 
 !/ - Copy.env
+!/bank.json

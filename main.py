@@ -5,11 +5,10 @@ import embeds
 import time
 import asyncio
 import TenGiphPy
-
 # import tenor_api
 import re
 
-from tenorscrap import Tenor # https://github.com/suarasiy/tenorscrap
+from tenorscrap import Tenor  # https://github.com/suarasiy/tenorscrap
 from reverse_img_search import get_vtuber, img_extensions
 from subscribe import Subscribe
 from economy import Economy
@@ -22,15 +21,10 @@ from dotenv import load_dotenv
 from discord.ext import commands
 from discord.ext.commands.errors import MissingRequiredArgument
 from discord.ext.commands.errors import CommandInvokeError
-
-#
-# os.chdir("C:\\Users\\test2\\PycharmProjects\\JONBOT")
-# ffmpeg_path = "C:/Users/test2/PycharmProjects/JONBOT/venv/Lib/site-packages/ffmpeg-binaries/bin/ffmpeg.exe"
-
-# from youtubesearchpython import VideosSearch
 from youtube_api import YouTubeDataAPI
 
-# from youtube_search import YoutubeSearch
+# os.chdir("C:\\Users\\test2\\PycharmProjects\\JONBOT")
+# ffmpeg_path = "C:/Users/test2/PycharmProjects/JONBOT/venv/Lib/site-packages/ffmpeg-binaries/bin/ffmpeg.exe"
 
 print("Starting JONBOT...")
 
@@ -65,29 +59,28 @@ async def on_message(message):
             if any(word in message.attachments[0].url.lower() for word in sick):
                 await message.add_reaction("🤢")
 
-        #    elif any(word in message.attachments[0].url for word in img_extensions):
-        #        if await get_vtuber(message.attachments[0].url):
-        #           await message.add_reaction("🤢")
+        elif any(word in message.attachments[0].url for word in img_extensions):
+            if await get_vtuber(message.attachments[0].url):
+                await message.add_reaction("🤢")
 
         if message.embeds:
             if message.embeds[0].url is str:
                 if any(word in message.embeds[0].url.lower() for word in sick):
                     await message.add_reaction("🤢")
 
-        #    elif any(word in message.embeds[0].url for word in img_extensions):
-        #       if await get_vtuber(message.embeds[0].url):
-        #          await message.add_reaction("🤢")
+        elif any(word in message.embeds[0].url for word in img_extensions):
+            if await get_vtuber(message.embeds[0].url):
+                await message.add_reaction("🤢")
 
-        # if any(word in message.content for word in img_extensions):
-        #     if await get_vtuber(message.content):
-        #        await message.add_reaction("🤢")
+        if any(word in message.content for word in img_extensions):
+            if await get_vtuber(message.content):
+                await message.add_reaction("🤢")
 
         reply = rick_reply(message)
         if reply is None:
             return
         else:
             await message.channel.send(reply)
-    # await rick.process_commands(message)
 
 
 @rick.event  # Starboard command
@@ -112,9 +105,10 @@ async def on_message_delete(message):
     logs_channel = await rick.fetch_channel(568434065582325770)  # jonbot-logs
     await logs_channel.send(embed=embeds.log_delete_embed(message))
 
+
 @rick.command()
 @commands.cooldown(1, 15)
-async def tts(ctx, arg1, *,  arg):
+async def tts(ctx, arg1, *, arg):
     from gtts import gTTS
     tts = gTTS(text=arg, lang=arg1)
     tts.save("good.mp3")
@@ -138,13 +132,14 @@ async def crabrave(ctx, *, arg):
         except:
             # an error happened sending the message
             pass
+
     await ctx.send("<a:creb:568424281688637440> " + arg + " <a:creb:568424281688637440>")
     vc = ctx.voice_client
     vc.play(discord.FFmpegPCMAudio("assets/sounds/crabrave/crab.mp3"), after=my_after)
 
 
 @rick.command()
-@commands.cooldown(1,15, commands.BucketType.user)
+@commands.cooldown(1, 15, commands.BucketType.user)
 async def ban(ctx, *, arg):
     await ctx.send("<:pepebanjon:568424285098606603> " + arg)
 
@@ -173,6 +168,7 @@ async def brian(ctx, *, arg):
     WebDriverWait(driver, timeout=20).until(lambda d: driver.find_element_by_link_text('Download'))
     driver.find_element_by_link_text('Download').click()
     vc.play(discord.FFmpegPCMAudio('assets\\tts\\voice.mp3'), after=lambda e: os.remove("assets\\tts\\voice.mp3"))
+
 
 @rick.command()
 async def yt(ctx, *, arg):
@@ -257,7 +253,6 @@ async def tenor(ctx, arg):
 
 @rick.command()
 async def sound(ctx, *, arg: str = None):
-
     sounds_path = "assets/sounds/"
     if arg is None:
         sounds_list = os.listdir(sounds_path)
@@ -282,7 +277,6 @@ async def sound(ctx, *, arg: str = None):
             vc = ctx.voice_client
             print(f"Voice Channel: {voice_channel}")
 
-
         try:
             sounds_list = os.listdir(sounds_path + arg)
             from random import choice
@@ -302,13 +296,10 @@ async def sound(ctx, *, arg: str = None):
             except:
                 # an error happened sending the message
                 pass
+
         vc.play(discord.FFmpegPCMAudio("assets/sounds/" + arg + "/" + filename), after=my_after)
     else:
         await ctx.send("join a channel retard")
-
-
-
-
 
 
 @rick.command()
@@ -317,8 +308,6 @@ async def help(ctx, arg: str = None):
         await ctx.send(embed=embeds.help_embed())
     if arg == "fish":
         await ctx.send(embed=embeds.fish_help_embed())
-
-
 
 
 rick.add_cog(Music(rick))

@@ -1,6 +1,7 @@
 import subprocess
 import os
 import sys
+from time import sleep
 
 # https://stackoverflow.com/questions/44112399/automatically-restart-a-python-program-if-its-killed
 filename = 'main.py'
@@ -13,6 +14,7 @@ try:
         """#if your there is an error from running 'main.py', 
         the while loop will be repeated, 
         otherwise the program will break from the loop"""
+        sleep(5)
         if p != 0:
             continue
         else:
