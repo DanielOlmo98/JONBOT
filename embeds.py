@@ -81,7 +81,7 @@ def starboard_embed(message):
 
             return embed
         else:
-            print("file not image")
+            print("file not image pin")
             jump = message.jump_url
             embed = discord.Embed(
                 description="**Content**\n" + message.content + "\n\n**File**\n" + message.attachments[0].url,
@@ -97,6 +97,7 @@ def starboard_embed(message):
             return embed
 
     if "tenor.com/view" in message.content:
+        print("tenor gif pin")
         tenor = Tenor()
         search_term = re.sub(r'(?:https://tenor.com/view/?)', '', message.content)
         search = tenor.search(search_term, limit=1)
@@ -116,9 +117,10 @@ def starboard_embed(message):
 
         return embed
     else:
+        print("just message pin")
         jump = message.jump_url
         embed = discord.Embed(
-            description=message.content + "\n" + "[[Jump to message]](" + jump + ")",
+            description=message.content + "\n\n" + "[[Jump to message]](" + jump + ")",
             colour=random.choice(colors))
         embed.set_author(name=message.author.name + " in " + "#" + message.channel.name,
                          icon_url=message.author.avatar_url)

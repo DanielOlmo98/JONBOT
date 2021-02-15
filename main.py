@@ -13,7 +13,7 @@ from tenorscrap import Tenor
 from reverse_img_search import get_vtuber, img_extensions
 from subscribe import Subscribe
 from economy import Economy
-from music import Music
+from musiccog import Music
 from discord.utils import get
 from replies import rick_reply
 from replies import listToString
@@ -63,22 +63,22 @@ async def on_message(message):
             if any(word in message.attachments[0].url.lower() for word in sick):
                 await message.add_reaction("🤢")
 
-            elif any(word in message.attachments[0].url for word in img_extensions):
-                if await get_vtuber(message.attachments[0].url):
-                    await message.add_reaction("🤢")
+        #    elif any(word in message.attachments[0].url for word in img_extensions):
+        #        if await get_vtuber(message.attachments[0].url):
+        #           await message.add_reaction("🤢")
 
         if message.embeds:
             if message.embeds[0].url is str:
                 if any(word in message.embeds[0].url.lower() for word in sick):
                     await message.add_reaction("🤢")
 
-            elif any(word in message.embeds[0].url for word in img_extensions):
-                if await get_vtuber(message.embeds[0].url):
-                    await message.add_reaction("🤢")
+        #    elif any(word in message.embeds[0].url for word in img_extensions):
+        #       if await get_vtuber(message.embeds[0].url):
+        #          await message.add_reaction("🤢")
 
-        if any(word in message.content for word in img_extensions):
-            if await get_vtuber(message.content):
-                await message.add_reaction("🤢")
+        # if any(word in message.content for word in img_extensions):
+        #     if await get_vtuber(message.content):
+        #        await message.add_reaction("🤢")
 
         reply = rick_reply(message)
         if reply is None:
@@ -112,25 +112,52 @@ async def on_message_delete(message):
 
 @rick.command()
 @commands.cooldown(1, 15)
-async def tts(ctx, *, arg):
+async def tts(ctx, arg1, *,  arg):
     from gtts import gTTS
-    tts = gTTS(text=arg, lang="en")
+    tts = gTTS(text=arg, lang=arg1)
     tts.save("good.mp3")
-    os.system("mpg321 good.mp3")
     vc = ctx.voice_client
     vc.play(discord.FFmpegPCMAudio("good.mp3"))
+
+
+@rick.command()
+async def crabrave(ctx, *, arg):
+    if ctx.voice_client is None:
+        return await ctx.send("<a:creb:568424281688637440> " + arg + " <a:creb:568424281688637440>")
+    if ctx.voice_client.is_playing() is True:
+        return await ctx.send("wait your turn.")
+
+    def my_after(error):
+
+        coro = ctx.voice_client.disconnect()
+        fut = asyncio.run_coroutine_threadsafe(coro, ctx.voice_client.loop)
+        try:
+            fut.result()
+        except:
+            # an error happened sending the message
+            pass
+    await ctx.send("<a:creb:568424281688637440> " + arg + " <a:creb:568424281688637440>")
+    vc = ctx.voice_client
+    vc.play(discord.FFmpegPCMAudio("assets/sounds/crabrave/crab.mp3"), after=my_after)
+
+
+@rick.command()
+@commands.cooldown(1,15, commands.BucketType.user)
+async def ban(ctx, *, arg):
+    await ctx.send("<:pepebanjon:568424285098606603> " + arg)
 
 
 @rick.command()
 @commands.cooldown(1, 15)
 async def brian(ctx, *, arg):
     from selenium import webdriver
-    import selenium
     from selenium.webdriver.support.ui import WebDriverWait
     if ctx.voice_client is None:
         return await ctx.send("summon me to a vc first, .join or .summon (vc name)")
     if len(ctx.message.content) > 400:
         return await ctx.send("a bit too long, buddy")
+    if ctx.voice_client.is_playing() is True:
+        return await ctx.send("wait your turn.")
     vc = ctx.voice_client
     options = webdriver.ChromeOptions()
     options.add_argument('headless')
