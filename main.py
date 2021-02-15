@@ -12,7 +12,7 @@ from tenorscrap import Tenor  # https://github.com/suarasiy/tenorscrap
 from reverse_img_search import get_vtuber, img_extensions
 from subscribe import Subscribe
 from economy import Economy
-from musiccog import Music
+from music import Music
 from discord.utils import get
 from replies import rick_reply
 from replies import listToString
