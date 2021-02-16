@@ -13,6 +13,7 @@ from reverse_img_search import get_vtuber, img_extensions
 from subscribe import Subscribe
 from economy import Economy
 from music import Music
+from rick_answers import RickAnswers
 from discord.utils import get
 from replies import rick_reply
 from replies import listToString
@@ -312,5 +313,6 @@ async def help(ctx, arg: str = None):
 rick.add_cog(Music(rick))
 rick.add_cog(Subscribe(rick))
 rick.add_cog(Economy(rick))
+rick.add_cog(RickAnswers(rick))
 
 rick.run(TOKEN)
