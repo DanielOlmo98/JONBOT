@@ -296,7 +296,6 @@ async def sound(ctx, *, arg: str = None):
             except:
                 # an error happened sending the message
                 pass
-
         vc.play(discord.FFmpegPCMAudio("assets/sounds/" + arg + "/" + filename))
     else:
         await ctx.send("join a channel retard")
