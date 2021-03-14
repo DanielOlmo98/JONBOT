@@ -17,7 +17,7 @@ class ImgProcessing(commands.Cog):
         reaction = get(message.reactions, emoji=payload.emoji.name)
 
         if payload.emoji.name == "⏩":
-            if reaction.count == 0:
+            if reaction.count == 1:
                 await self.gif_speedup(message, channel)
 
     async def gif_speedup(self, message, channel):
