@@ -4,6 +4,7 @@ from PIL import Image
 import requests
 import re
 from discord.utils import get
+from PIL_transparent_gif import save_transparent_gif
 
 
 class ImgProcessing(commands.Cog):
@@ -21,22 +22,30 @@ class ImgProcessing(commands.Cog):
                 await self.gif_speedup(message, channel)
 
     async def gif_speedup(self, message, channel):
-        async with channel.typing():
 
-            # html = BeautifulSoup(message.content, 'html.parser')
-            # urls = [a['href'] for a in html.find_all('a')]
-
+            urls = []
             urls = re.findall(r'(?:http\:|https\:)?\/\/.*\.(?:gif)', message.content)
 
             if message.attachments:
-                urls = message.attachments[0].url
+                urls.append(message.attachments[0].url)
             for url in urls:
+                async with channel.typing():
                 if ".gif" in url:
+                    too_fast = False
                     gif = Image.open(requests.get(url, stream=True).raw)
                     gif_len = gif.n_frames
                     frame_time = []
                     for i in range(gif_len):
-                        frame_time.append(gif.info['duration'] / 2)
+                        f_time = gif.info['duration'] / 2
+                        if f_time < 20:
+                            f_time = 20
+                            too_fast = True
+                        frame_time.append(f_time)
 
+
+                    print(frame_time)
                     gif.save("temp.gif", save_all=True, duration=frame_time)
+                    # save_transparent_gif(images=gif, durations=frame_time, save_file="temp.gif")
+                    if too_fast:
+                        await message.channel.send("SLOW DOWN COWBOY ✋🤠🚫")
                     await channel.send(file=discord.File("temp.gif"))

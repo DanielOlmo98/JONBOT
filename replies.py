@@ -45,7 +45,7 @@ def rick_reply(message):
         if random() < 0.005:
             return choice(random_replies)
         else:
-            if random() < 0.00001:
+            if random() < 0.0001:
                 return "<@" + str(message.author.id) + "> I LOVE YOU"
             return None
 
