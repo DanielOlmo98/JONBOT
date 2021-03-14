@@ -3,10 +3,7 @@ import discord
 from PIL import Image
 import requests
 import re
-from bs4 import BeautifulSoup
-import warnings
-
-warnings.filterwarnings("ignore", category=UserWarning, module='bs4')
+from discord.utils import get
 
 
 class ImgProcessing(commands.Cog):
@@ -17,8 +14,11 @@ class ImgProcessing(commands.Cog):
     async def on_raw_reaction_add(self, payload):
         channel = await self.bot.fetch_channel(payload.channel_id)
         message = await channel.fetch_message(payload.message_id)
+        reaction = get(message.reactions, emoji=payload.emoji.name)
+
         if payload.emoji.name == "⏩":
-            await self.gif_speedup(message, channel)
+            if reaction.count == 0:
+                await self.gif_speedup(message, channel)
 
     async def gif_speedup(self, message, channel):
         async with channel.typing():
