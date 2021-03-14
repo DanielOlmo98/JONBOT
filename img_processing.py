@@ -22,13 +22,13 @@ class ImgProcessing(commands.Cog):
 
     async def gif_speedup(self, message, channel):
 
-            urls = []
-            urls = re.findall(r'(?:http\:|https\:)?\/\/.*\.(?:gif)', message.content)
+        urls = []
+        urls = re.findall(r'(?:http\:|https\:)?\/\/.*\.(?:gif)', message.content)
 
-            if message.attachments:
-                urls.append(message.attachments[0].url)
-            for url in urls:
-                async with channel.typing():
+        if message.attachments:
+            urls.append(message.attachments[0].url)
+        for url in urls:
+            async with channel.typing():
                 if ".gif" in url:
                     too_fast = False
                     gif = Image.open(requests.get(url, stream=True).raw)
@@ -40,7 +40,6 @@ class ImgProcessing(commands.Cog):
                             f_time = 20
                             too_fast = True
                         frame_time.append(f_time)
-
 
                     print(frame_time)
                     gif.save("temp.gif", save_all=True, duration=frame_time)
