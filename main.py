@@ -310,6 +310,13 @@ async def help(ctx, arg: str = None):
         await ctx.send(embed=embeds.fish_help_embed())
 
 
+@rick.command()
+async def redtruth(ctx, arg:str = None):
+    if arg is None:
+        await ctx.send("No statement found")
+    else:
+        await ctx.send("```diff\n" + arg + "\n```")
+
 rick.add_cog(Music(rick))
 rick.add_cog(Subscribe(rick))
 rick.add_cog(Economy(rick))
