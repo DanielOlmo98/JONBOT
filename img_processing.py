@@ -4,7 +4,6 @@ from PIL import Image
 import requests
 import re
 from discord.utils import get
-from PIL_transparent_gif import save_transparent_gif
 
 
 class ImgProcessing(commands.Cog):
@@ -45,7 +44,6 @@ class ImgProcessing(commands.Cog):
 
                     print(frame_time)
                     gif.save("temp.gif", save_all=True, duration=frame_time)
-                    # save_transparent_gif(images=gif, durations=frame_time, save_file="temp.gif")
                     if too_fast:
                         await message.channel.send("SLOW DOWN COWBOY ✋🤠🚫")
                     await channel.send(file=discord.File("temp.gif"))
