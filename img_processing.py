@@ -3,6 +3,10 @@ import discord
 from PIL import Image
 import requests
 import re
+from bs4 import BeautifulSoup
+import warnings
+
+warnings.filterwarnings("ignore", category=UserWarning, module='bs4')
 
 
 class ImgProcessing(commands.Cog):
@@ -18,17 +22,21 @@ class ImgProcessing(commands.Cog):
 
     async def gif_speedup(self, message, channel):
         async with channel.typing():
-            url = re.sub(r'http\S+', '\n', message.content)
+
+            # html = BeautifulSoup(message.content, 'html.parser')
+            # urls = [a['href'] for a in html.find_all('a')]
+
+            urls = re.findall(r'(?:http\:|https\:)?\/\/.*\.(?:gif)', message.content)
+
             if message.attachments:
-                url = message.attachments[0].url
+                urls = message.attachments[0].url
+            for url in urls:
+                if ".gif" in url:
+                    gif = Image.open(requests.get(url, stream=True).raw)
+                    gif_len = gif.n_frames
+                    frame_time = []
+                    for i in range(gif_len):
+                        frame_time.append(gif.info['duration'] / 2)
 
-            if ".gif" in url[-4:]:
-                gif = Image.open(requests.get(url, stream=True).raw)
-                gif_len = gif.n_frames
-                frame_time = []
-                for i in range(gif_len):
-                    frame_time.append(gif.info['duration'] / 2)
-
-                gif.save("temp.gif", save_all=True, duration=frame_time)
-
-            await channel.send(file=discord.File("temp.gif"))
+                    gif.save("temp.gif", save_all=True, duration=frame_time)
+                    await channel.send(file=discord.File("temp.gif"))
