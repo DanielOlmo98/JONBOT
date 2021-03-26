@@ -80,8 +80,8 @@ class Shipping(commands.Cog):
         heart_size = (8 * ship_percent + 1, 8 * ship_percent + 1)
         heart = heart.resize(heart_size, Image.ANTIALIAS)
         font = ImageFont.truetype("assets/Verdana.ttf", 2 * ship_percent + 1)
-        req = requests.get(pfp_url_1, stream=True)
-        pfp_1 = Image.open(req.raw)
+
+        pfp_1 = Image.open(requests.get(pfp_url_1, stream=True).raw)
         pfp_2 = Image.open(requests.get(pfp_url_2, stream=True).raw)
 
         pfp_1 = pfp_1.resize((1024, 1024), Image.ANTIALIAS)
