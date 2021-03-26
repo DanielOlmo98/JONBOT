@@ -38,6 +38,9 @@ sick = ["vtuber",
 def rick_reply(message):
     from random import random, choice
 
+    if stfu_alba(message):
+        return "stfu alba"
+
     try:
         # any(word in message.content for word in reply_dict)
         reply = reply_dict[(message.content.lower())]
@@ -55,6 +58,8 @@ def rick_reply(message):
         else:
             reply = None
 
+
+
     return reply
 
 
@@ -65,3 +70,10 @@ def listToString(s):
         str1 += ele
 
     return str1
+
+
+def stfu_alba(message):
+    if message.author.id == 306597250774204416:
+        if message.content == "-daily":
+            return True
+    return False
