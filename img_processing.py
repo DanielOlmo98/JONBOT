@@ -10,6 +10,7 @@ class ImgProcessing(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
+    @commands.cooldown(1, 10, commands.BucketType.user)
     @commands.Cog.listener()
     async def on_raw_reaction_add(self, payload):
         channel = await self.bot.fetch_channel(payload.channel_id)
