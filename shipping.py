@@ -73,15 +73,15 @@ class Shipping(commands.Cog):
 
         usr1 = self.bot.get_user(mention_id_1)
         usr2 = self.bot.get_user(mention_id_2)
-        pfp_url_1 = usr1.avatar_url
-        pfp_url_2 = usr2.avatar_url
+        pfp_url_1 = str(usr1.avatar_url)
+        pfp_url_2 = str(usr2.avatar_url)
 
         heart = Image.open("assets/heart.png")
         heart_size = (8 * ship_percent + 1, 8 * ship_percent + 1)
         heart = heart.resize(heart_size, Image.ANTIALIAS)
         font = ImageFont.truetype("assets/Verdana.ttf", 2 * ship_percent + 1)
-
-        pfp_1 = Image.open(requests.get(pfp_url_1, stream=True).raw)
+        req = requests.get(pfp_url_1, stream=True)
+        pfp_1 = Image.open(req.raw)
         pfp_2 = Image.open(requests.get(pfp_url_2, stream=True).raw)
 
         pfp_1 = pfp_1.resize((1024, 1024), Image.ANTIALIAS)
