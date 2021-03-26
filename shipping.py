@@ -13,6 +13,7 @@ class Shipping(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
 
+    @commands.cooldown(1, 10, commands.BucketType.user)
     @commands.command(name='ship')
     async def ship(self, ctx):
         if ctx.message.mentions:
