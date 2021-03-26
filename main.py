@@ -15,6 +15,7 @@ from economy import Economy
 from music import Music
 from rick_answers import RickAnswers
 from img_processing import ImgProcessing
+from shipping import Shipping
 from discord.utils import get
 from replies import rick_reply
 from replies import listToString
@@ -323,5 +324,6 @@ rick.add_cog(Subscribe(rick))
 rick.add_cog(Economy(rick))
 rick.add_cog(RickAnswers(rick))
 rick.add_cog(ImgProcessing(rick))
+rick.add_cog(Shipping(rick))
 
 rick.run(TOKEN)
