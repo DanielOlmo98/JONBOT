@@ -35,11 +35,12 @@ sick = ["vtuber",
         ]
 
 
-def rick_reply(message):
+async def rick_reply(message):
     from random import random, choice
 
     if stfu_alba(message):
-        return "stfu alba"
+        await message.reply("stfu alba")
+        return None
 
     try:
         # any(word in message.content for word in reply_dict)

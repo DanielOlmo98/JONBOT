@@ -79,7 +79,7 @@ async def on_message(message):
             if await get_vtuber(message.content):
                 await message.add_reaction("🤢")
 
-        reply = rick_reply(message)
+        reply = await rick_reply(message)
         if reply is None:
             return
         else:
