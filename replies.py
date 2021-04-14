@@ -13,6 +13,12 @@ random_replies = ["cringe",
                   "based",
                   "thats kinda cringe bro",
                   "ok buddy",
+                  "post bench",
+                  "nice",
+                  "lmao",
+                  "hot",
+                  "kek",
+
                   ]
 
 sick = ["vtuber",
