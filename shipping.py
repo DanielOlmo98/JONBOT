@@ -16,6 +16,7 @@ class Shipping(commands.Cog):
     @commands.cooldown(1, 10, commands.BucketType.user)
     @commands.command(name='ship')
     async def ship(self, ctx):
+
         if ctx.message.mentions:
             if len(ctx.message.mentions) > 2:
                 await ctx.send("Sorry I am an ardent supporter of monogamy")
@@ -27,13 +28,17 @@ class Shipping(commands.Cog):
             else:
                 mention_id_2 = ctx.message.author.id
 
-            random.seed(abs(mention_id_1 - mention_id_2))
-            ship_percent = random.randint(0, 100)
+            if mention_id_1 == mention_id_2:
+                random.seed(abs(mention_id_1))
+            else:
+                random.seed(abs(mention_id_1 - mention_id_2))
 
-            response = self.love_response(ship_percent)
-            self.img_gen(ship_percent, mention_id_1, mention_id_2)
-            await ctx.channel.send(file=discord.File('assets/shipping_temp.png'))
-            await ctx.send(response)
+            ship_percent = random.randint(0, 100)
+            async with ctx.typing():
+                response = self.love_response(ship_percent)
+                await self.img_gen(ship_percent, mention_id_1, mention_id_2)
+                await ctx.channel.send(file=discord.File('assets/shipping_temp.png'))
+                await ctx.send(response)
             return
 
         else:
@@ -70,10 +75,10 @@ class Shipping(commands.Cog):
         h = h_1 // 2 - h_2 // 2
         return w, h
 
-    def img_gen(self, ship_percent, mention_id_1, mention_id_2):
+    async def img_gen(self, ship_percent, mention_id_1, mention_id_2):
 
-        usr1 = self.bot.get_user(mention_id_1)
-        usr2 = self.bot.get_user(mention_id_2)
+        usr1 = await self.bot.fetch_user(mention_id_1)
+        usr2 = await self.bot.fetch_user(mention_id_2)
         pfp_url_1 = str(usr1.avatar_url)
         pfp_url_2 = str(usr2.avatar_url)
 

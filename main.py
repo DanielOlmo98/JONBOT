@@ -299,6 +299,7 @@ async def sound(ctx, *, arg: str = None):
             except:
                 # an error happened sending the message
                 pass
+
         vc.play(discord.FFmpegPCMAudio("assets/sounds/" + arg + "/" + filename))
     else:
         await ctx.send("join a channel retard")
@@ -313,11 +314,12 @@ async def help(ctx, arg: str = None):
 
 
 @rick.command()
-async def redtruth(ctx, arg:str = None):
+async def redtruth(ctx, arg: str = None):
     if arg is None:
         await ctx.send("No statement found")
     else:
         await ctx.send("```diff\n" + arg + "\n```")
+
 
 rick.add_cog(Music(rick))
 rick.add_cog(Subscribe(rick))
