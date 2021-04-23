@@ -39,7 +39,7 @@ class Economy(commands.Cog):
         if isinstance(error, commands.CommandOnCooldown):
             all_words = ctx.message.content.split()
             first_word = all_words[0]
-            await ctx.send('Wait %.2fs ' % error.retry_after + 'before using ' + first_word+ " again",
+            await ctx.send('Wait %.2fs ' % error.retry_after + 'before using ' + first_word + " again",
                            delete_after=error.retry_after)
 
         elif isinstance(error, commands.CommandNotFound, ):
@@ -171,7 +171,10 @@ class Economy(commands.Cog):
         from random import choice
         from random import random
         rarity = random()
-        if "trash" not in str(message.author.id) not in self.users:
+        try:
+            self.users[str(message.author.id)]["trash"]
+
+        except KeyError:
             self.users[str(message.author.id)].update(
                 {"trash": 0, "common": 0, "uncommon": 0, '🐳': 0, '🐧': 0, '🦑': 0,
                  '🐙': 0, '🐬': 0, '🐢': 0, '🦀': 0, '🦐': 0, '🦈': 0, '🐊': 0, '👽': 0,
@@ -179,7 +182,7 @@ class Economy(commands.Cog):
                  '<:jontron2:568424284947480586> '
                  '<:l_tentacle:799786690864349204>': 0, '🐉': 0, })
         if str(message.author.id) not in self.users:
-            return await message.channel.send("You need to create an account first (.balance)")
+            return await message.channel.send("You need to fish first (.fish)")
 
         if self.users[str(message.author.id)]["Pocket"] >= 10:
             print(rarity)
