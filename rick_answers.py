@@ -2,6 +2,7 @@ from discord.ext import commands
 import discord
 from random import choice
 from random import randint
+from replies import stfu_alba
 
 
 class RickAnswers(commands.Cog):
@@ -18,6 +19,12 @@ class RickAnswers(commands.Cog):
         self.advice_list = advice_list
         self.unit_list_many = unit_list_many
         self.unit_list_long = unit_list_long
+
+    @commands.Cog.listener()
+    async def on_message_delete(self, message):
+        if stfu_alba(message):
+            await message.channel.send("stfu alba")
+            return None
 
     @commands.Cog.listener()
     async def on_message(self, message):
