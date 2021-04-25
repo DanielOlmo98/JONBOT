@@ -57,7 +57,7 @@ class ImgProcessing(commands.Cog):
     async def mmgmhnhffhngmfhxbfngmvhfhfhmgmggjhhhhh(self, message, channel):
         try:
             urls = []
-            urls = re.findall(r'(?:http\:|https\:)?\/\/.*\.(?:(png|jpeg|jpg))', message.content)
+            urls = re.findall(r"(?:http\:|https\:)?\/\/.*\.(?:jpg|png|jpeg)", message.content)
             if message.attachments:
                 urls.append(message.attachments[0].url)
             for url in urls:
@@ -67,6 +67,7 @@ class ImgProcessing(commands.Cog):
                         # thinkbubble size 200x310, center 458x174, upper corner (332,9)
                         react_img = Image.open(requests.get(url, stream=True).raw)
                         react_img = react_img.resize((200, 310), Image.ANTIALIAS)
+                        react_img = react_img.convert("RGBA")
                         new_image = Image.new('RGBA', (mmgm.size), (255, 0, 255, 0))
                         new_image.paste(react_img, (332, 9), react_img)
                         new_image.paste(mmgm, (0, 0), mmgm)
