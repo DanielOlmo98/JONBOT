@@ -83,15 +83,15 @@ class Shipping(commands.Cog):
         pfp_url_2 = str(usr2.avatar_url)
 
         heart = Image.open("assets/heart.png")
-        heart_size = (8 * ship_percent + 1, 8 * ship_percent + 1)
+        heart_size = (4 * ship_percent + 1, 4 * ship_percent + 1)
         heart = heart.resize(heart_size, Image.ANTIALIAS)
-        font = ImageFont.truetype("assets/Verdana.ttf", 2 * ship_percent + 1)
+        font = ImageFont.truetype("assets/Verdana.ttf",  ship_percent + 1)
 
         pfp_1 = Image.open(requests.get(pfp_url_1, stream=True).raw)
         pfp_2 = Image.open(requests.get(pfp_url_2, stream=True).raw)
 
-        pfp_1 = pfp_1.resize((1024, 1024), Image.ANTIALIAS)
-        pfp_2 = pfp_2.resize((1024, 1024), Image.ANTIALIAS)
+        pfp_1 = pfp_1.resize((512, 512), Image.ANTIALIAS)
+        pfp_2 = pfp_2.resize((512, 512), Image.ANTIALIAS)
 
         width_1, height_1 = pfp_1.size
         width_heart, height_heart = heart.size
@@ -108,6 +108,6 @@ class Shipping(commands.Cog):
         drawing = ImageDraw.Draw(new_image)
         txt_w, txt_h = drawing.textsize(str(ship_percent) + "%", font=font)
         txt_x, txt_y = self.center_coords(img_w, img_h, txt_w, txt_h)
-        drawing.text((txt_x, txt_y - ship_percent + 1), str(ship_percent) + "%", (255, 255, 255), font=font)
+        drawing.text((txt_x, txt_y - ship_percent/2 + 1), str(ship_percent) + "%", (255, 255, 255), font=font)
 
         new_image.save('assets/shipping_temp.png', 'PNG')
