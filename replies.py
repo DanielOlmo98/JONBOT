@@ -81,6 +81,6 @@ def listToString(s):
 
 def stfu_alba(message):
     if message.author.id == 306597250774204416:
-        if message.content == "-daily":
+        if message.content == "-daily" or "- daily":
             return True
     return False
