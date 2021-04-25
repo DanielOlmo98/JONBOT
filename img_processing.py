@@ -23,7 +23,7 @@ class ImgProcessing(commands.Cog):
 
         elif payload.emoji.name == "🤤":
             if reaction.count == 1:
-                await self.mmgmhnhffhngmfhxbfngmvhfhfhmgmggjhhhhh(message, channel)
+                await self.mmgmhnhffhngmfhxbfngmvhfhfhmgmggjhhhhh(message, channel, payload)
 
     async def gif_speedup(self, message, channel):
         try:
@@ -54,8 +54,10 @@ class ImgProcessing(commands.Cog):
         except requests.exceptions.MissingSchema:
             return
 
-    async def mmgmhnhffhngmfhxbfngmvhfhfhmgmggjhhhhh(self, message, channel):
+    async def mmgmhnhffhngmfhxbfngmvhfhfhmgmggjhhhhh(self, message, channel, payload):
         try:
+            if channel == discord.utils.get(payload.member.guild.text_channels, name="pins"):
+                return
             urls = []
             urls = re.findall(r"(?:http\:|https\:)?\/\/.*\.(?:jpg|png|jpeg)", message.content)
             if message.attachments:
