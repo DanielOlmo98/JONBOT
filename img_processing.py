@@ -16,16 +16,17 @@ class ImgProcessing(commands.Cog):
         channel = await self.bot.fetch_channel(payload.channel_id)
         message = await channel.fetch_message(payload.message_id)
         reaction = get(message.reactions, emoji=payload.emoji.name)
-        if channel == discord.utils.get(payload.member.guild.text_channels, name="pins"):
+        if channel == discord.utils.get(payload.member.guild.text_channels, name="banter"):
+
+            if payload.emoji.name == "⏩":
+                if reaction.count == 1:
+                    await self.gif_speedup(message, channel)
+
+            elif payload.emoji.name == "🤤":
+                if reaction.count == 1:
+                    await self.mmgmhnhffhngmfhxbfngmvhfhfhmgmggjhhhhh(message, channel)
+        else:
             return
-
-        if payload.emoji.name == "⏩":
-            if reaction.count == 1:
-                await self.gif_speedup(message, channel)
-
-        elif payload.emoji.name == "🤤":
-            if reaction.count == 1:
-                await self.mmgmhnhffhngmfhxbfngmvhfhfhmgmggjhhhhh(message, channel)
 
     async def gif_speedup(self, message, channel):
         try:

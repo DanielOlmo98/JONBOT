@@ -1,5 +1,8 @@
-from discord.ext import commands
+from discord.ext import commands, tasks
+from datetime import datetime, timedelta
 import discord
+import feedparser
+import asyncio, datetime
 from random import choice
 from random import randint
 from replies import stfu_alba
@@ -19,6 +22,7 @@ class RickAnswers(commands.Cog):
         self.advice_list = advice_list
         self.unit_list_many = unit_list_many
         self.unit_list_long = unit_list_long
+        self.daily_verse.start()
 
     @commands.Cog.listener()
     async def on_message_delete(self, message):
@@ -56,6 +60,37 @@ class RickAnswers(commands.Cog):
         else:
             reply = choice(self.advice_list)
             await ctx.reply(reply)
+
+    @commands.command(name="verse")
+    async def verse(self, ctx):
+        feed = feedparser.parse("https://www.biblegateway.com/votd/get/?format=atom")
+        entry = feed.entries[0]
+
+        daily_verse = entry.summary[7:-7]
+        daily_verse = ''.join(('"', daily_verse, '"'))
+
+        embed = discord.Embed(title="Verse of the Day", url=entry.link,
+                              color=0xb4d9e0)
+        embed.add_field(name=entry.title, value=daily_verse,
+                        inline=False)
+        embed.set_thumbnail(url="https://jesuschristsavior.net/Savior.jpeg")
+        if ctx is None:
+            channel = await self.bot.fetch_channel(118433598071242753)
+            await channel.send(embed=embed)
+        else:
+            await ctx.send(embed=embed)
+
+    @tasks.loop(hours=24)
+    async def daily_verse(self):
+        await self.verse(ctx=None)
+
+    @daily_verse.before_loop
+    async def before(self):
+        await self.bot.wait_until_ready()
+        await asyncio.sleep(24*60*60)
+
+
+
 
 
 unit_list_many = ["million", "tons", "kg", "liters", "thousand", "cocks", "km/h",

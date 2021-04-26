@@ -26,3 +26,4 @@ youtube-data-api~=0.0.20
 youtube-dl~=2021.1.8
 youtube-search~=1.1.1
 youtube-search-python~=1.3.4
+feedparser~=6.0.2
