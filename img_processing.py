@@ -16,7 +16,9 @@ class ImgProcessing(commands.Cog):
         channel = await self.bot.fetch_channel(payload.channel_id)
         message = await channel.fetch_message(payload.message_id)
         reaction = get(message.reactions, emoji=payload.emoji.name)
-        if channel == discord.utils.get(payload.member.guild.text_channels, name="banter"):
+        if channel == (discord.utils.get(payload.member.guild.text_channels, name="banter")
+                       or discord.utils.get(payload.member.guild.text_channels, name="lewd")
+                       or discord.utils.get(payload.member.guild.text_channels, name="general")):
 
             if payload.emoji.name == "⏩":
                 if reaction.count == 1:
