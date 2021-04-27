@@ -302,9 +302,16 @@ class Economy(commands.Cog):
 
         def rarefish_embed():
             rarefish = ""
+
             for x in rare_array:
-                if self.users[str(message.author.id)][x] > 0:
-                    rarefish = rarefish + " " + x + "x" + str(self.users[str(message.author.id)][x])
+                fish_count = self.users[str(message.author.id)][x]
+                string = ""
+                if fish_count > 0:
+
+                    for _ in range(fish_count):
+                        string = string + x + " "
+                rarefish = rarefish + string
+
             embed = discord.Embed(colour=0x5AD0CB,
                                   description=rarefish)
             embed.set_author(name="Your rare collection", icon_url="https://pngimg.com/uploads/star/star_PNG41471.png")
@@ -323,8 +330,13 @@ class Economy(commands.Cog):
         def secret_fish_embed():
             secret_fish = ""
             for x in secret_array:
-                if self.users[str(message.author.id)][x] > 0:
-                    secret_fish = secret_fish + " " + x
+                fish_count = self.users[str(message.author.id)][x]
+                string = ""
+                if fish_count > 0:
+
+                    for _ in range(fish_count):
+                        string = string + x + " "
+                secret_fish = secret_fish + string
 
             embed = discord.Embed(colour=0x5AD0CB,
                                   description=secret_fish)
@@ -413,7 +425,6 @@ class Economy(commands.Cog):
             self.users[str(x)].update(
                 {'<:cute_cow:836681439541985330>': 0, })
         return await ctx.send("it is done.")
-
 
     async def bank_autosave(self):
         while True:
