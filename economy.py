@@ -256,6 +256,7 @@ class Economy(commands.Cog):
                 await asyncio.sleep(1)
                 await message.channel.send("DORAGON??")
                 await message.channel.send("https://media.tenor.com/images/8f8216b3462c7ddfbe29001a0e91d6a2/tenor.gif")
+                self.users[str(message.author.id)]["🐉"] = self.users[str(message.author.id)]["🐉"] + 1
 
             else:
                 await message.channel.send("throw longer retard", delete_after=5)
@@ -297,7 +298,7 @@ class Economy(commands.Cog):
             rarefish = ""
             for x in rare_array:
                 if self.users[str(message.author.id)][x] > 0:
-                    rarefish = rarefish + " " + x
+                    rarefish = rarefish + " " + x + "x" + str(self.users[str(message.author.id)][x])
             embed = discord.Embed(colour=0x5AD0CB,
                                   description=rarefish)
             embed.set_author(name="Your rare collection", icon_url="https://pngimg.com/uploads/star/star_PNG41471.png")
@@ -318,6 +319,8 @@ class Economy(commands.Cog):
             for x in secret_array:
                 if self.users[str(message.author.id)][x] > 0:
                     secret_fish = secret_fish + " " + x
+                    if self.users[str(message.author.id)][x] > 1:
+                        secret_fish = secret_fish + " " + x + "x" + str(self.users[str(message.author.id)][x])
             embed = discord.Embed(colour=0x5AD0CB,
                                   description=secret_fish)
             embed.set_author(name="Your super secret hauls",
