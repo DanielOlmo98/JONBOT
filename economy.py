@@ -412,6 +412,7 @@ class Economy(commands.Cog):
         for x in self.users:
             self.users[str(x)].update(
                 {'<:cute_cow:836681439541985330>': 0, })
+        return await ctx.send("it is done.")
 
 
     async def bank_autosave(self):
