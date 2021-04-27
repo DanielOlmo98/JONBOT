@@ -256,7 +256,14 @@ class Economy(commands.Cog):
                 await message.channel.send("DORAGON??")
                 await message.channel.send("https://media.tenor.com/images/8f8216b3462c7ddfbe29001a0e91d6a2/tenor.gif")
                 self.users[str(message.author.id)]["🐉"] = self.users[str(message.author.id)]["🐉"] + 1
-
+            elif rarity < 0.9977:
+                await message.channel.send("fishing.. ( -10💰 )", delete_after=5)
+                await asyncio.sleep(5)
+                await message.channel.send("🎣 | <@" + str(message.author.id) +
+                                           ">, you caught:  ")
+                await message.channel.send("Damn man that's a pretty cute cow")
+                self.users[str(message.author.id)]["<:cute_cow:836681439541985330>"] = \
+                    self.users[str(message.author.id)]["<:cute_cow:836681439541985330>"] + 1
             else:
                 await message.channel.send("throw longer retard", delete_after=5)
         else:
@@ -318,8 +325,7 @@ class Economy(commands.Cog):
             for x in secret_array:
                 if self.users[str(message.author.id)][x] > 0:
                     secret_fish = secret_fish + " " + x
-                    if self.users[str(message.author.id)][x] > 1:
-                        secret_fish = secret_fish + " " + x + "x" + str(self.users[str(message.author.id)][x])
+
             embed = discord.Embed(colour=0x5AD0CB,
                                   description=secret_fish)
             embed.set_author(name="Your super secret hauls",
@@ -398,6 +404,15 @@ class Economy(commands.Cog):
                 await ctx.send(f'Sold {amount} {fish} for {int(amount) * 55} 💰')
             elif fish != "uncommon" or "common" or "trash":
                 await ctx.send("I don't want that 😡")
+
+    @commands.command(name='fishupdate')
+    async def fishupdate(self, ctx):
+        if ctx.author.id not in (90182404404170752, 540175819033542666):
+            return await ctx.send("no u DONT")
+        for x in self.users:
+            self.users[str(x)].update(
+                {'<:cute_cow:836681439541985330>': 0, })
+
 
     async def bank_autosave(self):
         while True:
