@@ -179,7 +179,7 @@ class Economy(commands.Cog):
                 {"trash": 0, "common": 0, "uncommon": 0, '🐳': 0, '🐧': 0, '🦑': 0,
                  '🐙': 0, '🐬': 0, '🐢': 0, '🦀': 0, '🦐': 0, '🦈': 0, '🐊': 0, '👽': 0,
                  "<:r_tentacle:799786836595048469> <:jontron1:568424285027303434> <:jontron2:568424284947480586> <:l_tentacle:799786690864349204>": 0,
-                 '🐉': 0, })
+                 '🐉': 0, '<:cute_cow:836681439541985330>': 0, })
         if str(message.author.id) not in self.users:
             return await message.channel.send("You need to fish first (.fish)")
 
