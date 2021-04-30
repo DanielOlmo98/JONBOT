@@ -1,19 +1,22 @@
 import json
 import asyncio
 import discord
+from soupsieve.util import lower
+
 import embeds
 
 from tabulate import tabulate
-from discord.ext.commands import errors
+from discord.ext.commands import errors, bot
 from discord.ext import commands
 from os import path
 from random import randint
 
+choices = ['yes', 'no', "y", "n"]
 trash_array = ['📎', '🛒', '👞', '🔋', '🔧', '📰']
 rare_array = ['🐳', '🐧', '🦑', '🐙', '🐬', '🐢', '🦀', '🦐', '🦈', '🐊', ]
 secret_array = ['👽', '<:r_tentacle:799786836595048469> <:jontron1:568424285027303434>'
-                      ' <:jontron2:568424284947480586> <:l_tentacle:799786690864349204>', '🐉']
-rick = commands.Bot(command_prefix='.', help_command=None, case_insensitive=True)
+                '<:jontron2:568424284947480586> <:l_tentacle:799786690864349204>', '🐉', '<:cute_cow:836681439541985330>'
+                '<:treasure:837622258767888445>']
 
 
 class Economy(commands.Cog):
@@ -98,7 +101,7 @@ class Economy(commands.Cog):
                          tablefmt="plain", numalign="right")
         await ctx.message.channel.send("```\n" + table + "\n```")
 
-    @rick.group()
+    @commands.group()
     async def balance(self, ctx):
         await self.open_account(ctx)
 
@@ -187,7 +190,7 @@ class Economy(commands.Cog):
             print(rarity)
             self.users[str(message.author.id)]["Pocket"] = self.users[str(message.author.id)]["Pocket"] - 10
 
-            if rarity < 0.55:
+            if rarity < 0.50:
                 await message.channel.send("fishing.. ( -10💰 )", delete_after=5)
                 await asyncio.sleep(5)
                 await message.channel.send("🎣 | <@" + str(message.author.id) + ">, you caught: " + choice(trash_array))
@@ -260,10 +263,47 @@ class Economy(commands.Cog):
                 await message.channel.send("fishing.. ( -10💰 )", delete_after=5)
                 await asyncio.sleep(5)
                 await message.channel.send("🎣 | <@" + str(message.author.id) +
-                                           ">, you caught:  ")
+                                           ">, you caught: <:cute_cow:836681439541985330> ")
                 await message.channel.send("Damn man that's a pretty cute cow")
                 self.users[str(message.author.id)]["<:cute_cow:836681439541985330>"] = \
                     self.users[str(message.author.id)]["<:cute_cow:836681439541985330>"] + 1
+            elif rarity < 0.9935:
+                await message.channel.send("fishing.. ( -10💰 )", delete_after=5)
+                await asyncio.sleep(5)
+                await message.channel.send("🎣 | <@" + str(message.author.id) +
+                                           ">, you caught: <:treasure:837622258767888445> ")
+                await message.channel.send("Arrrg, that be a fine booty there, i'd be willin' to offer ya "
+                                           "10 thousand dublooons for that there beauty")
+                await asyncio.sleep(2)
+                await message.channel.send("Do you accept the offer? Y/N ")
+
+                def check(m: discord.Message):
+                    return m.author.id == message.author.id and m.channel.id == message.channel.id \
+                           and lower(m.content) in choices
+
+                try:
+
+                    msg: discord.Message = await self.bot.wait_for(event="message", check=check, timeout=30.0)
+                    if lower(msg.content) in ("no", "n"):
+                        await message.send("*You decided to keep the treasure chest for yourself*")
+                        self.users[str(message.author.id)]["<:treasure:837622258767888445>"] \
+                            = self.users[str(message.author.id)]["<:treasure:837622258767888445>"] + 1
+                        return
+                    elif lower(msg.content) in ("yes", "y"):
+                        await message.send(f"Arrg, that be mighty kind of ye, here ya go, ten thousand dubloons.")
+                        await asyncio.sleep(1)
+                        await message.send("*10.000 jonbucks has been added to your account.*")
+                        await asyncio.sleep(2)
+                        await message.send("*as the pirate left you could hear him whistling a familiar tune*")
+                        self.users[str(message.author.id)]["Pocket"] \
+                            = self.users[str(message.author.id)]["Pocket"] + 10000
+                        return
+                except asyncio.TimeoutError:
+
+                    await message.send(f" *You were distracted being a sperg so you lost sight of the pirate,"
+                                       f"  you decided to keep the treasure chest..*")
+                    return
+
             else:
                 await message.channel.send("throw longer retard", delete_after=5)
         else:
@@ -276,7 +316,7 @@ class Economy(commands.Cog):
         if isinstance(error, errors.CommandOnCooldown):
             await ctx.send(str(error.retry_after))
 
-    @rick.group(name='fishinv', invoke_without_subcommand=True)
+    @commands.group(name='fishinv', invoke_without_subcommand=True)
     async def fishinv(self, ctx):
         if ctx.invoked_subcommand is None:
             if str(ctx.message.author.id) not in self.users:
@@ -423,7 +463,7 @@ class Economy(commands.Cog):
             return await ctx.send("no u DONT")
         for x in self.users:
             self.users[str(x)].update(
-                {'<:cute_cow:836681439541985330>': 0, })
+                {'<:treasure:837622258767888445>': 0, })
         return await ctx.send("it is done.")
 
     async def bank_autosave(self):
