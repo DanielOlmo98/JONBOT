@@ -13,13 +13,11 @@ from random import randint
 
 choices = ['yes', 'no', "y", "n", "si"]
 trash_array = ['📎', '🛒', '👞', '🔋', '🔧', '📰']
-rare_array = ['🐳', '🐧', '🦑', '🐙', '🐬', '🐢', '🦀', '🦐', '🦈', '🐊', ]
-secret_array = ['👽', '<:r_tentacle:799786836595048469> <:jontron1:568424285027303434>'
-                '<:jontron2:568424284947480586> <:l_tentacle:799786690864349204>', '🐉', '<:cute_cow:836681439541985330>'
+rare_array = ['🐳', '🐧', '🦑', '🐙', '🐬', '🐢', '🦀', '🦐', '🦈', '🐊','🦞', '🐡'  ]
+secret_array = ['👽', '<:r_tentacle:799786836595048469> <:jontron1:568424285027303434> '
+                '<:jontron2:568424284947480586> <:l_tentacle:799786690864349204>', '🐉',
+                '<:cute_cow:836681439541985330>',
                 '<:treasure:837622258767888445>']
-
-
-
 
 class Economy(commands.Cog):
     def __init__(self, bot: commands.Bot):
@@ -337,33 +335,43 @@ class Economy(commands.Cog):
 
     @commands.group(name='fishinv', invoke_without_subcommand=True)
     async def fishinv(self, ctx):
+        def fishinv_embed2():
+            embed = discord.Embed(title="Your fishes", colour=0x5AD0CB)
+            embed.set_thumbnail(url=mention.avatar_url)
+            embed.add_field(name=" 📰 Trash", value=str(self.users[str(mention.id)]["trash"]))
+            embed.add_field(name=" 🐟 Common", value=str(self.users[str(mention.id)]["common"]))
+            embed.add_field(name=" 🐠 Uncommon", value=str(self.users[str(mention.id)]["uncommon"]))
+            embed.set_footer(text="Brought to you by reimu aka dav#3945 and IZpixl5#5264")
+            return embed
+
+        def fishinv_embed():
+            author_id = ctx.message.author.id
+            embed = discord.Embed(title="Your fishes", colour=0x5AD0CB)
+            embed.set_thumbnail(url=ctx.message.author.avatar_url)
+            embed.add_field(name=" 📰 Trash", value=str(self.users[str(author_id)]["trash"]))
+            embed.add_field(name=" 🐟 Common", value=str(self.users[str(author_id)]["common"]))
+            embed.add_field(name=" 🐠 Uncommon", value=str(self.users[str(author_id)]["uncommon"]))
+            embed.set_footer(text="Brought to you by reimu aka dav#3945 and IZpixl5#5264")
+            return embed
+
         if ctx.invoked_subcommand is None:
+            if ctx.message.mentions:
+                mention = ctx.message.mentions[0]
+                if str(mention.id) not in self.users:
+                    return await ctx.message.channel.send("You need to create an account first (.balance)")
+                return await ctx.message.channel.send(embed=fishinv_embed2())
+
             if str(ctx.message.author.id) not in self.users:
                 return await ctx.message.channel.send("You need to create an account first (.balance)")
-
-            def fishinv_embed():
-                author_id = ctx.message.author.id
-                embed = discord.Embed(title="Your fishes", colour=0x5AD0CB)
-                embed.set_thumbnail(url=ctx.message.author.avatar_url)
-                embed.add_field(name=" 📰 Trash", value=str(self.users[str(author_id)]["trash"]))
-                embed.add_field(name=" 🐟 Common", value=str(self.users[str(author_id)]["common"]))
-                embed.add_field(name=" 🐠 Uncommon", value=str(self.users[str(author_id)]["uncommon"]))
-                embed.set_footer(text="Brought to you by reimu aka dav#3945 and IZpixl5#5264")
-                return embed
-
             await ctx.message.channel.send(embed=fishinv_embed())
 
-    @fishinv.command(name='rare')
-    async def rare(self, message):
-
-        if str(message.author.id) not in self.users:
-            return await message.channel.send("You need to create an account first (.balance)")
-
+    @fishinv.command(name='rare', invoke_without_subcommand=True)
+    async def rare(self, ctx):
         def rarefish_embed():
             rarefish = ""
 
             for x in rare_array:
-                fish_count = self.users[str(message.author.id)][x]
+                fish_count = self.users[str(ctx.message.author.id)][x]
                 string = ""
                 if fish_count > 0:
 
@@ -374,22 +382,49 @@ class Economy(commands.Cog):
             embed = discord.Embed(colour=0x5AD0CB,
                                   description=rarefish)
             embed.set_author(name="Your rare collection", icon_url="https://pngimg.com/uploads/star/star_PNG41471.png")
-            embed.set_thumbnail(url=message.author.avatar_url)
+            embed.set_thumbnail(url=ctx.message.author.avatar_url)
             embed.set_footer(text="Brought to you by reimu aka dav#3945 and IZpixl5#5264")
             return embed
 
-        await message.channel.send(embed=rarefish_embed())
+        def rarefish_embed2():
+            rarefish = ""
 
-    @fishinv.command(name='secret')
-    async def secret_fish(self, message):
+            for x in rare_array:
+                fish_count = self.users[str(mention.id)][x]
+                string = ""
+                if fish_count > 0:
 
-        if str(message.author.id) not in self.users:
-            return await message.channel.send("You need to create an account first (.balance)")
+                    for _ in range(fish_count):
+                        string = string + x + " "
+                rarefish = rarefish + string
+
+            embed = discord.Embed(colour=0x5AD0CB,
+                                  description=rarefish)
+            embed.set_author(name="Your rare collection", icon_url="https://pngimg.com/uploads/star/star_PNG41471.png")
+            embed.set_thumbnail(url=mention.avatar_url)
+            embed.set_footer(text="Brought to you by reimu aka dav#3945 and IZpixl5#5264")
+            return embed
+        if ctx.invoked_subcommand is None:
+            if ctx.message.mentions:
+                mention = ctx.message.mentions[0]
+                if str(mention.id) not in self.users:
+                    return await ctx.message.channel.send("You need to create an account first (.balance)")
+                return await ctx.message.channel.send(embed=rarefish_embed2())
+
+            if str(ctx.message.author.id) not in self.users:
+                return await ctx.message.channel.send("You need to create an account first (.balance)")
+            return await ctx.message.channel.send(embed=rarefish_embed())
+
+
+
+
+    @fishinv.command(name='secret', invoke_without_subcommand=True)
+    async def secret_fish(self, ctx):
 
         def secret_fish_embed():
             secret_fish = ""
             for x in secret_array:
-                fish_count = self.users[str(message.author.id)][x]
+                fish_count = self.users[str(ctx.message.author.id)][x]
                 string = ""
                 if fish_count > 0:
 
@@ -402,11 +437,41 @@ class Economy(commands.Cog):
             embed.set_author(name="Your super secret hauls",
                              icon_url="http://vignette2.wikia.nocookie.net/mariokart/"
                                       "images/f/fc/ItemBoxMK8.png/revision/latest?cb=20140520032019")
-            embed.set_thumbnail(url=message.author.avatar_url)
+            embed.set_thumbnail(url=ctx.message.author.avatar_url)
             embed.set_footer(text="Brought to you by reimu aka dav#3945 and IZpixl5#5264")
             return embed
 
-        await message.channel.send(embed=secret_fish_embed())
+        def secret_fish_embed2():
+            secret_fish = ""
+            for x in secret_array:
+                fish_count = self.users[str(mention.id)][x]
+                string = ""
+                if fish_count > 0:
+
+                    for _ in range(fish_count):
+                        string = string + x + " "
+                secret_fish = secret_fish + string
+
+            embed = discord.Embed(colour=0x5AD0CB,
+                                  description=secret_fish)
+            embed.set_author(name="Your super secret hauls",
+                             icon_url="http://vignette2.wikia.nocookie.net/mariokart/"
+                                      "images/f/fc/ItemBoxMK8.png/revision/latest?cb=20140520032019")
+            embed.set_thumbnail(url=mention.avatar_url)
+            embed.set_footer(text="Brought to you by reimu aka dav#3945 and IZpixl5#5264")
+            return embed
+        if ctx.invoked_subcommand is None:
+            if ctx.message.mentions:
+                mention = ctx.message.mentions[0]
+                if str(mention.id) not in self.users:
+                    return await ctx.message.channel.send("You need to create an account first (.balance)")
+                return await ctx.message.channel.send(embed=secret_fish_embed2())
+
+            if str(ctx.message.author.id) not in self.users:
+                return await ctx.message.channel.send("You need to create an account first (.balance)")
+            return await ctx.message.channel.send(embed=secret_fish_embed())
+
+
 
     @commands.command(name='quieres', invoke_without_subcommand=True)
     async def quieres(self, message):
@@ -428,7 +493,7 @@ class Economy(commands.Cog):
         if user is None:
             await message.send("Tienes " + str(self.users[str(message.author.id)]["🐶"]) + " 🐶 perro(s).")
         else:
-            userdog = str(self.users[str(message.author.id)]["🐶"])
+            userdog = str(self.users[str(user)]["🐶"])
             return await message.send(str(user) + " tiene " + userdog + " 🐶 perro(s).")
 
 
@@ -507,7 +572,7 @@ class Economy(commands.Cog):
             return await ctx.send("no u DONT")
         for x in self.users:
             self.users[str(x)].update(
-                {'🐶': 0, })
+                {'<:treasure:837622258767888445>': 0,'<:cute_cow:836681439541985330>': 0, })
         return await ctx.send("it is done.")
 
     async def bank_autosave(self):
