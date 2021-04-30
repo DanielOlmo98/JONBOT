@@ -572,7 +572,7 @@ class Economy(commands.Cog):
             return await ctx.send("no u DONT")
         for x in self.users:
             self.users[str(x)].update(
-                {'<:treasure:837622258767888445>': 0,'<:cute_cow:836681439541985330>': 0, })
+                {'🐡': 0,'🦞': 0, })
         return await ctx.send("it is done.")
 
     async def bank_autosave(self):
