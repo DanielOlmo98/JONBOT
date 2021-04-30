@@ -11,12 +11,14 @@ from discord.ext import commands
 from os import path
 from random import randint
 
-choices = ['yes', 'no', "y", "n"]
+choices = ['yes', 'no', "y", "n", "si"]
 trash_array = ['📎', '🛒', '👞', '🔋', '🔧', '📰']
 rare_array = ['🐳', '🐧', '🦑', '🐙', '🐬', '🐢', '🦀', '🦐', '🦈', '🐊', ]
 secret_array = ['👽', '<:r_tentacle:799786836595048469> <:jontron1:568424285027303434>'
                 '<:jontron2:568424284947480586> <:l_tentacle:799786690864349204>', '🐉', '<:cute_cow:836681439541985330>'
                 '<:treasure:837622258767888445>']
+
+
 
 
 class Economy(commands.Cog):
@@ -36,6 +38,23 @@ class Economy(commands.Cog):
 
         super().__init__()  # whatever here
         self.cd_mapping = commands.CooldownMapping.from_cooldown(1, 30, commands.BucketType.user)
+
+    async def yesno(self, message):
+        await message.send("Y/N")
+        def check(m: discord.Message):
+            return m.author.id == message.author.id and m.channel.id == message.channel.id \
+                   and lower(m.content) in choices
+
+        try:
+
+            msg: discord.Message = await self.bot.wait_for(event="message", check=check, timeout=30.0)
+            if lower(msg.content) in ("no", "n"):
+                return False
+
+            elif lower(msg.content) in ("yes", "y", "si"):
+                return True
+        except asyncio.TimeoutError:
+            return asyncio.TimeoutError
 
     @commands.Cog.listener()
     async def on_command_error(self, ctx, error):
@@ -392,24 +411,28 @@ class Economy(commands.Cog):
     @commands.command(name='quieres', invoke_without_subcommand=True)
     async def quieres(self, message):
         await message.send("¿Quieres?")
-        await message.send("Y/N")
-        def check(m: discord.Message):
-            return m.author.id == message.author.id and m.channel.id == message.channel.id \
-                   and lower(m.content) in choices
-
         try:
-
-            msg: discord.Message = await self.bot.wait_for(event="message", check=check, timeout=30.0)
-            if lower(msg.content) in ("no", "n"):
+            cock = await self.yesno(message)
+            if cock:
+                await message.send("Guau\n *one dog has been added to your inventory*")
+                self.users[str(message.author.id)]["🐶"] \
+                    = self.users[str(message.author.id)]["🐶"] + 1
+            else:
                 await message.send("¡Qué pena!")
                 return
-            elif lower(msg.content) in ("yes", "y"):
-                await message.send("Guau\n *one dog has been added to your inventory*")
-                return
         except asyncio.TimeoutError:
+            return message.send("deja de perder mi tiempo")
 
-            await message.send("deja de perder mi tiempo")
-            return
+    @commands.command(name='dog')
+    async def dog(self, message, user: str = None):
+        if user is None:
+            await message.send("Tienes " + str(self.users[str(message.author.id)]["🐶"]) + " 🐶 perro(s).")
+        else:
+            userdog = str(self.users[str(message.author.id)]["🐶"])
+            return await message.send(str(user) + " tiene " + userdog + " 🐶 perro(s).")
+
+
+
     @commands.command(name='award', invoke_without_subcommand=True)
     async def award(self, message, user, amount):
         award_perms = [540175819033542666, 90182404404170752]
