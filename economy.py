@@ -389,6 +389,27 @@ class Economy(commands.Cog):
 
         await message.channel.send(embed=secret_fish_embed())
 
+    @commands.command(name='quieres', invoke_without_subcommand=True)
+    async def quieres(self, message):
+        await message.send("¿Quieres?")
+        await message.send("Y/N")
+        def check(m: discord.Message):
+            return m.author.id == message.author.id and m.channel.id == message.channel.id \
+                   and lower(m.content) in choices
+
+        try:
+
+            msg: discord.Message = await self.bot.wait_for(event="message", check=check, timeout=30.0)
+            if lower(msg.content) in ("no", "n"):
+                await message.send("¡Qué pena!")
+                return
+            elif lower(msg.content) in ("yes", "y"):
+                await message.send("Guau\n *one dog has been added to your inventory*")
+                return
+        except asyncio.TimeoutError:
+
+            await message.send("deja de perder mi tiempo")
+            return
     @commands.command(name='award', invoke_without_subcommand=True)
     async def award(self, message, user, amount):
         award_perms = [540175819033542666, 90182404404170752]
@@ -463,7 +484,7 @@ class Economy(commands.Cog):
             return await ctx.send("no u DONT")
         for x in self.users:
             self.users[str(x)].update(
-                {'<:treasure:837622258767888445>': 0, })
+                {'🐶': 0, })
         return await ctx.send("it is done.")
 
     async def bank_autosave(self):
