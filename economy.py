@@ -729,7 +729,7 @@ class Economy(commands.Cog):
             return await ctx.send("no u DONT")
         for x in self.users:
             self.users[str(x)].update(
-                {'bait': 0})
+                {'🦞': 0, '🐡': 0})
         return await ctx.send("it is done.")
 
 
