@@ -222,18 +222,18 @@ class Economy(commands.Cog):
                 await asyncio.sleep(5)
                 await message.channel.send("🎣 | <@" + str(message.author.id) + ">, you caught: 🐠")
                 self.users[str(message.author.id)]["uncommon"] = self.users[str(message.author.id)]["uncommon"] + 1
-            elif rarity < 0.9950:
+            elif rarity < 0.991:
                 rare_fish = choice(rare_array)
                 await message.channel.send("fishing.. ( -10💰 )", delete_after=5)
                 await asyncio.sleep(5)
                 await message.channel.send(f'🎣 | <@{str(message.author.id)}>, you caught: {rare_fish} \n nice')
                 self.users[str(message.author.id)][rare_fish] = self.users[str(message.author.id)][rare_fish] + 1
-            elif rarity < 0.9960:
+            elif rarity < 0.9915:
                 await message.channel.send("fishing.. ( -10💰 )", delete_after=5)
                 await asyncio.sleep(5)
                 await message.channel.send("🎣 | <@" + str(message.author.id) + ">, you caught: 👽 ayy lmao!")
                 self.users[str(message.author.id)]["👽"] = self.users[str(message.author.id)]["👽"] + 1
-            elif rarity < 0.9965:
+            elif rarity < 0.9920:
                 await message.channel.send("fishing.. ( -10💰 )", delete_after=5)
                 await asyncio.sleep(5)
                 await message.channel.send("huh?")
@@ -265,7 +265,7 @@ class Economy(commands.Cog):
                                                        "<:jontron1:568424285027303434> "
                                                        "<:jontron2:568424284947480586> "
                                                        "<:l_tentacle:799786690864349204>"] + 1
-            elif rarity < 0.9975:
+            elif rarity < 0.9925:
                 await message.channel.send("fishing.. ( -10💰 )", delete_after=5)
                 await asyncio.sleep(5)
                 await message.channel.send("huh?")
@@ -276,7 +276,7 @@ class Economy(commands.Cog):
                 await message.channel.send("DORAGON??")
                 await message.channel.send("https://media.tenor.com/images/8f8216b3462c7ddfbe29001a0e91d6a2/tenor.gif")
                 self.users[str(message.author.id)]["🐉"] = self.users[str(message.author.id)]["🐉"] + 1
-            elif rarity < 0.9977:
+            elif rarity < 0.9930:
                 await message.channel.send("fishing.. ( -10💰 )", delete_after=5)
                 await asyncio.sleep(5)
                 await message.channel.send("🎣 | <@" + str(message.author.id) +
