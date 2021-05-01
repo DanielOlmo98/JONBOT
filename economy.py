@@ -69,7 +69,10 @@ class Economy(commands.Cog):
         elif isinstance(error, discord.ext.commands.errors.BadArgument):
             await ctx.send("huh")
         else:
+            await ctx.send("Something went wrong\n" + str(error))
             raise error
+
+
 
     @commands.Cog.listener()
     async def on_message(self, message):
@@ -494,11 +497,10 @@ class Economy(commands.Cog):
                 return await ctx.message.channel.send("You need to create an account first (.balance)")
             await ctx.message.channel.send(embed=fishinv_embed())
 
-    @fishinv.command(name='rare', invoke_without_subcommand=True)
+    @fishinv.command(name='rare', invoke_without_subcommand=True, pass_context=True)
     async def rare(self, ctx):
-        def rarefish_embed():
-            rarefish = ""
-
+        def rare_fish_embed():
+            rare_fish = ""
             for x in rare_array:
                 fish_count = self.users[str(ctx.message.author.id)][x]
                 string = ""
@@ -506,18 +508,19 @@ class Economy(commands.Cog):
 
                     for _ in range(fish_count):
                         string = string + x + " "
-                rarefish = rarefish + string
+                rare_fish = rare_fish + string
 
             embed = discord.Embed(colour=0x5AD0CB,
-                                  description=rarefish)
-            embed.set_author(name="Your rare collection", icon_url="https://pngimg.com/uploads/star/star_PNG41471.png")
+                                  description=rare_fish)
+            embed.set_author(name="Your super secret hauls",
+                             icon_url="http://vignette2.wikia.nocookie.net/mariokart/"
+                                      "images/f/fc/ItemBoxMK8.png/revision/latest?cb=20140520032019")
             embed.set_thumbnail(url=ctx.message.author.avatar_url)
             embed.set_footer(text="Brought to you by reimu aka dav#3945 and IZpixl5#5264")
             return embed
 
-        def rarefish_embed2():
+        def rarefish_embed_2():
             rarefish = ""
-
             for x in rare_array:
                 fish_count = self.users[str(mention.id)][x]
                 string = ""
@@ -529,7 +532,9 @@ class Economy(commands.Cog):
 
             embed = discord.Embed(colour=0x5AD0CB,
                                   description=rarefish)
-            embed.set_author(name="Your rare collection", icon_url="https://pngimg.com/uploads/star/star_PNG41471.png")
+            embed.set_author(name="Your super secret hauls",
+                             icon_url="http://vignette2.wikia.nocookie.net/mariokart/"
+                                      "images/f/fc/ItemBoxMK8.png/revision/latest?cb=20140520032019")
             embed.set_thumbnail(url=mention.avatar_url)
             embed.set_footer(text="Brought to you by reimu aka dav#3945 and IZpixl5#5264")
             return embed
@@ -539,15 +544,15 @@ class Economy(commands.Cog):
                 mention = ctx.message.mentions[0]
                 if str(mention.id) not in self.users:
                     return await ctx.message.channel.send("You need to create an account first (.balance)")
-                return await ctx.message.channel.send(embed=rarefish_embed2())
+                return await ctx.message.channel.send(embed=rarefish_embed_2())
 
             if str(ctx.message.author.id) not in self.users:
                 return await ctx.message.channel.send("You need to create an account first (.balance)")
-            return await ctx.message.channel.send(embed=rarefish_embed())
+            return await ctx.message.channel.send(embed=rare_fish_embed())
 
 
     @fishinv.command(name='bait', invoke_without_subcommand=True)
-    async def rare(self, ctx):
+    async def bait(self, ctx):
         if ctx.invoked_subcommand is None:
             if str(ctx.message.author.id) not in self.users:
                 return await ctx.message.channel.send("You need to create an account first (.balance)")
