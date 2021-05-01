@@ -217,7 +217,7 @@ class Economy(commands.Cog):
                     await message.channel.send(f'get some more jonbucks man,'
                                                f' ( you have {str(self.users[str(message.author.id)]["Pocket"])} )',
                                                delete_after=5)
-                elif rarity < 0.60:
+                elif rarity < 0.50:
                     await message.channel.send("fishing.. ( -10💰 )", delete_after=5)
                     await asyncio.sleep(5)
                     await message.channel.send("🎣 | <@" + str(message.author.id) + ">, you caught: 🐟")
@@ -233,12 +233,12 @@ class Economy(commands.Cog):
                     await asyncio.sleep(5)
                     await message.channel.send(f'🎣 | <@{str(message.author.id)}>, you caught: {rare_fish} \n nice')
                     self.users[str(message.author.id)][rare_fish] = self.users[str(message.author.id)][rare_fish] + 1
-                elif rarity < 0.9717:
+                elif rarity < 0.972:
                     await message.channel.send("fishing.. ( -10💰 )", delete_after=5)
                     await asyncio.sleep(5)
                     await message.channel.send("🎣 | <@" + str(message.author.id) + ">, you caught: 👽 ayy lmao!")
                     self.users[str(message.author.id)]["👽"] = self.users[str(message.author.id)]["👽"] + 1
-                elif rarity < 0.9724:
+                elif rarity < 0.973:
                     await message.channel.send("fishing.. ( -10💰 )", delete_after=5)
                     await asyncio.sleep(5)
                     await message.channel.send("huh?")
@@ -270,7 +270,7 @@ class Economy(commands.Cog):
                                                            "<:jontron1:568424285027303434> "
                                                            "<:jontron2:568424284947480586> "
                                                            "<:l_tentacle:799786690864349204>"] + 1
-                elif rarity < 0.9731:
+                elif rarity < 0.974:
                     await message.channel.send("fishing.. ( -10💰 )", delete_after=5)
                     await asyncio.sleep(5)
                     await message.channel.send("huh?")
@@ -281,7 +281,7 @@ class Economy(commands.Cog):
                     await message.channel.send("DORAGON??")
                     await message.channel.send("https://media.tenor.com/images/8f8216b3462c7ddfbe29001a0e91d6a2/tenor.gif")
                     self.users[str(message.author.id)]["🐉"] = self.users[str(message.author.id)]["🐉"] + 1
-                elif rarity < 0.9738:
+                elif rarity < 0.975:
                     await message.channel.send("fishing.. ( -10💰 )", delete_after=5)
                     await asyncio.sleep(5)
                     await message.channel.send("🎣 | <@" + str(message.author.id) +
@@ -289,7 +289,7 @@ class Economy(commands.Cog):
                     await message.channel.send("Damn man that's a pretty cute cow")
                     self.users[str(message.author.id)]["<:cute_cow:836681439541985330>"] = \
                         self.users[str(message.author.id)]["<:cute_cow:836681439541985330>"] + 1
-                elif rarity < 0.9745:
+                elif rarity < 0.9751:
                     await message.channel.send("fishing.. ( -10💰 )", delete_after=5)
                     await asyncio.sleep(5)
                     await message.channel.send("🎣 | <@" + str(message.author.id) +
@@ -343,6 +343,11 @@ class Economy(commands.Cog):
                 await message.channel.send(f'get some more jonbucks man,'
                                            f' ( you have {str(self.users[str(message.author.id)]["Pocket"])} )',
                                            delete_after=5)
+            if rarity < 0.45:
+                await message.channel.send("fishing.. ( -10💰 )", delete_after=5)
+                await asyncio.sleep(5)
+                await message.channel.send("🎣 | <@" + str(message.author.id) + ">, you caught: " + choice(trash_array))
+                self.users[str(message.author.id)]["trash"] = self.users[str(message.author.id)]["trash"] + 1
             if rarity < 0.50:
                 await message.channel.send("fishing.. ( -10💰 )", delete_after=5)
                 await asyncio.sleep(5)
