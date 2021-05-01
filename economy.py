@@ -348,7 +348,7 @@ class Economy(commands.Cog):
                 await asyncio.sleep(5)
                 await message.channel.send("🎣 | <@" + str(message.author.id) + ">, you caught: " + choice(trash_array))
                 self.users[str(message.author.id)]["trash"] = self.users[str(message.author.id)]["trash"] + 1
-            if rarity < 0.50:
+            elif rarity < 0.50:
                 await message.channel.send("fishing.. ( -10💰 )", delete_after=5)
                 await asyncio.sleep(5)
                 await message.channel.send("🎣 | <@" + str(message.author.id) + ">, you caught: 🪱 some bait lol")
