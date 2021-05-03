@@ -68,6 +68,8 @@ class Economy(commands.Cog):
             return
         elif isinstance(error, discord.ext.commands.errors.BadArgument):
             await ctx.send("huh")
+        elif isinstance(error, ValueError, ):
+            await ctx.send("Thats not a number")
         else:
             await ctx.send("Something went wrong\n" + str(error))
             raise error
@@ -662,77 +664,80 @@ class Economy(commands.Cog):
 
     @commands.command(name='buy')
     async def buy(self, ctx, fish: str = None, amount: str = None):
-        author = ctx.author.id
-        if fish is None:
-            return await ctx.send(embed=embeds.buy_embed())
-        if amount is None:
-            await ctx.send("Specify amount")
-        if amount is not int:
-            await ctx.send("try a number instead of " + amount)
-        if fish and amount:
-
-            if lower(fish) == "bait":
-                if int(amount) < 0:
-                    return await ctx.send("Are you dumb?")
-                if int(self.users[str(author)]["Pocket"]) < int(amount) * 70:
-                    return await ctx.send("Not enough jonbucks")
-                self.users[str(author)]["bait"] = self.users[str(author)]["bait"] + int(amount)
-                self.users[str(author)]["Pocket"] = self.users[str(author)]["Pocket"] - int(amount) * 70
-                await ctx.send(f'Bought {amount} {fish} for {int(amount) * 70} 💰')
-
+        try:
+            author = ctx.author.id
+            if fish is None:
+                return await ctx.send(embed=embeds.buy_embed())
+            if fish and amount:
+                if lower(fish) == "bait":
+                    if int(amount) < 0:
+                        return await ctx.send("Are you dumb?")
+                    if amount is None:
+                        return await ctx.send("Specify amount")
+                    if int(self.users[str(author)]["Pocket"]) < int(amount) * 70:
+                        return await ctx.send("Not enough jonbucks")
+                    self.users[str(author)]["bait"] = self.users[str(author)]["bait"] + int(amount)
+                    self.users[str(author)]["Pocket"] = self.users[str(author)]["Pocket"] - int(amount) * 70
+                    await ctx.send(f'Bought {amount} {fish} for {int(amount) * 70} 💰')
+                else:
+                     return await ctx.send(fish + " is not a fish")
+            else:
+                return await ctx.send(embed=embeds.buy_embed())
+        except ValueError:
+            await ctx.send(amount + " is not a number")
 
     @commands.command(name='sell')
     async def sell(self, ctx, fish: str = None, amount: str = None):
-        author = ctx.author.id
-        if fish is None:
-            return await ctx.send(embed=embeds.sell_embed())
-        if amount is None:
-            await ctx.send("try a number instead of " + amount)
-        if fish and amount:
-            if lower(fish) == "common":
-                if lower(amount) == "all":
-                    amount = self.users[str(author)]["common"]
-                    self.users[str(author)]["common"] = self.users[str(author)]["common"] - amount
-                    self.users[str(author)]["Pocket"] = self.users[str(author)]["Pocket"] + 25 * amount
-                    return await ctx.send(f'Sold {amount} {fish} for {int(amount) * 25} 💰')
-                if int(amount) < 0:
-                    return await ctx.send("Are you dumb?")
-                if int(amount) > self.users[str(author)][fish]:
-                    return await ctx.send("do you really have that many fish?")
-                self.users[str(author)]["Pocket"] = self.users[str(author)]["Pocket"] + 25 * int(amount)
-                self.users[str(author)]["common"] = self.users[str(author)]["common"] - int(amount)
-                await ctx.send(f'Sold {amount} {fish} for {int(amount) * 25} 💰')
+        try:
+            author = ctx.author.id
+            if fish is None:
+                return await ctx.send(embed=embeds.sell_embed())
+            if fish and amount:
+                if lower(fish) == "common":
+                    if lower(amount) == "all":
+                        amount = self.users[str(author)]["common"]
+                        self.users[str(author)]["common"] = self.users[str(author)]["common"] - amount
+                        self.users[str(author)]["Pocket"] = self.users[str(author)]["Pocket"] + 25 * amount
+                        return await ctx.send(f'Sold {amount} {fish} for {int(amount) * 25} 💰')
+                    if int(amount) < 0:
+                        return await ctx.send("Are you dumb?")
+                    if int(amount) > self.users[str(author)][fish]:
+                        return await ctx.send("do you really have that many fish?")
+                    self.users[str(author)]["Pocket"] = self.users[str(author)]["Pocket"] + 25 * int(amount)
+                    self.users[str(author)]["common"] = self.users[str(author)]["common"] - int(amount)
+                    await ctx.send(f'Sold {amount} {fish} for {int(amount) * 25} 💰')
 
-            elif lower(fish) == "trash":
-                if lower(amount) == "all":
-                    amount = self.users[str(author)]["trash"]
-                    self.users[str(author)]["trash"] = self.users[str(author)]["trash"] - amount
-                    self.users[str(author)]["Pocket"] = self.users[str(author)]["Pocket"] + 6 * amount
-                    return await ctx.send(f'Sold {amount} {fish} for {int(amount) * 6} 💰')
-                if int(amount) > self.users[str(author)][fish]:
-                    return await ctx.send("do you really have that many fish?")
-                if int(amount) < 0:
-                    return await ctx.send("Are you dumb?")
-                self.users[str(author)]["Pocket"] = self.users[str(author)]["Pocket"] + 6 * int(amount)
-                self.users[str(author)]["trash"] = self.users[str(author)]["trash"] - int(amount)
-                await ctx.send(f'Sold {amount} {fish} for {int(amount) * 6} 💰')
+                elif lower(fish) == "trash":
+                    if lower(amount) == "all":
+                        amount = self.users[str(author)]["trash"]
+                        self.users[str(author)]["trash"] = self.users[str(author)]["trash"] - amount
+                        self.users[str(author)]["Pocket"] = self.users[str(author)]["Pocket"] + 6 * amount
+                        return await ctx.send(f'Sold {amount} {fish} for {int(amount) * 6} 💰')
+                    if int(amount) > self.users[str(author)][fish]:
+                        return await ctx.send("do you really have that many fish?")
+                    if int(amount) < 0:
+                        return await ctx.send("Are you dumb?")
+                    self.users[str(author)]["Pocket"] = self.users[str(author)]["Pocket"] + 6 * int(amount)
+                    self.users[str(author)]["trash"] = self.users[str(author)]["trash"] - int(amount)
+                    await ctx.send(f'Sold {amount} {fish} for {int(amount) * 6} 💰')
 
-            elif lower(fish) == "uncommon":
-                if lower(amount) == "all":
-                    amount = self.users[str(author)]["uncommon"]
-                    self.users[str(author)]["uncommon"] = self.users[str(author)]["uncommon"] - amount
-                    self.users[str(author)]["Pocket"] = self.users[str(author)]["Pocket"] + 55 * amount
-                    return await ctx.send(f'Sold {amount} {fish} for {int(amount) * 55} 💰')
-                if int(amount) < 0:
-                    return await ctx.send("Are you dumb?")
-                if int(amount) > self.users[str(author)][fish]:
-                    return await ctx.send("do you really have that many fish?")
-                self.users[str(author)]["Pocket"] = self.users[str(author)]["Pocket"] + 55 * int(amount)
-                self.users[str(author)]["uncommon"] = self.users[str(author)]["uncommon"] - int(amount)
-                await ctx.send(f'Sold {amount} {fish} for {int(amount) * 55} 💰')
-            elif fish != "uncommon" or "common" or "trash":
-                await ctx.send("I don't want that 😡")
-
+                elif lower(fish) == "uncommon":
+                    if lower(amount) == "all":
+                        amount = self.users[str(author)]["uncommon"]
+                        self.users[str(author)]["uncommon"] = self.users[str(author)]["uncommon"] - amount
+                        self.users[str(author)]["Pocket"] = self.users[str(author)]["Pocket"] + 55 * amount
+                        return await ctx.send(f'Sold {amount} {fish} for {int(amount) * 55} 💰')
+                    if int(amount) < 0:
+                        return await ctx.send("Are you dumb?")
+                    if int(amount) > self.users[str(author)][fish]:
+                        return await ctx.send("do you really have that many fish?")
+                    self.users[str(author)]["Pocket"] = self.users[str(author)]["Pocket"] + 55 * int(amount)
+                    self.users[str(author)]["uncommon"] = self.users[str(author)]["uncommon"] - int(amount)
+                    await ctx.send(f'Sold {amount} {fish} for {int(amount) * 55} 💰')
+                elif fish != "uncommon" or "common" or "trash":
+                    await ctx.send("I don't want that 😡")
+        except ValueError:
+            await ctx.send(amount + " is not a number")
 
     @commands.command(name='dishupdate')
     async def fishupdate(self, ctx):
