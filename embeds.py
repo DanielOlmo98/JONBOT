@@ -47,7 +47,7 @@ def sell_embed():
 def buy_embed():
     embed = discord.Embed(title="Buy bait and other things using:",
                           description=".buy (item) (amount)"
-                                      "\n\nBait = 70 💰",
+                                      "\n\nBait 🪱 = 70 💰",
                           colour=0x5AD0CB)
     embed.set_footer(text="Brought to you by reimu aka dav#3945 and IZpixl5#5264")
     return embed

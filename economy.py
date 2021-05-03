@@ -666,7 +666,9 @@ class Economy(commands.Cog):
         if fish is None:
             return await ctx.send(embed=embeds.buy_embed())
         if amount is None:
-            return await ctx.send(embed=embeds.buy_embed())
+            await ctx.send("Specify amount")
+        if amount is not int:
+            await ctx.send("try a number instead of " + amount)
         if fish and amount:
 
             if lower(fish) == "bait":
@@ -676,7 +678,7 @@ class Economy(commands.Cog):
                     return await ctx.send("Not enough jonbucks")
                 self.users[str(author)]["bait"] = self.users[str(author)]["bait"] + int(amount)
                 self.users[str(author)]["Pocket"] = self.users[str(author)]["Pocket"] - int(amount) * 70
-                await ctx.send(f'Bought {amount} {fish} for {int(amount) * 100} 💰')
+                await ctx.send(f'Bought {amount} {fish} for {int(amount) * 70} 💰')
 
 
     @commands.command(name='sell')
@@ -685,9 +687,8 @@ class Economy(commands.Cog):
         if fish is None:
             return await ctx.send(embed=embeds.sell_embed())
         if amount is None:
-            return await ctx.send(embed=embeds.sell_embed())
+            await ctx.send("try a number instead of " + amount)
         if fish and amount:
-
             if lower(fish) == "common":
                 if lower(amount) == "all":
                     amount = self.users[str(author)]["common"]
