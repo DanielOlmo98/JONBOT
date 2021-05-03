@@ -672,10 +672,10 @@ class Economy(commands.Cog):
             if lower(fish) == "bait":
                 if int(amount) < 0:
                     return await ctx.send("Are you dumb?")
-                if int(self.users[str(author)]["Pocket"]) < int(amount) * 100:
+                if int(self.users[str(author)]["Pocket"]) < int(amount) * 70:
                     return await ctx.send("Not enough jonbucks")
                 self.users[str(author)]["bait"] = self.users[str(author)]["bait"] + int(amount)
-                self.users[str(author)]["Pocket"] = self.users[str(author)]["Pocket"] - int(amount) * 100
+                self.users[str(author)]["Pocket"] = self.users[str(author)]["Pocket"] - int(amount) * 70
                 await ctx.send(f'Bought {amount} {fish} for {int(amount) * 100} 💰')
 
 
