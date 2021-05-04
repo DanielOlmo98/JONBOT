@@ -12,6 +12,7 @@ from discord.ext import commands
 from os import path
 from random import randint
 
+fast_words = ['Quick!', 'Hurry!', "With haste!", "Swiftly!", "", "sí"]
 choices = ['yes', 'no', "y", "n", "si", "sí"]
 type_challenge = ['discombobulate', 'expressionlessly', "dichlorodifluoromethane", "anomatopoeia", "acquiesce",
                   "obfuscate", "incongruous", "andragogy","caribbean", "boulevard", "abysmal", "presbyterian",
@@ -91,11 +92,12 @@ class Economy(commands.Cog):
                 return
             else:
                 rng = random()
+                fast = choice(fast_words)
                 word = choice(type_challenge)
-                if rng > 0.002:
+                if rng > 0.004:
                     return
                 else:
-                    await message.channel.send("Quick! Type " + word + " first to get 5k jonbucks")
+                    await message.channel.send(fast + " Type " + word + " first to get 5k 💰 jonbucks")
 
                     def check(m: discord.Message):
                         return m.channel.id == message.channel.id and lower(m.content) == word
