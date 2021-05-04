@@ -12,7 +12,7 @@ from discord.ext import commands
 from os import path
 from random import randint
 
-fast_words = ['Quick!', 'Hurry!', "With haste!", "Swiftly!", "", "sí"]
+fast_words = ['Quick!', 'Hurry!', "With haste!", "Swiftly!",]
 choices = ['yes', 'no', "y", "n", "si", "sí"]
 type_challenge = ['discombobulate', 'expressionlessly', "dichlorodifluoromethane", "anomatopoeia", "acquiesce",
                   "obfuscate", "incongruous", "andragogy","caribbean", "boulevard", "abysmal", "presbyterian",
@@ -83,64 +83,61 @@ class Economy(commands.Cog):
 
     @commands.Cog.listener()
     async def on_message(self, message):
-        if message.author.bot:
-            return
         bucket = self.cd_mapping.get_bucket(message)
         retry_after = bucket.update_rate_limit()
-        if message:
-            if message.channel.id not in (118433598071242753, 568426576006479897, 163299962401193984):
-                return
-            else:
-                rng = random()
-                fast = choice(fast_words)
-                word = choice(type_challenge)
-                if rng > 0.004:
-                    return
-                else:
-                    await message.channel.send(fast + " Type " + word + " first to get 5k 💰 jonbucks")
+        if message.author.bot:
+            return
+        if str(message.author.id) not in self.users:
+            self.users[str(message.author.id)] = {"Exp": 100, "Level": 1, "Pocket": 500}
+        if "Level" not in self.users[str(message.author.id)]:
+            self.users[str(message.author.id)].update({"Exp": 100, "Level": 1})
+        if str(message.author.id) in self.users:
+            self.users[str(message.author.id)]["Pocket"] = self.users[str(message.author.id)]["Pocket"] + 2
+            self.users[str(message.author.id)]["Exp"] = self.users[str(message.author.id)]["Exp"] - randint(10, 20)
+        if self.users[str(message.author.id)]["Exp"] <= 0:
+            level_exp = (self.users[str(message.author.id)]["Level"] + 1) ** 2 * 35
+            print(level_exp)
+            await message.channel.send("Level up pog")
+            self.users[str(message.author.id)]["Exp"] = self.users[str(message.author.id)]["Exp"] + int(level_exp)
 
-                    def check(m: discord.Message):
-                        return m.channel.id == message.channel.id and lower(m.content) == word
-
-                    try:
-
-                        msg: discord.Message = await self.bot.wait_for(event="message", check=check, timeout=10.0)
-                        if lower(msg.content) == word:
-                            await message.channel.send(
-                                "Well done " +
-                                message.author.mention +
-                                "\n5k jonbucks have been ""added to your account.")
-
-                            self.users[str(message.author.id)]["Pocket"] = self.users[str(message.author.id)][
-                                                                               "Pocket"] + 5000
-                            return
-                        if lower(msg.content) != word:
-                            await message.channel.send("Wrong!" + message.author.tag)
-                    except asyncio.TimeoutError:
-
-                        await message.channel.send("Nobody managed to type it in time")
-                        return
-        if retry_after:
+            self.users[str(message.author.id)]["Level"] = self.users[str(message.author.id)]["Level"] + 1
+            await asyncio.sleep(1)
+            await message.channel.send(f"You're now level {self.users[str(message.author.id)]['Level']} "
+                                       f"{message.author.mention}")
+        if message.channel.id not in (118433598071242753, 568426576006479897, 163299962401193984):
             return
         else:
+            rng = random()
+            fast = choice(fast_words)
+            word = choice(type_challenge)
+            if rng > 0.004:
+                return
+            else:
+                await message.channel.send(fast + " Type " + word + " first to get 5k 💰 jonbucks")
 
-            if str(message.author.id) not in self.users:
-                self.users[str(message.author.id)] = {"Exp": 100, "Level": 1, "Pocket": 500}
-            if "Level" not in self.users[str(message.author.id)]:
-                self.users[str(message.author.id)].update({"Exp": 100, "Level": 1})
-            if str(message.author.id) in self.users:
-                self.users[str(message.author.id)]["Pocket"] = self.users[str(message.author.id)]["Pocket"] + 2
-                self.users[str(message.author.id)]["Exp"] = self.users[str(message.author.id)]["Exp"] - randint(10, 20)
-            if self.users[str(message.author.id)]["Exp"] <= 0:
-                level_exp = (self.users[str(message.author.id)]["Level"] + 1) ** 2 * 35
-                print(level_exp)
-                await message.channel.send("Level up pog")
-                self.users[str(message.author.id)]["Exp"] = self.users[str(message.author.id)]["Exp"] + int(level_exp)
+                def check(m: discord.Message):
+                    return m.channel.id == message.channel.id and lower(m.content) == word
 
-                self.users[str(message.author.id)]["Level"] = self.users[str(message.author.id)]["Level"] + 1
-                await asyncio.sleep(1)
-                await message.channel.send(f"You're now level {self.users[str(message.author.id)]['Level']} "
-                                           f"{message.author.mention}")
+                try:
+
+                    msg: discord.Message = await self.bot.wait_for(event="message", check=check, timeout=10.0)
+                    if lower(msg.content) == word:
+                        await message.channel.send(
+                            "Well done " +
+                            message.author.mention +
+                            "\n5k jonbucks have been ""added to your account.")
+
+                        self.users[str(message.author.id)]["Pocket"] = self.users[str(message.author.id)][
+                                                                           "Pocket"] + 5000
+                        return
+                    if lower(msg.content) != word:
+                        await message.channel.send("Wrong!" + message.author.tag)
+                except asyncio.TimeoutError:
+
+                    await message.channel.send("Nobody managed to type it in time")
+                    return
+            if retry_after:
+                return
 
     @commands.command(name='level', invoke_without_subcommand=True)
     async def level(self, ctx):
