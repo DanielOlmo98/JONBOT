@@ -12,7 +12,7 @@ from discord.ext import commands
 from os import path
 from random import randint
 
-fast_words = ['Quick!', 'Hurry!', "With haste!", "Swiftly!",]
+fast_words = ['Quick!', 'Hurry!', "With haste!", "Swiftly!", "", "sí"]
 choices = ['yes', 'no', "y", "n", "si", "sí"]
 type_challenge = ['discombobulate', 'expressionlessly', "dichlorodifluoromethane", "anomatopoeia", "acquiesce",
                   "obfuscate", "incongruous", "andragogy","caribbean", "boulevard", "abysmal", "presbyterian",
@@ -87,6 +87,8 @@ class Economy(commands.Cog):
         retry_after = bucket.update_rate_limit()
         if message.author.bot:
             return
+        if retry_after:
+            return
         if str(message.author.id) not in self.users:
             self.users[str(message.author.id)] = {"Exp": 100, "Level": 1, "Pocket": 500}
         if "Level" not in self.users[str(message.author.id)]:
@@ -104,40 +106,40 @@ class Economy(commands.Cog):
             await asyncio.sleep(1)
             await message.channel.send(f"You're now level {self.users[str(message.author.id)]['Level']} "
                                        f"{message.author.mention}")
-        if message.channel.id not in (118433598071242753, 568426576006479897, 163299962401193984):
+
+        rng = 0.003
+        fast = choice(fast_words)
+        word = choice(type_challenge)
+
+        if rng > 0.004:
             return
         else:
-            rng = random()
-            fast = choice(fast_words)
-            word = choice(type_challenge)
-            if rng > 0.004:
-                return
-            else:
-                await message.channel.send(fast + " Type " + word + " first to get 5k 💰 jonbucks")
+            await message.channel.send(fast + " Type " + word + " first to get 5k 💰 jonbucks")
 
-                def check(m: discord.Message):
-                    return m.channel.id == message.channel.id and lower(m.content) == word
+            def check(m: discord.Message):
+                return m.channel.id == message.channel.id and lower(m.content) == word
 
-                try:
+            try:
 
-                    msg: discord.Message = await self.bot.wait_for(event="message", check=check, timeout=10.0)
-                    if lower(msg.content) == word:
-                        await message.channel.send(
-                            "Well done " +
-                            message.author.mention +
-                            "\n5k jonbucks have been ""added to your account.")
+                msg: discord.Message = await self.bot.wait_for(event="message", check=check, timeout=10.0)
+                if lower(msg.content) == word:
+                    await message.channel.send(
+                        "Well done " +
+                        message.author.mention +
+                        "\n5k jonbucks have been ""added to your account.")
 
-                        self.users[str(message.author.id)]["Pocket"] = self.users[str(message.author.id)][
-                                                                           "Pocket"] + 5000
-                        return
-                    if lower(msg.content) != word:
-                        await message.channel.send("Wrong!" + message.author.tag)
-                except asyncio.TimeoutError:
-
-                    await message.channel.send("Nobody managed to type it in time")
+                    self.users[str(message.author.id)]["Pocket"] = self.users[str(message.author.id)][
+                                                                       "Pocket"] + 5000
                     return
-            if retry_after:
+                if lower(msg.content) != word:
+                    await message.channel.send("Wrong!" + message.author.tag)
+            except asyncio.TimeoutError:
+
+                await message.channel.send("Nobody managed to type it in time")
                 return
+
+
+
 
     @commands.command(name='level', invoke_without_subcommand=True)
     async def level(self, ctx):
