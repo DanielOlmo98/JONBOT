@@ -107,7 +107,7 @@ class Economy(commands.Cog):
             await message.channel.send(f"You're now level {self.users[str(message.author.id)]['Level']} "
                                        f"{message.author.mention}")
 
-        rng = 0.003
+        rng = random()
         fast = choice(fast_words)
         word = choice(type_challenge)
 
