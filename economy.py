@@ -123,14 +123,14 @@ class Economy(commands.Cog):
                 if lower(msg.content) == word:
                     await message.channel.send(
                         "Well done " +
-                        message.author.mention +
+                        msg.author.mention +
                         "\n5k jonbucks have been ""added to your account.")
 
-                    self.users[str(message.author.id)]["Pocket"] = self.users[str(message.author.id)][
+                    self.users[str(msg.author.id)]["Pocket"] = self.users[str(msg.author.id)][
                                                                        "Pocket"] + 5000
                     return
                 if lower(msg.content) != word:
-                    await message.channel.send("Wrong!" + message.author.tag)
+                    await message.channel.send("Wrong!" + msg.author.tag)
             except asyncio.TimeoutError:
 
                 await message.channel.send("Nobody managed to type it in time")
