@@ -12,7 +12,7 @@ from discord.ext import commands
 from os import path
 from random import randint
 
-fast_words = ['Quick!', 'Hurry!', "With haste!", "Swiftly!", "", "sí"]
+fast_words = ['Quick!', 'Hurry!', "With haste!", "Swiftly!",]
 choices = ['yes', 'no', "y", "n", "si", "sí"]
 type_challenge = ['discombobulate', 'expressionlessly', "dichlorodifluoromethane", "anomatopoeia", "acquiesce",
                   "obfuscate", "incongruous", "andragogy", "caribbean", "boulevard", "abysmal", "presbyterian",
