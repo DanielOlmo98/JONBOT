@@ -16,7 +16,7 @@ fast_words = ['Quick!', 'Hurry!', "With haste!", "Swiftly!",]
 choices = ['yes', 'no', "y", "n", "si", "sí"]
 type_challenge = ['discombobulate', 'expressionlessly', "dichlorodifluoromethane", "anomatopoeia", "acquiesce",
                   "obfuscate", "incongruous", "andragogy", "caribbean", "boulevard", "abysmal", "presbyterian",
-                  "euclidean", "dearth", ]
+                  "euclidean", "dearth", "chiaroscurist", " handkerchief", "obstinance", "paraphernalia" "onomatopoeia"  ]
 trash_array = ['📎', '🛒', '👞', '🔋', '🔧', '📰']
 rare_array = ['🐳', '🐧', '🦑', '🐙', '🐬', '🐢', '🦀', '🦐', '🦈', '🐊', '🦞', '🐡']
 secret_array = ['👽', '<:r_tentacle:799786836595048469> <:jontron1:568424285027303434> '
