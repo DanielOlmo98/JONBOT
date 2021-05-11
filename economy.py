@@ -113,8 +113,6 @@ class Economy(commands.Cog):
 
         if rng > random():
             return
-        elif message.channel.id != 568426576006479897:
-            return
         else:
             image_length = len(word) * 22
             img = Image.new('RGB', (image_length, 50), color=(0, 0, 0))
