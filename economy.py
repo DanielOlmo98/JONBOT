@@ -11,12 +11,14 @@ from discord.ext.commands import errors, bot
 from discord.ext import commands
 from os import path
 from random import randint
+from PIL import Image, ImageDraw, ImageFont
 
 fast_words = ['Quick!', 'Hurry!', "With haste!", "Swiftly!",]
 choices = ['yes', 'no', "y", "n", "si", "sí"]
 type_challenge = ['discombobulate', 'expressionlessly', "dichlorodifluoromethane", "anomatopoeia", "acquiesce",
                   "obfuscate", "incongruous", "andragogy", "caribbean", "boulevard", "abysmal", "presbyterian",
-                  "euclidean", "dearth", "chiaroscurist", " handkerchief", "obstinance", "paraphernalia" "onomatopoeia"  ]
+                  "euclidean", "dearth", "chiaroscurist", " handkerchief", "obstinance", "paraphernalia" "onomatopoeia"
+                  ,"gang members", "yakuza", "hooligans"]
 trash_array = ['📎', '🛒', '👞', '🔋', '🔧', '📰']
 rare_array = ['🐳', '🐧', '🦑', '🐙', '🐬', '🐢', '🦀', '🦐', '🦈', '🐊', '🦞', '🐡']
 secret_array = ['👽', '<:r_tentacle:799786836595048469> <:jontron1:568424285027303434> '
@@ -109,10 +111,20 @@ class Economy(commands.Cog):
         fast = choice(fast_words)
         word = choice(type_challenge)
 
-        if rng > 0.004:
+        if rng > random():
+            return
+        elif message.channel.id != 568426576006479897:
             return
         else:
-            await message.channel.send(fast + " Type " + word + " first to get 5k 💰 jonbucks")
+            image_length = len(word) * 22
+            img = Image.new('RGB', (image_length, 50), color=(0, 0, 0))
+            fnt = ImageFont.truetype('assets/fonts/edosz.ttf', 40)
+            d = ImageDraw.Draw(img)
+            d.text((5, 0), word, font=fnt, fill=(255, 255, 255))
+
+            img.save('pil_text_font.png')
+            await message.channel.send(fast + " Type the word in the image first to get 5k 💰 jonbucks")
+            await message.channel.send(file=discord.File(r'pil_text_font.png'))
 
             def check(m: discord.Message):
                 return m.channel.id == message.channel.id and lower(m.content) == word
@@ -134,7 +146,7 @@ class Economy(commands.Cog):
             except asyncio.TimeoutError:
 
                 await message.channel.send("Nobody managed to type it in time")
-                return
+
 
     @commands.command(name='level', invoke_without_subcommand=True)
     async def level(self, ctx):
