@@ -114,7 +114,7 @@ class Economy(commands.Cog):
         if rng > 0.005:
             return
         else:
-            image_length = len(word) * 22
+            image_length = len(word) * 25
             img = Image.new('RGB', (image_length, 50), color=(0, 0, 0))
             fnt = ImageFont.truetype('assets/fonts/edosz.ttf', 40)
             d = ImageDraw.Draw(img)
