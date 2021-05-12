@@ -114,11 +114,11 @@ class Economy(commands.Cog):
         if rng > 0.005:
             return
         else:
-            image_length = len(word) * 25
+            image_length = len(word) * 23
             img = Image.new('RGB', (image_length, 50), color=(0, 0, 0))
             fnt = ImageFont.truetype('assets/fonts/edosz.ttf', 40)
             d = ImageDraw.Draw(img)
-            d.text((5, 0), word, font=fnt, fill=(255, 255, 255))
+            d.text((len(word), 0), word, font=fnt, fill=(255, 255, 255))
 
             img.save('pil_text_font.png')
             await message.channel.send(fast + " Type the word in the image first to get 5k 💰 jonbucks")
