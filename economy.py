@@ -2,7 +2,8 @@ import json
 import asyncio
 import discord
 from soupsieve.util import lower
-
+from random import choice
+from random import random
 import embeds
 
 from tabulate import tabulate
@@ -10,8 +11,14 @@ from discord.ext.commands import errors, bot
 from discord.ext import commands
 from os import path
 from random import randint
+from PIL import Image, ImageDraw, ImageFont
 
-choices = ['yes', 'no', "y", "n", "si"]
+fast_words = ['Quick!', 'Hurry!', "With haste!", "Swiftly!",]
+choices = ['yes', 'no', "y", "n", "si", "sí"]
+type_challenge = ['discombobulate', 'expressionlessly', "dichlorodifluoromethane", "anomatopoeia", "acquiesce",
+                  "obfuscate", "incongruous", "andragogy", "caribbean", "boulevard", "abysmal", "presbyterian",
+                  "euclidean", "dearth", "chiaroscurist", " handkerchief", "obstinance", "paraphernalia" "onomatopoeia"
+                  ,"gang members", "yakuza", "hooligans"]
 trash_array = ['📎', '🛒', '👞', '🔋', '🔧', '📰']
 rare_array = ['🐳', '🐧', '🦑', '🐙', '🐬', '🐢', '🦀', '🦐', '🦈', '🐊', '🦞', '🐡']
 secret_array = ['👽', '<:r_tentacle:799786836595048469> <:jontron1:568424285027303434> '
@@ -68,35 +75,76 @@ class Economy(commands.Cog):
             return
         elif isinstance(error, discord.ext.commands.errors.BadArgument):
             await ctx.send("huh")
+        elif isinstance(error, ValueError, ):
+            await ctx.send("Thats not a number")
         else:
+            await ctx.send("Something went wrong\n" + str(error))
             raise error
 
     @commands.Cog.listener()
     async def on_message(self, message):
         bucket = self.cd_mapping.get_bucket(message)
         retry_after = bucket.update_rate_limit()
+        if message.author.bot:
+            return
         if retry_after:
             return
-        else:
-            if message.author.bot:
-                return
-            if str(message.author.id) not in self.users:
-                self.users[str(message.author.id)] = {"Exp": 100, "Level": 1, "Pocket": 500}
-            if "Level" not in self.users[str(message.author.id)]:
-                self.users[str(message.author.id)].update({"Exp": 100, "Level": 1})
-            if str(message.author.id) in self.users:
-                self.users[str(message.author.id)]["Pocket"] = self.users[str(message.author.id)]["Pocket"] + 2
-                self.users[str(message.author.id)]["Exp"] = self.users[str(message.author.id)]["Exp"] - randint(10, 20)
-            if self.users[str(message.author.id)]["Exp"] <= 0:
-                level_exp = (self.users[str(message.author.id)]["Level"] + 1) ** 2 * 35
-                print(level_exp)
-                await message.channel.send("Level up pog")
-                self.users[str(message.author.id)]["Exp"] = self.users[str(message.author.id)]["Exp"] + int(level_exp)
+        if str(message.author.id) not in self.users:
+            self.users[str(message.author.id)] = {"Exp": 100, "Level": 1, "Pocket": 500}
+        if "Level" not in self.users[str(message.author.id)]:
+            self.users[str(message.author.id)].update({"Exp": 100, "Level": 1})
+        if str(message.author.id) in self.users:
+            self.users[str(message.author.id)]["Pocket"] = self.users[str(message.author.id)]["Pocket"] + 2
+            self.users[str(message.author.id)]["Exp"] = self.users[str(message.author.id)]["Exp"] - randint(10, 20)
+        if self.users[str(message.author.id)]["Exp"] <= 0:
+            level_exp = (self.users[str(message.author.id)]["Level"] + 1) ** 2 * 35
+            print(level_exp)
+            await message.channel.send("Level up pog")
+            self.users[str(message.author.id)]["Exp"] = self.users[str(message.author.id)]["Exp"] + int(level_exp)
 
-                self.users[str(message.author.id)]["Level"] = self.users[str(message.author.id)]["Level"] + 1
-                await asyncio.sleep(1)
-                await message.channel.send(f"You're now level {self.users[str(message.author.id)]['Level']} "
-                                           f"{message.author.mention}")
+            self.users[str(message.author.id)]["Level"] = self.users[str(message.author.id)]["Level"] + 1
+            await asyncio.sleep(1)
+            await message.channel.send(f"You're now level {self.users[str(message.author.id)]['Level']} "
+                                       f"{message.author.mention}")
+
+        rng = random()
+        fast = choice(fast_words)
+        word = choice(type_challenge)
+
+        if rng > 0.0002:
+            return
+        else:
+            image_length = len(word) * 23
+            img = Image.new('RGB', (image_length, 50), color=(0, 0, 0))
+            fnt = ImageFont.truetype('assets/fonts/edosz.ttf', 40)
+            d = ImageDraw.Draw(img)
+            d.text((len(word), 0), word, font=fnt, fill=(255, 255, 255))
+
+            img.save('pil_text_font.png')
+            await message.channel.send(fast + " Type the word in the image first to get 5k 💰 jonbucks")
+            await message.channel.send(file=discord.File(r'pil_text_font.png'))
+
+            def check(m: discord.Message):
+                return m.channel.id == message.channel.id and lower(m.content) == word
+
+            try:
+
+                msg: discord.Message = await self.bot.wait_for(event="message", check=check, timeout=10.0)
+                if lower(msg.content) == word:
+                    await message.channel.send(
+                        "Well done " +
+                        msg.author.mention +
+                        "\n5k jonbucks have been ""added to your account.")
+
+                    self.users[str(msg.author.id)]["Pocket"] = self.users[str(msg.author.id)][
+                                                                       "Pocket"] + 5000
+                    return
+                if lower(msg.content) != word:
+                    await message.channel.send("Wrong!" + msg.author.tag)
+            except asyncio.TimeoutError:
+
+                await message.channel.send("Nobody managed to type it in time")
+
 
     @commands.command(name='level', invoke_without_subcommand=True)
     async def level(self, ctx):
@@ -190,8 +238,6 @@ class Economy(commands.Cog):
     @commands.cooldown(1, 15.0, commands.BucketType.user)
     @commands.command(name='fish', invoke_without_subcommand=True)
     async def fish(self, message, mode: str = None):
-        from random import choice
-        from random import random
         rarity = random()
         try:
             self.users[str(message.author.id)]["trash"]
@@ -214,7 +260,7 @@ class Economy(commands.Cog):
                     await message.channel.send(f'get some more jonbucks man,'
                                                f' ( you have {str(self.users[str(message.author.id)]["Pocket"])} )',
                                                delete_after=5)
-                elif rarity < 0.60:
+                elif rarity < 0.50:
                     await message.channel.send("fishing.. ( -10💰 )", delete_after=5)
                     await asyncio.sleep(5)
                     await message.channel.send("🎣 | <@" + str(message.author.id) + ">, you caught: 🐟")
@@ -230,12 +276,12 @@ class Economy(commands.Cog):
                     await asyncio.sleep(5)
                     await message.channel.send(f'🎣 | <@{str(message.author.id)}>, you caught: {rare_fish} \n nice')
                     self.users[str(message.author.id)][rare_fish] = self.users[str(message.author.id)][rare_fish] + 1
-                elif rarity < 0.9717:
+                elif rarity < 0.972:
                     await message.channel.send("fishing.. ( -10💰 )", delete_after=5)
                     await asyncio.sleep(5)
                     await message.channel.send("🎣 | <@" + str(message.author.id) + ">, you caught: 👽 ayy lmao!")
                     self.users[str(message.author.id)]["👽"] = self.users[str(message.author.id)]["👽"] + 1
-                elif rarity < 0.9724:
+                elif rarity < 0.973:
                     await message.channel.send("fishing.. ( -10💰 )", delete_after=5)
                     await asyncio.sleep(5)
                     await message.channel.send("huh?")
@@ -267,7 +313,7 @@ class Economy(commands.Cog):
                                                            "<:jontron1:568424285027303434> "
                                                            "<:jontron2:568424284947480586> "
                                                            "<:l_tentacle:799786690864349204>"] + 1
-                elif rarity < 0.9731:
+                elif rarity < 0.974:
                     await message.channel.send("fishing.. ( -10💰 )", delete_after=5)
                     await asyncio.sleep(5)
                     await message.channel.send("huh?")
@@ -276,9 +322,10 @@ class Economy(commands.Cog):
                                                ">, you caught: 🐉 ")
                     await asyncio.sleep(1)
                     await message.channel.send("DORAGON??")
-                    await message.channel.send("https://media.tenor.com/images/8f8216b3462c7ddfbe29001a0e91d6a2/tenor.gif")
+                    await message.channel.send(
+                        "https://media.tenor.com/images/8f8216b3462c7ddfbe29001a0e91d6a2/tenor.gif")
                     self.users[str(message.author.id)]["🐉"] = self.users[str(message.author.id)]["🐉"] + 1
-                elif rarity < 0.9738:
+                elif rarity < 0.975:
                     await message.channel.send("fishing.. ( -10💰 )", delete_after=5)
                     await asyncio.sleep(5)
                     await message.channel.send("🎣 | <@" + str(message.author.id) +
@@ -286,7 +333,7 @@ class Economy(commands.Cog):
                     await message.channel.send("Damn man that's a pretty cute cow")
                     self.users[str(message.author.id)]["<:cute_cow:836681439541985330>"] = \
                         self.users[str(message.author.id)]["<:cute_cow:836681439541985330>"] + 1
-                elif rarity < 0.9745:
+                elif rarity < 0.9751:
                     await message.channel.send("fishing.. ( -10💰 )", delete_after=5)
                     await asyncio.sleep(5)
                     await message.channel.send("🎣 | <@" + str(message.author.id) +
@@ -309,25 +356,29 @@ class Economy(commands.Cog):
                                 = self.users[str(message.author.id)]["<:treasure:837622258767888445>"] + 1
                             return
                         elif lower(msg.content) in ("yes", "y"):
-                            await message.send(f"Arrg, that be mighty kind of ye, here ya go, ten thousand dubloons.")
+                            await message.send(f"Arrg, that be mighty kind of ye, here ya go, fifty thousand dubloons.")
                             await asyncio.sleep(1)
-                            await message.send("*10.000 jonbucks has been added to your account.*")
+                            await message.send("*50.000 jonbucks has been added to your account.*")
                             await asyncio.sleep(2)
                             await message.send("*as the pirate left you could hear him whistling a familiar tune*")
                             self.users[str(message.author.id)]["Pocket"] \
-                                = self.users[str(message.author.id)]["Pocket"] + 10000
+                                = self.users[str(message.author.id)]["Pocket"] + 50000
                             return
                     except asyncio.TimeoutError:
 
                         await message.send(f" *You were distracted being a sperg so you lost sight of the pirate,"
-                                           f"  you decided to keep the treasure chest..*")
+                                           f"  you had no choice but to keep the treasure chest..*")
+                        self.users[str(message.author.id)]["<:treasure:837622258767888445>"] \
+                            = self.users[str(message.author.id)]["<:treasure:837622258767888445>"] + 1
                         return
                 elif rarity < 0.97451:
                     await message.channel.send("fishing.. ( -10💰 )", delete_after=5)
                     await asyncio.sleep(5)
-                    await message.channel.send("🎣 | <@" + str(message.author.id) + ">, you caught: " + choice(trash_array))
+                    await message.channel.send(
+                        "🎣 | <@" + str(message.author.id) + ">, you caught: " + choice(trash_array))
                     self.users[str(message.author.id)]["trash"] = self.users[str(message.author.id)]["trash"] + 1
-                    await message.send("So fucking bad hahahahahahaha, even though you're using bait you still got trash")
+                    await message.send(
+                        "So fucking bad hahahahahahaha, even though you're using bait you still got trash")
                 else:
                     await message.channel.send(
                         "You were too slow reeling in, so you lost the fishy <:sadge:815214740645216277>")
@@ -340,11 +391,16 @@ class Economy(commands.Cog):
                 await message.channel.send(f'get some more jonbucks man,'
                                            f' ( you have {str(self.users[str(message.author.id)]["Pocket"])} )',
                                            delete_after=5)
-            if rarity < 0.50:
+            if rarity < 0.45:
                 await message.channel.send("fishing.. ( -10💰 )", delete_after=5)
                 await asyncio.sleep(5)
                 await message.channel.send("🎣 | <@" + str(message.author.id) + ">, you caught: " + choice(trash_array))
                 self.users[str(message.author.id)]["trash"] = self.users[str(message.author.id)]["trash"] + 1
+            elif rarity < 0.50:
+                await message.channel.send("fishing.. ( -10💰 )", delete_after=5)
+                await asyncio.sleep(5)
+                await message.channel.send("🎣 | <@" + str(message.author.id) + ">, you caught: 🪱 some bait lol")
+                self.users[str(message.author.id)]["bait"] = self.users[str(message.author.id)]["bait"] + 1
             elif rarity < 0.89:
                 await message.channel.send("fishing.. ( -10💰 )", delete_after=5)
                 await asyncio.sleep(5)
@@ -423,7 +479,7 @@ class Economy(commands.Cog):
                 await message.channel.send("🎣 | <@" + str(message.author.id) +
                                            ">, you caught: <:treasure:837622258767888445> ")
                 await message.channel.send("Arrrg, that be a fine booty there, i'd be willin' to offer ya "
-                                           "10 thousand dublooons for that there beauty")
+                                           "fifty thousand dublooons for that there beauty")
                 await asyncio.sleep(2)
                 await message.channel.send("Do you accept the offer? Y/N ")
 
@@ -442,16 +498,18 @@ class Economy(commands.Cog):
                     elif lower(msg.content) in ("yes", "y"):
                         await message.send(f"Arrg, that be mighty kind of ye, here ya go, ten thousand dubloons.")
                         await asyncio.sleep(1)
-                        await message.send("*10.000 jonbucks has been added to your account.*")
+                        await message.send("*50.000 jonbucks has been added to your account.*")
                         await asyncio.sleep(2)
                         await message.send("*as the pirate left you could hear him whistling a familiar tune*")
                         self.users[str(message.author.id)]["Pocket"] \
-                            = self.users[str(message.author.id)]["Pocket"] + 10000
+                            = self.users[str(message.author.id)]["Pocket"] + 50000
                         return
                 except asyncio.TimeoutError:
 
                     await message.send(f" *You were distracted being a sperg so you lost sight of the pirate,"
-                                       f"  you decided to keep the treasure chest..*")
+                                       f"  you had no choice but to keep the treasure chest..*")
+                    self.users[str(message.author.id)]["<:treasure:837622258767888445>"] \
+                        = self.users[str(message.author.id)]["<:treasure:837622258767888445>"] + 1
                     return
 
             else:
@@ -494,11 +552,10 @@ class Economy(commands.Cog):
                 return await ctx.message.channel.send("You need to create an account first (.balance)")
             await ctx.message.channel.send(embed=fishinv_embed())
 
-    @fishinv.command(name='rare', invoke_without_subcommand=True)
+    @fishinv.command(name='rare', invoke_without_subcommand=True, pass_context=True)
     async def rare(self, ctx):
-        def rarefish_embed():
-            rarefish = ""
-
+        def rare_fish_embed():
+            rare_fish = ""
             for x in rare_array:
                 fish_count = self.users[str(ctx.message.author.id)][x]
                 string = ""
@@ -506,18 +563,19 @@ class Economy(commands.Cog):
 
                     for _ in range(fish_count):
                         string = string + x + " "
-                rarefish = rarefish + string
+                rare_fish = rare_fish + string
 
             embed = discord.Embed(colour=0x5AD0CB,
-                                  description=rarefish)
-            embed.set_author(name="Your rare collection", icon_url="https://pngimg.com/uploads/star/star_PNG41471.png")
+                                  description=rare_fish)
+            embed.set_author(name="Your super secret hauls",
+                             icon_url="http://vignette2.wikia.nocookie.net/mariokart/"
+                                      "images/f/fc/ItemBoxMK8.png/revision/latest?cb=20140520032019")
             embed.set_thumbnail(url=ctx.message.author.avatar_url)
             embed.set_footer(text="Brought to you by reimu aka dav#3945 and IZpixl5#5264")
             return embed
 
-        def rarefish_embed2():
+        def rarefish_embed_2():
             rarefish = ""
-
             for x in rare_array:
                 fish_count = self.users[str(mention.id)][x]
                 string = ""
@@ -529,7 +587,9 @@ class Economy(commands.Cog):
 
             embed = discord.Embed(colour=0x5AD0CB,
                                   description=rarefish)
-            embed.set_author(name="Your rare collection", icon_url="https://pngimg.com/uploads/star/star_PNG41471.png")
+            embed.set_author(name="Your super secret hauls",
+                             icon_url="http://vignette2.wikia.nocookie.net/mariokart/"
+                                      "images/f/fc/ItemBoxMK8.png/revision/latest?cb=20140520032019")
             embed.set_thumbnail(url=mention.avatar_url)
             embed.set_footer(text="Brought to you by reimu aka dav#3945 and IZpixl5#5264")
             return embed
@@ -539,21 +599,19 @@ class Economy(commands.Cog):
                 mention = ctx.message.mentions[0]
                 if str(mention.id) not in self.users:
                     return await ctx.message.channel.send("You need to create an account first (.balance)")
-                return await ctx.message.channel.send(embed=rarefish_embed2())
+                return await ctx.message.channel.send(embed=rarefish_embed_2())
 
             if str(ctx.message.author.id) not in self.users:
                 return await ctx.message.channel.send("You need to create an account first (.balance)")
-            return await ctx.message.channel.send(embed=rarefish_embed())
-
+            return await ctx.message.channel.send(embed=rare_fish_embed())
 
     @fishinv.command(name='bait', invoke_without_subcommand=True)
-    async def rare(self, ctx):
+    async def bait(self, ctx):
         if ctx.invoked_subcommand is None:
             if str(ctx.message.author.id) not in self.users:
                 return await ctx.message.channel.send("You need to create an account first (.balance)")
             return await ctx.message.channel.send("You have " +
                                                   str(self.users[str(ctx.message.author.id)]["bait"]) + " 🪱 bait ")
-
 
     @fishinv.command(name='secret', invoke_without_subcommand=True)
     async def secret_fish(self, ctx):
@@ -608,7 +666,6 @@ class Economy(commands.Cog):
                 return await ctx.message.channel.send("You need to create an account first (.balance)")
             return await ctx.message.channel.send(embed=secret_fish_embed())
 
-
     @commands.command(name='quieres', invoke_without_subcommand=True)
     async def quieres(self, message):
         await message.send("¿Quieres?")
@@ -624,7 +681,6 @@ class Economy(commands.Cog):
         except asyncio.TimeoutError:
             return message.send("deja de perder mi tiempo")
 
-
     @commands.command(name='dog')
     async def dog(self, message, user: str = None):
         if user is None:
@@ -632,7 +688,6 @@ class Economy(commands.Cog):
         else:
             userdog = str(self.users[str(user)]["🐶"])
             return await message.send(str(user) + " tiene " + userdog + " 🐶 perro(s).")
-
 
     @commands.command(name='award', invoke_without_subcommand=True)
     async def award(self, message, user, amount):
@@ -649,79 +704,82 @@ class Economy(commands.Cog):
             self.users[str(mention)]["Pocket"] = self.users[str(mention)]["Pocket"] + int(amount)
             await message.channel.send("you gave " + str(amount + "💰 jonbucks to " + str(user)))
 
-
     @commands.command(name='buy')
     async def buy(self, ctx, fish: str = None, amount: str = None):
-        author = ctx.author.id
-        if fish is None:
-            return await ctx.send(embed=embeds.buy_embed())
-        if amount is None:
-            return await ctx.send(embed=embeds.buy_embed())
-        if fish and amount:
-
-            if lower(fish) == "bait":
-                if int(amount) < 0:
-                    return await ctx.send("Are you dumb?")
-                if int(self.users[str(author)]["Pocket"]) < int(amount) * 100:
-                    return await ctx.send("Not enough jonbucks")
-                self.users[str(author)]["bait"] = self.users[str(author)]["bait"] + int(amount)
-                self.users[str(author)]["Pocket"] = self.users[str(author)]["Pocket"] - int(amount) * 100
-                await ctx.send(f'Bought {amount} {fish} for {int(amount) * 100} 💰')
-
+        try:
+            author = ctx.author.id
+            if fish is None:
+                return await ctx.send(embed=embeds.buy_embed())
+            if fish and amount:
+                if lower(fish) == "bait":
+                    if int(amount) < 0:
+                        return await ctx.send("Are you dumb?")
+                    if amount is None:
+                        return await ctx.send("Specify amount")
+                    if int(self.users[str(author)]["Pocket"]) < int(amount) * 70:
+                        return await ctx.send("Not enough jonbucks")
+                    self.users[str(author)]["bait"] = self.users[str(author)]["bait"] + int(amount)
+                    self.users[str(author)]["Pocket"] = self.users[str(author)]["Pocket"] - int(amount) * 70
+                    await ctx.send(f'Bought {amount} {fish} for {int(amount) * 70} 💰')
+                else:
+                    return await ctx.send(fish + " is not a fish")
+            else:
+                return await ctx.send(embed=embeds.buy_embed())
+        except ValueError:
+            await ctx.send(amount + " is not a number")
 
     @commands.command(name='sell')
     async def sell(self, ctx, fish: str = None, amount: str = None):
-        author = ctx.author.id
-        if fish is None:
-            return await ctx.send(embed=embeds.sell_embed())
-        if amount is None:
-            return await ctx.send(embed=embeds.sell_embed())
-        if fish and amount:
+        try:
+            author = ctx.author.id
+            if fish is None:
+                return await ctx.send(embed=embeds.sell_embed())
+            if fish and amount:
+                if lower(fish) == "common":
+                    if lower(amount) == "all":
+                        amount = self.users[str(author)]["common"]
+                        self.users[str(author)]["common"] = self.users[str(author)]["common"] - amount
+                        self.users[str(author)]["Pocket"] = self.users[str(author)]["Pocket"] + 25 * amount
+                        return await ctx.send(f'Sold {amount} {fish} for {int(amount) * 25} 💰')
+                    if int(amount) < 0:
+                        return await ctx.send("Are you dumb?")
+                    if int(amount) > self.users[str(author)][fish]:
+                        return await ctx.send("do you really have that many fish?")
+                    self.users[str(author)]["Pocket"] = self.users[str(author)]["Pocket"] + 25 * int(amount)
+                    self.users[str(author)]["common"] = self.users[str(author)]["common"] - int(amount)
+                    await ctx.send(f'Sold {amount} {fish} for {int(amount) * 25} 💰')
 
-            if lower(fish) == "common":
-                if lower(amount) == "all":
-                    amount = self.users[str(author)]["common"]
-                    self.users[str(author)]["common"] = self.users[str(author)]["common"] - amount
-                    self.users[str(author)]["Pocket"] = self.users[str(author)]["Pocket"] + 25 * amount
-                    return await ctx.send(f'Sold {amount} {fish} for {int(amount) * 25} 💰')
-                if int(amount) < 0:
-                    return await ctx.send("Are you dumb?")
-                if int(amount) > self.users[str(author)][fish]:
-                    return await ctx.send("do you really have that many fish?")
-                self.users[str(author)]["Pocket"] = self.users[str(author)]["Pocket"] + 25 * int(amount)
-                self.users[str(author)]["common"] = self.users[str(author)]["common"] - int(amount)
-                await ctx.send(f'Sold {amount} {fish} for {int(amount) * 25} 💰')
+                elif lower(fish) == "trash":
+                    if lower(amount) == "all":
+                        amount = self.users[str(author)]["trash"]
+                        self.users[str(author)]["trash"] = self.users[str(author)]["trash"] - amount
+                        self.users[str(author)]["Pocket"] = self.users[str(author)]["Pocket"] + 6 * amount
+                        return await ctx.send(f'Sold {amount} {fish} for {int(amount) * 6} 💰')
+                    if int(amount) > self.users[str(author)][fish]:
+                        return await ctx.send("do you really have that many fish?")
+                    if int(amount) < 0:
+                        return await ctx.send("Are you dumb?")
+                    self.users[str(author)]["Pocket"] = self.users[str(author)]["Pocket"] + 6 * int(amount)
+                    self.users[str(author)]["trash"] = self.users[str(author)]["trash"] - int(amount)
+                    await ctx.send(f'Sold {amount} {fish} for {int(amount) * 6} 💰')
 
-            elif lower(fish) == "trash":
-                if lower(amount) == "all":
-                    amount = self.users[str(author)]["trash"]
-                    self.users[str(author)]["trash"] = self.users[str(author)]["trash"] - amount
-                    self.users[str(author)]["Pocket"] = self.users[str(author)]["Pocket"] + 6 * amount
-                    return await ctx.send(f'Sold {amount} {fish} for {int(amount) * 6} 💰')
-                if int(amount) > self.users[str(author)][fish]:
-                    return await ctx.send("do you really have that many fish?")
-                if int(amount) < 0:
-                    return await ctx.send("Are you dumb?")
-                self.users[str(author)]["Pocket"] = self.users[str(author)]["Pocket"] + 6 * int(amount)
-                self.users[str(author)]["trash"] = self.users[str(author)]["trash"] - int(amount)
-                await ctx.send(f'Sold {amount} {fish} for {int(amount) * 6} 💰')
-
-            elif lower(fish) == "uncommon":
-                if lower(amount) == "all":
-                    amount = self.users[str(author)]["uncommon"]
-                    self.users[str(author)]["uncommon"] = self.users[str(author)]["uncommon"] - amount
-                    self.users[str(author)]["Pocket"] = self.users[str(author)]["Pocket"] + 55 * amount
-                    return await ctx.send(f'Sold {amount} {fish} for {int(amount) * 55} 💰')
-                if int(amount) < 0:
-                    return await ctx.send("Are you dumb?")
-                if int(amount) > self.users[str(author)][fish]:
-                    return await ctx.send("do you really have that many fish?")
-                self.users[str(author)]["Pocket"] = self.users[str(author)]["Pocket"] + 55 * int(amount)
-                self.users[str(author)]["uncommon"] = self.users[str(author)]["uncommon"] - int(amount)
-                await ctx.send(f'Sold {amount} {fish} for {int(amount) * 55} 💰')
-            elif fish != "uncommon" or "common" or "trash":
-                await ctx.send("I don't want that 😡")
-
+                elif lower(fish) == "uncommon":
+                    if lower(amount) == "all":
+                        amount = self.users[str(author)]["uncommon"]
+                        self.users[str(author)]["uncommon"] = self.users[str(author)]["uncommon"] - amount
+                        self.users[str(author)]["Pocket"] = self.users[str(author)]["Pocket"] + 55 * amount
+                        return await ctx.send(f'Sold {amount} {fish} for {int(amount) * 55} 💰')
+                    if int(amount) < 0:
+                        return await ctx.send("Are you dumb?")
+                    if int(amount) > self.users[str(author)][fish]:
+                        return await ctx.send("do you really have that many fish?")
+                    self.users[str(author)]["Pocket"] = self.users[str(author)]["Pocket"] + 55 * int(amount)
+                    self.users[str(author)]["uncommon"] = self.users[str(author)]["uncommon"] - int(amount)
+                    await ctx.send(f'Sold {amount} {fish} for {int(amount) * 55} 💰')
+                elif fish != "uncommon" or "common" or "trash":
+                    await ctx.send("I don't want that 😡")
+        except ValueError:
+            await ctx.send(amount + " is not a number")
 
     @commands.command(name='dishupdate')
     async def fishupdate(self, ctx):
@@ -729,15 +787,13 @@ class Economy(commands.Cog):
             return await ctx.send("no u DONT")
         for x in self.users:
             self.users[str(x)].update(
-                {'🦞': 0, '🐡': 0})
+                {'🦞': 0, '🐡': 0, 'bait': 0})
         return await ctx.send("it is done.")
-
 
     async def bank_autosave(self):
         while True:
             await asyncio.sleep(100)
             await self.bank_save()
-
 
     async def bank_save(self):
         with open("bank.json", "w") as f:
