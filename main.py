@@ -38,7 +38,15 @@ TOKEN = os.getenv('DISCORD_TOKEN')
 YT_API = os.getenv('YT_API')
 TENOR_API = os.getenv('TENOR_API')
 
+for env_var, env_string in zip((ffmpeg_path, TOKEN, YT_API, TENOR_API),("ffmpeg_path", "TOKEN", "YT_API", "TENOR_API")):
+    if env_var is None:
+        raise ValueError("Missing enviroment variable: " + env_string)
+
+
 rick_server_id = 94440780738854912
+
+
+
 
 rick = commands.Bot(command_prefix='.', help_command=None, case_insensitive=True)
 

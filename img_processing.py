@@ -83,3 +83,23 @@ class ImgProcessing(commands.Cog):
 
         except requests.exceptions.MissingSchema:
             return
+
+    @commands.cooldown(1, 5, commands.BucketType.user)
+    @commands.command(name='pfp')
+    async def pfp(self, ctx):
+        if len(ctx.message.mentions) > 1:
+            await ctx.send("One at the time")
+            return
+        elif len(ctx.message.mentions) == 1:
+            mention_id = ctx.message.mentions[0].id
+
+        elif len(ctx.message.mentions) == 0:
+            mention_id = ctx.message.author.id
+
+        else:
+            await ctx.send("Something weird happen")
+            return
+        usr = await self.bot.fetch_user(mention_id)
+        pfp_url = str(usr.avatar_url)
+        pfp = Image.open(requests.get(pfp_url, stream=True).raw)
+        await ctx.channel.send(pfp_url)
