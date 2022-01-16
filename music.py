@@ -265,8 +265,9 @@ class VoiceState:
             await self.voice.disconnect()
             self.voice = None
 
-    @tasks.loop(seconds=30.0, count=1)
+    @tasks.loop(count=1)
     async def auto_disconnect(self):
+        await sleep(30)
         if not self.voice.is_playing():
             await self.stop()
 
