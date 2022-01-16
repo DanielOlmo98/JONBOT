@@ -78,7 +78,7 @@ class Economy(commands.Cog):
         elif isinstance(error, ValueError, ):
             await ctx.send("Thats not a number")
         else:
-            await ctx.send("Something went wrong\n" + str(error))
+            await ctx.send("Something went wrong: " + str(error))
             raise error
 
     @commands.Cog.listener()

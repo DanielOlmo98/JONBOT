@@ -25,7 +25,7 @@ import random
 import discord
 import youtube_dl
 from async_timeout import timeout
-from discord.ext import commands
+from discord.ext import commands, tasks
 
 # Silence useless bug reports messages
 youtube_dl.utils.bug_reports_message = lambda: ''
@@ -46,7 +46,7 @@ class YTDLSource(discord.PCMVolumeTransformer):
         'audioformat': 'mp3',
         'outtmpl': '%(extractor)s-%(id)s-%(title)s.%(ext)s',
         'restrictfilenames': True,
-        'noplaylist': True,
+        'noplaylist': False,
         'nocheckcertificate': True,
         'ignoreerrors': False,
         'logtostderr': False,
@@ -237,12 +237,14 @@ class VoiceState:
             if not self.loop:
                 self.current = await self.songs.get()
 
-
             self.current.source.volume = self._volume
             self.voice.play(self.current.source, after=self.play_next_song)
+
             await self.current.source.channel.send(embed=self.current.create_embed())
 
             await self.next.wait()
+            if not self.voice.is_playing():
+                await self.auto_disconnect()
 
     def play_next_song(self, error=None):
         if error:
@@ -262,6 +264,11 @@ class VoiceState:
         if self.voice:
             await self.voice.disconnect()
             self.voice = None
+
+    @tasks.loop(seconds=30.0, count=1)
+    async def auto_disconnect(self):
+        if not self.voice.is_playing():
+            await self.stop()
 
 
 class Music(commands.Cog):
@@ -290,8 +297,8 @@ class Music(commands.Cog):
     async def cog_before_invoke(self, ctx: commands.Context):
         ctx.voice_state = self.get_voice_state(ctx)
 
-    async def cog_command_error(self, ctx: commands.Context, error: commands.CommandError):
-        await ctx.send('An error occurred: {}'.format(str(error)))
+    # async def cog_command_error(self, ctx: commands.Context, error: commands.CommandError):
+    #     await ctx.send('An error occurred: {}'.format(str(error)))
 
     @commands.command(name='join', invoke_without_subcommand=True)
     async def _join(self, ctx: commands.Context):
@@ -491,8 +498,6 @@ class Music(commands.Cog):
                 await ctx.voice_state.songs.put(song)
                 await ctx.send('Enqueued {}'.format(str(source)))
 
-
-
     @_join.before_invoke
     @_play.before_invoke
     async def ensure_voice_state(self, ctx: commands.Context):
@@ -502,13 +507,3 @@ class Music(commands.Cog):
         if ctx.voice_client:
             if ctx.voice_client.channel != ctx.author.voice.channel:
                 raise commands.CommandError('Bot is already in a voice channel.')
-
-
-bot = commands.Bot('music.', description='Yet another music bot.')
-bot.add_cog(Music(bot))
-
-
-@bot.event
-async def on_ready():
-    print('Logged in as:\n{0.user.name}\n{0.user.id}'.format(bot))
-

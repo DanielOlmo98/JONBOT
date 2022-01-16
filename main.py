@@ -32,46 +32,54 @@ from youtube_api import YouTubeDataAPI
 # ffmpeg_path = "C:/Users/test2/PycharmProjects/JONBOT/venv/Lib/site-packages/ffmpeg-binaries/bin/ffmpeg.exe"
 
 print("Starting JONBOT...")
-
 load_dotenv()
-ffmpeg_path = str(os.getenv('FFMPEG'))
-TOKEN = os.getenv('DISCORD_TOKEN')
-YT_API = os.getenv('YT_API')
-TENOR_API = os.getenv('TENOR_API')
+envs = {
+    'FFMPEG': os.getenv('FFMPEG'),
+    'TOKEN': os.getenv('DISCORD_TOKEN'),
+    'YT_API': os.getenv('YT_API'),
+    'TENOR_API': os.getenv('TENOR_API'),
+    'daily_verse_channel_id': int(os.getenv('daily_verse_channel_id', default=0)),
+    'jonbot_logs_bots': int(os.getenv('jonbot_logs_bots', default=0)),
+    'jonbot_logs': int(os.getenv('jonbot_logs', default=0)),
+    'rick_server_id': int(os.getenv('rick_server_id', default=0))
+}
 
 env_var_exception = None
+missing_envs = []
 try:
-    for env_var, env_string in zip((ffmpeg_path, TOKEN, YT_API, TENOR_API),
-                                   ("ffmpeg_path", "TOKEN", "YT_API", "TENOR_API")):
-        if env_var is None:
-            raise ValueError("Missing enviroment variable: " + env_string)
+    for key in envs:
+        if envs[key] == 0 or envs[key] is None:
+            missing_envs.append(key)
+
+    if missing_envs:
+        raise ValueError("Missing enviroment variables: " + ', '.join(missing_envs))
 except ValueError as x:
     env_var_exception = x
     pass
 
-rick_server_id = 94440780738854912
+# rick_server_id = 94440780738854912
 
 rick = commands.Bot(command_prefix='.', help_command=None, case_insensitive=True)
+
 
 @rick.event
 async def on_ready():
     print('Logged in as:\n{0.user.name}\n{0.user.id}'.format(rick))
     await rick.change_presence(activity=discord.Activity(type=discord.ActivityType.watching,
-                                                              name=".help  🌶️"))
+                                                         name=".help  🌶️"))
 
     if env_var_exception is not None:
-        channel = rick.get_channel(rick_server_id)
+        channel = rick.get_channel(envs['rick_server_id'])
         await channel.send(env_var_exception)
 
-rick.add_cog(MainCog(rick, TENOR_API, YT_API))
+
+rick.add_cog(
+    MainCog(rick, envs['TENOR_API'], envs['YT_API'], envs['jonbot_logs_bots'], envs['jonbot_logs']))
 rick.add_cog(Music(rick))
 rick.add_cog(Subscribe(rick))
 rick.add_cog(Economy(rick))
-rick.add_cog(RickAnswers(rick))
+rick.add_cog(RickAnswers(rick, envs['daily_verse_channel_id']))
 rick.add_cog(ImgProcessing(rick))
 rick.add_cog(Shipping(rick))
 
-rick.run(TOKEN)
-
-
-
+rick.run(envs['TOKEN'])

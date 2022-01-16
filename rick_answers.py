@@ -8,8 +8,8 @@ from random import randint
 from replies import stfu_alba
 
 
-class RickAnswers(commands.Cog):
-    def __init__(self, bot: commands.Bot):
+class RickAnswers(commands.Cog, ):
+    def __init__(self, bot: commands.Bot, daily_verse_channel_id):
         self.bot = bot
 
         self.replies = ['It is certain', 'It is decidedly so', 'Without a doubt', 'Yes – definitely',
@@ -23,6 +23,7 @@ class RickAnswers(commands.Cog):
         self.unit_list_many = unit_list_many
         self.unit_list_long = unit_list_long
         self.daily_verse.start()
+        self.daily_verse_channel_id = daily_verse_channel_id
 
     @commands.Cog.listener()
     async def on_message_delete(self, message):
@@ -75,7 +76,7 @@ class RickAnswers(commands.Cog):
                         inline=False)
         embed.set_thumbnail(url="https://jesuschristsavior.net/Savior.jpeg")
         if ctx is None:
-            channel = await self.bot.fetch_channel(118433598071242753)
+            channel = await self.bot.fetch_channel(self.daily_verse_channel_id)
             await channel.send(embed=embed)
         else:
             await ctx.send(embed=embed)
@@ -131,7 +132,7 @@ advice_list = [
     ' Don’t act while you’re still angry. Anger makes the wrong things seem right, and remorse lasts way longer than anger.',
     ' Understand that what’s dangerous and what’s illegal are always going to be different, and need to be. It doesn’t always make sense to criminalize something just because it can be harmful.',
     ' Don’t be late. Everyone hates waiting for late people.',
-    ' Read Richard Carlson’s classic Don’t Sweat the Small Stuff.  Or read it again if it’s been a while. Fifteen years after I first read it, I can’t think of a more helpful book.',
+    ' Read Richard Carlson’s classic Don’t Sweat the Small Stuff.  Or read it again if it’s been a while. Fifteen years  after I first read it, I can’t think of a more helpful book.',
     ' Be aware of the complex, systemic nature of the world’s biggest problems, and our habit of framing them as simple ones with clear villains and victims.',
     ' When you’re with a loved one, pretend momentarily that they’re actually gone from your life, and that you’re just remembering this ordinary moment with them.',
     ' Make a point of sitting and chatting with at least one local whenever you travel. It will transform your view of the place.',

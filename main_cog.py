@@ -14,12 +14,12 @@ from youtube_api import YouTubeDataAPI
 
 
 class MainCog(commands.Cog):
-    def __init__(self, rick: commands.Bot, TENOR_API, YT_API):
+    def __init__(self, rick: commands.Bot, TENOR_API, YT_API, jonbot_logs_bots, jonbot_logs):
         self.rick = rick
         self.TENOR_API = TENOR_API
         self.YT_API = YT_API
-
-
+        self.jonbot_logs_bots = jonbot_logs_bots
+        self.jonbot_logs = jonbot_logs
 
     @commands.Cog.listener()
     async def on_message(self, message):
@@ -72,9 +72,9 @@ class MainCog(commands.Cog):
     @commands.Cog.listener()
     async def on_message_delete(self, message):
         if message.author.bot:
-            logs_channel = await self.rick.fetch_channel(718399485616717894)  # jonbot-logs-bots
+            logs_channel = await self.rick.fetch_channel(self.jonbot_logs_bots)  # jonbot-logs-bots 718399485616717894
             return await logs_channel.send(embed=embeds.log_delete_embed(message))
-        logs_channel = await self.rick.fetch_channel(568434065582325770)  # jonbot-logs
+        logs_channel = await self.rick.fetch_channel(self.jonbot_logs)  # jonbot-logs 568434065582325770
         await logs_channel.send(embed=embeds.log_delete_embed(message))
 
     @commands.command()
