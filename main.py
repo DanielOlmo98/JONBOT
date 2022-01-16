@@ -34,7 +34,6 @@ from youtube_api import YouTubeDataAPI
 print("Starting JONBOT...")
 load_dotenv()
 envs = {
-    'FFMPEG': os.getenv('FFMPEG'),
     'TOKEN': os.getenv('DISCORD_TOKEN'),
     'YT_API': os.getenv('YT_API'),
     'TENOR_API': os.getenv('TENOR_API'),
