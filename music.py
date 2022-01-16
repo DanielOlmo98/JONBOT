@@ -31,6 +31,8 @@ from discord.ext import commands, tasks
 youtube_dl.utils.bug_reports_message = lambda: ''
 
 
+# TODO playlist support
+
 class VoiceError(Exception):
     pass
 
