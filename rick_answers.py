@@ -6,7 +6,7 @@ import asyncio, datetime
 from random import choice
 from random import randint
 from replies import stfu_alba
-
+from html import unescape
 
 class RickAnswers(commands.Cog, ):
     def __init__(self, bot: commands.Bot, daily_verse_channel_id):
@@ -68,7 +68,7 @@ class RickAnswers(commands.Cog, ):
         entry = feed.entries[0]
 
         daily_verse = entry.summary[7:-7]
-        daily_verse = ''.join(('"', daily_verse, '"'))
+        daily_verse = unescape(''.join(('"', daily_verse, '"')))
 
         embed = discord.Embed(title="Verse of the Day", url=entry.link,
                               color=0xb4d9e0)
