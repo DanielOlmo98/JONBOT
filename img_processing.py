@@ -18,7 +18,7 @@ class ImgProcessing(commands.Cog):
         reaction = get(message.reactions, emoji=payload.emoji.name)
         if channel in (discord.utils.get(payload.member.guild.text_channels, name="banter")
                        , discord.utils.get(payload.member.guild.text_channels, name="lewd")
-                       , discord.utils.get(payload.member.guild.text_channels, name="general")):
+                       , discord.utils.get(payload.member.guild.text_channels, name="bible-study")):
 
             if payload.emoji.name == "⏩":
                 if reaction.count == 1:
