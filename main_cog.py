@@ -14,12 +14,13 @@ from youtube_api import YouTubeDataAPI
 
 
 class MainCog(commands.Cog):
-    def __init__(self, rick: commands.Bot, TENOR_API, YT_API, jonbot_logs_bots, jonbot_logs):
-        self.rick = rick
+    def __init__(self, rick: commands.Bot, TENOR_API, YT_API, jonbot_logs_bots, jonbot_logs, rick_server_id):
+        self.bot = rick
         self.TENOR_API = TENOR_API
         self.YT_API = YT_API
         self.jonbot_logs_bots = jonbot_logs_bots
         self.jonbot_logs = jonbot_logs
+        self.rick_server_id = rick_server_id
 
     @commands.Cog.listener()
     async def on_message(self, message):
@@ -58,7 +59,7 @@ class MainCog(commands.Cog):
 
     @commands.Cog.listener()  # Starboard command
     async def on_raw_reaction_add(self, payload):
-        channel = await self.rick.fetch_channel(payload.channel_id)
+        channel = await self.bot.fetch_channel(payload.channel_id)
         starboard_channel = discord.utils.get(payload.member.guild.text_channels, name="pins")
         message = await channel.fetch_message(payload.message_id)
         if payload.emoji.name == "📌":
@@ -72,9 +73,9 @@ class MainCog(commands.Cog):
     @commands.Cog.listener()
     async def on_message_delete(self, message):
         if message.author.bot:
-            logs_channel = await self.rick.fetch_channel(self.jonbot_logs_bots)  # jonbot-logs-bots 718399485616717894
+            logs_channel = await self.bot.fetch_channel(self.jonbot_logs_bots)  # jonbot-logs-bots 718399485616717894
             return await logs_channel.send(embed=embeds.log_delete_embed(message))
-        logs_channel = await self.rick.fetch_channel(self.jonbot_logs)  # jonbot-logs 568434065582325770
+        logs_channel = await self.bot.fetch_channel(self.jonbot_logs)  # jonbot-logs 568434065582325770
         await logs_channel.send(embed=embeds.log_delete_embed(message))
 
     @commands.command()
@@ -272,3 +273,20 @@ class MainCog(commands.Cog):
             await ctx.send("No statement found")
         else:
             await ctx.send("```diff\n" + arg + "\n```")
+
+    @commands.Cog.listener()
+    async def on_member_join(self, member):
+        channel = await self.bot.fetch_channel(self.rick_server_id)
+        await channel.send(f'{member.mention} joined.')
+
+    @commands.Cog.listener()
+    async def on_member_remove(self, member):
+        channel = await self.bot.fetch_channel(self.rick_server_id)
+        await channel.send(f'{member.mention} left.')
+
+    @commands.command(name='norole')
+    async def get_norole_users(self, ctx):
+        usr_list = ctx.guild.members
+        norole_usr_list = [m.mention for m in usr_list if m.top_role.name == '@everyone']
+        for user in norole_usr_list:
+            await ctx.send(f'{user}')
