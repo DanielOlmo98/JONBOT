@@ -290,3 +290,7 @@ class MainCog(commands.Cog):
         norole_usr_list = [m.mention for m in usr_list if m.top_role.name == '@everyone']
         for user in norole_usr_list:
             await ctx.send(f'{user}')
+
+    @commands.command(name='remindme')
+    async def remind_me(self, ctx, arg):
+        await ctx.send('no')
