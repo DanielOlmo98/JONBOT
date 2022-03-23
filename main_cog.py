@@ -294,3 +294,16 @@ class MainCog(commands.Cog):
     @commands.command(name='remindme')
     async def remind_me(self, ctx, arg):
         await ctx.send('no')
+
+
+    @commands.command(name='imgs')
+    @commands.cooldown(1, 1)
+    async def image_search(self, ctx, arg: str = None):
+        from duckduckgo_search import ddg_images
+        if arg is None:
+            return
+        search_result = ddg_images(arg, max_results = 1)
+        await ctx.send(search_result[0]['image'])
+
+
+
