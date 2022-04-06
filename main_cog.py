@@ -298,7 +298,7 @@ class MainCog(commands.Cog):
 
     @commands.command(name='imgs')
     @commands.cooldown(1, 1)
-    async def image_search(self, ctx, arg: str = None):
+    async def image_search(self, ctx, *args: str = None):
         from duckduckgo_search import ddg_images
         if arg is None:
             return
