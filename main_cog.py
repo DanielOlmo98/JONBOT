@@ -298,11 +298,11 @@ class MainCog(commands.Cog):
 
     @commands.command(name='imgs')
     @commands.cooldown(1, 1)
-    async def image_search(self, ctx, *args: str = None):
+    async def image_search(self, ctx, *args):
         from duckduckgo_search import ddg_images
-        if arg is None:
+        if args is None:
             return
-        search_result = ddg_images(arg, max_results = 1)
+        search_result = ddg_images(" ".join(args), max_results = 1)
         await ctx.send(search_result[0]['image'])
 
 
