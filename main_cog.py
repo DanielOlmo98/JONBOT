@@ -302,7 +302,7 @@ class MainCog(commands.Cog):
         from duckduckgo_search import ddg_images
         if args is None:
             return
-        search_result = ddg_images(" ".join(args), max_results = 1)
+        search_result = ddg_images(" ".join(args), max_results = 1, safesearch = 'On')
         await ctx.send(search_result[0]['image'])
 
 
