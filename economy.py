@@ -13,12 +13,12 @@ from os import path
 from random import randint
 from PIL import Image, ImageDraw, ImageFont
 
-fast_words = ['Quick!', 'Hurry!', "With haste!", "Swiftly!",]
+fast_words = ['Quick!', 'Hurry!', "With haste!", "Swiftly!", ]
 choices = ['yes', 'no', "y", "n", "si", "sí"]
 type_challenge = ['discombobulate', 'expressionlessly', "dichlorodifluoromethane", "anomatopoeia", "acquiesce",
                   "obfuscate", "incongruous", "andragogy", "caribbean", "boulevard", "abysmal", "presbyterian",
                   "euclidean", "dearth", "chiaroscurist", " handkerchief", "obstinance", "paraphernalia" "onomatopoeia"
-                  ,"gang members", "yakuza", "hooligans"]
+    , "gang members", "yakuza", "hooligans"]
 trash_array = ['📎', '🛒', '👞', '🔋', '🔧', '📰']
 rare_array = ['🐳', '🐧', '🦑', '🐙', '🐬', '🐢', '🦀', '🦐', '🦈', '🐊', '🦞', '🐡']
 secret_array = ['👽', '<:r_tentacle:799786836595048469> <:jontron1:568424285027303434> '
@@ -63,23 +63,23 @@ class Economy(commands.Cog):
         except asyncio.TimeoutError:
             return asyncio.TimeoutError
 
-    @commands.Cog.listener()
-    async def on_command_error(self, ctx, error):
-        if isinstance(error, commands.CommandOnCooldown):
-            all_words = ctx.message.content.split()
-            first_word = all_words[0]
-            await ctx.send('Wait %.2fs ' % error.retry_after + 'before using ' + first_word + " again",
-                           delete_after=error.retry_after)
-
-        elif isinstance(error, commands.CommandNotFound, ):
-            return
-        elif isinstance(error, discord.ext.commands.errors.BadArgument):
-            await ctx.send("huh")
-        elif isinstance(error, ValueError, ):
-            await ctx.send("Thats not a number")
-        else:
-            await ctx.send("Something went wrong: " + str(error))
-            raise error
+    # @commands.Cog.listener()
+    # async def on_command_error(self, ctx, error):
+    #     if isinstance(error, commands.CommandOnCooldown):
+    #         all_words = ctx.message.content.split()
+    #         first_word = all_words[0]
+    #         await ctx.send('Wait %.2fs ' % error.retry_after + 'before using ' + first_word + " again",
+    #                        delete_after=error.retry_after)
+    #
+    #     elif isinstance(error, commands.CommandNotFound, ):
+    #         return
+    #     elif isinstance(error, discord.ext.commands.errors.BadArgument):
+    #         await ctx.send("huh")
+    #     elif isinstance(error, ValueError, ):
+    #         await ctx.send("Thats not a number")
+    #     else:
+    #         await ctx.send("Something went wrong: " + str(error))
+    #         raise error
 
     @commands.Cog.listener()
     async def on_message(self, message):
@@ -137,14 +137,13 @@ class Economy(commands.Cog):
                         "\n5k jonbucks have been ""added to your account.")
 
                     self.users[str(msg.author.id)]["Pocket"] = self.users[str(msg.author.id)][
-                                                                       "Pocket"] + 5000
+                                                                   "Pocket"] + 5000
                     return
                 if lower(msg.content) != word:
                     await message.channel.send("Wrong!" + msg.author.tag)
             except asyncio.TimeoutError:
 
                 await message.channel.send("Nobody managed to type it in time")
-
 
     @commands.command(name='level', invoke_without_subcommand=True)
     async def level(self, ctx):

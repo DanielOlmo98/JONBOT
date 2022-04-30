@@ -18,6 +18,7 @@ from rick_answers import RickAnswers
 from img_processing import ImgProcessing
 from shipping import Shipping
 from main_cog import MainCog
+from new_fishing import NewFishingCog
 from discord.utils import get
 from replies import rick_reply
 from replies import listToString
@@ -82,5 +83,6 @@ rick.add_cog(Economy(rick))
 rick.add_cog(RickAnswers(rick, envs['daily_verse_channel_id']))
 rick.add_cog(ImgProcessing(rick))
 rick.add_cog(Shipping(rick))
+rick.add_cog(NewFishingCog(rick))
 
 rick.run(envs['TOKEN'])
