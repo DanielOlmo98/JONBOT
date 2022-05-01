@@ -9,6 +9,7 @@ import TenGiphPy
 # import tenor_api
 import re
 
+from main_cog import MainCog
 from tenorscrap import Tenor  # https://github.com/suarasiy/tenorscrap
 from reverse_img_search import get_vtuber, img_extensions
 from subscribe import Subscribe
@@ -17,7 +18,6 @@ from music import Music
 from rick_answers import RickAnswers
 from img_processing import ImgProcessing
 from shipping import Shipping
-from main_cog import MainCog
 from new_fishing import NewFishingCog
 from discord.utils import get
 from replies import rick_reply

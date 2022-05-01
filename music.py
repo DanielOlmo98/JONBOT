@@ -246,6 +246,7 @@ class VoiceState:
 
             await self.next.wait()
             if not self.voice.is_playing():
+                # if not len(self.songs):
                 await self.auto_disconnect()
 
     def play_next_song(self, error=None):
@@ -269,7 +270,7 @@ class VoiceState:
 
     @tasks.loop(count=1)
     async def auto_disconnect(self):
-        await sleep(30)
+        await sleep(3)
         if not self.voice.is_playing():
             await self.stop()
 

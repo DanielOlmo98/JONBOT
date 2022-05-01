@@ -63,23 +63,6 @@ class Economy(commands.Cog):
         except asyncio.TimeoutError:
             return asyncio.TimeoutError
 
-    # @commands.Cog.listener()
-    # async def on_command_error(self, ctx, error):
-    #     if isinstance(error, commands.CommandOnCooldown):
-    #         all_words = ctx.message.content.split()
-    #         first_word = all_words[0]
-    #         await ctx.send('Wait %.2fs ' % error.retry_after + 'before using ' + first_word + " again",
-    #                        delete_after=error.retry_after)
-    #
-    #     elif isinstance(error, commands.CommandNotFound, ):
-    #         return
-    #     elif isinstance(error, discord.ext.commands.errors.BadArgument):
-    #         await ctx.send("huh")
-    #     elif isinstance(error, ValueError, ):
-    #         await ctx.send("Thats not a number")
-    #     else:
-    #         await ctx.send("Something went wrong: " + str(error))
-    #         raise error
 
     @commands.Cog.listener()
     async def on_message(self, message):

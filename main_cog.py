@@ -1,3 +1,4 @@
+import dataclasses
 import os
 import discord
 import embeds
@@ -295,15 +296,11 @@ class MainCog(commands.Cog):
     async def remind_me(self, ctx, arg):
         await ctx.send('no')
 
-
     @commands.command(name='imgs')
     @commands.cooldown(1, 1)
     async def image_search(self, ctx, *args):
         from duckduckgo_search import ddg_images
         if args is None:
             return
-        search_result = ddg_images(" ".join(args), max_results = 1, safesearch = 'On')
+        search_result = ddg_images(" ".join(args), max_results=1, safesearch='On')
         await ctx.send(search_result[0]['image'])
-
-
-
