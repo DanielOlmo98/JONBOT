@@ -63,7 +63,6 @@ class Economy(commands.Cog):
         except asyncio.TimeoutError:
             return asyncio.TimeoutError
 
-
     @commands.Cog.listener()
     async def on_message(self, message):
         bucket = self.cd_mapping.get_bucket(message)

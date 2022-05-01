@@ -19,6 +19,7 @@ from rick_answers import RickAnswers
 from img_processing import ImgProcessing
 from shipping import Shipping
 from new_fishing import NewFishingCog
+from errors import ErrorCog
 from discord.utils import get
 from replies import rick_reply
 from replies import listToString
@@ -77,6 +78,7 @@ async def on_ready():
 rick.add_cog(
     MainCog(rick, envs['TENOR_API'], envs['YT_API'], envs['jonbot_logs_bots'], envs['jonbot_logs'],
             envs['rick_server_id']))
+rick.add_cog(ErrorCog(rick))
 rick.add_cog(Music(rick))
 rick.add_cog(Subscribe(rick))
 rick.add_cog(Economy(rick))
