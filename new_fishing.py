@@ -75,14 +75,15 @@ class NewFishingCog(commands.Cog):
         fish_dict = self.get_fish()
         fish = self.Fish(**fish_dict[list(fish_dict)[0]])
         fishsize = fish.get_fish_size()
+        userid = ctx.author.id
+
+        await ctx.send(f'<@{userid}> caught a {fishsize:.1f} cm {fish}', delete_after=8)        
+        await self.inventory.add_fish(userid, fish_dict, fishsize)
         
         try:
             await ctx.message.delete()
         except discord.Forbidden:
             pass
-
-        await ctx.send(f'You caught a {fishsize:.1f} cm {fish}', delete_after=8)        
-        await self.inventory.add_fish(ctx.message.author.id, fish_dict, fishsize)
 
     @commands.command(name='topfish')
     async def fish_leaderboard(self, ctx, fish: str = "flopper"):
@@ -116,7 +117,7 @@ class NewFishingCog(commands.Cog):
                 name = fishes[fish]["name"]
                 size_lims = fishes[fish]["size_lims"]
             except KeyError:
-                raise ValueError("Fish not found")
+                raise ChatError("Fish not found")
 
             return name, size_lims
         else:
