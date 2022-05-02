@@ -22,7 +22,7 @@ class ErrorCog(commands.Cog):
         # elif isinstance(error, TypeError):
         #     await ctx.send("Thats not a number")
         else:
-            await ctx.send("Something went wrong: " + str(error))
+            await ctx.send(str(error))
             raise error
 
 
