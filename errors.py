@@ -7,6 +7,7 @@ class ErrorCog(commands.Cog):
     async def on_command_error(self, ctx, error):
         if isinstance(error, ChatError):
             await ctx.send(str(error))
+            return
 
         if isinstance(error, commands.CommandOnCooldown):
             all_words = ctx.message.content.split()
@@ -14,16 +15,17 @@ class ErrorCog(commands.Cog):
 
             await ctx.send(f'Wait {error.retry_after:2fs} before using {first_word} again',
                            delete_after=error.retry_after)
-
-        elif isinstance(error, commands.CommandNotFound):
             return
-        elif isinstance(error, commands.errors.BadArgument):
+
+        if isinstance(error, commands.CommandNotFound):
+            return
+        
+        if isinstance(error, commands.errors.BadArgument):
             await ctx.send("huh")
-        # elif isinstance(error, TypeError):
-        #     await ctx.send("Thats not a number")
-        else:
-            await ctx.send(str(error))
-            raise error
+            return
+
+        await ctx.send(str(error))
+        raise error
 
 
 class ChatError(Exception):
