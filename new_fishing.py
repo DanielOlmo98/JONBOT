@@ -14,7 +14,6 @@ from discord.ext.commands import errors, bot
 from discord.ext import commands
 from os import path
 from random import randint
-from errors import ChatError
 
 class NewFishingCog(commands.Cog):
 
