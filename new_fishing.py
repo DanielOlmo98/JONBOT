@@ -15,6 +15,7 @@ from discord.ext import commands
 from os import path
 from random import randint
 
+
 class NewFishingCog(commands.Cog):
 
     def __init__(self, bot: commands.Bot, inv_filename="fish"):
@@ -73,11 +74,7 @@ class NewFishingCog(commands.Cog):
         fish_dict = self.get_fish()
         fish = self.Fish(**fish_dict[list(fish_dict)[0]])
         fishsize = fish.get_fish_size()
-        try:
-            await ctx.message.delete()
-        except discord.Forbidden:
-            pass
-        await ctx.send(f'You caught a {fishsize:.1f} cm {fish}', delete_after=5)
+        await ctx.send(f'You caught a {fishsize:.1f} cm {fish}')
         await self.inventory.add_fish(ctx.message.author.id, fish_dict, fishsize)
 
     @commands.command(name='topfish')
@@ -142,7 +139,7 @@ class NewFishingCog(commands.Cog):
         fishes = self.get_fishdict(split=False)
         message = ""
         for fish, inv in userinv.items():
-            message += f'{fishes[fish]["name"]}:\n Amount: {inv["count"]}\n Largest: {inv["largest"]:.1f}cm\n\n'
+            message += f'{fishes[fish]["name"]}:\n Amount: {inv["count"]}\n Largest: {inv["largest"]:.1f\n\n}cm'
 
         await ctx.send(message)
 
