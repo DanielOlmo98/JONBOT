@@ -7,6 +7,7 @@ from discord.utils import get
 
 colors = [0x00ffee, 0xfea601, 0x644fff, 0x206694]
 
+
 def help_embed():
     embed = discord.Embed(title="Commands and what they do", colour=random.choice(colors))
     embed.set_thumbnail(
@@ -87,6 +88,7 @@ def starboard_embed(message):
 
             return embed
         else:
+            print("file not image pin")
             jump = message.jump_url
             embed = discord.Embed(
                 description="**Content**\n" + message.content + "\n\n**File**\n" + message.attachments[0].url,
@@ -102,6 +104,7 @@ def starboard_embed(message):
             return embed
 
     if "tenor.com/view" in message.content:
+        print("tenor gif pin")
         tenor = Tenor()
         search_term = re.sub(r'(?:https://tenor.com/view/?)', '', message.content)
         search = tenor.search(search_term, limit=1)
@@ -121,6 +124,7 @@ def starboard_embed(message):
 
         return embed
     else:
+        print("just message pin")
         jump = message.jump_url
         embed = discord.Embed(
             description=message.content + "\n\n" + "[[Jump to message]](" + jump + ")",
@@ -138,6 +142,7 @@ def starboard_embed(message):
 def log_delete_embed(message):
     if message.attachments:
         if message.attachments[0].url.endswith(("jpg", "png", "gif")):
+            print("attachment jpg,png,gif")
             attachment_url = message.attachments[0].proxy_url
             embed = discord.Embed(description=re.sub(r'http\S+', '\n', f"**Message sent by** {message.author.mention} "
                                                      f"**was deleted in** <#{message.channel.id}>\n "
@@ -150,6 +155,7 @@ def log_delete_embed(message):
             embed.timestamp = message.created_at
             return embed
         else:
+            print("attachment no image")
             embed = discord.Embed(description=f"**Message sent by** {message.author.mention} "
                                               f"**was deleted in** <#{message.channel.id}>\n "
                                               f"(Message ID: {message.id})\n\n**Message**\n{message.content}\n\n"
@@ -161,6 +167,7 @@ def log_delete_embed(message):
             return embed
     if message.embeds:
         if message.embeds[0].url.endswith(("jpg", "png", "gif")):
+            print("embed image")
             embed = discord.Embed(description=re.sub(r'http\S+', '\n', f"**Message sent by** {message.author.mention} "
                                                      f"**was deleted in** <#{message.channel.id}>\n "
                                                      f"(Message ID: {message.id})\n\n"
@@ -173,6 +180,7 @@ def log_delete_embed(message):
             embed.timestamp = message.created_at
             return embed
         else:
+            print("embed no image")
             embed = discord.Embed(description=f"**Message sent by** {message.author.mention} "
                                               f"**was deleted in** <#{message.channel.id}>\n "
                                               f"(Message ID: {message.id})\n\n**Message**\n{message.content}\n\n",
@@ -182,6 +190,7 @@ def log_delete_embed(message):
             embed.timestamp = message.created_at
             return embed
     else:
+        print("message")
         embed = discord.Embed(description=f"**Message sent by** {message.author.mention} "
                                             f"**was deleted in** <#{message.channel.id}>\n "
                                             f"(Message ID: {message.id})\n\n**Message**\n{message.content}\n\n",
