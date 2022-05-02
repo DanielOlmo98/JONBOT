@@ -16,6 +16,7 @@ from os import path
 from random import randint
 
 
+
 class NewFishingCog(commands.Cog):
 
     def __init__(self, bot: commands.Bot, inv_filename="fish"):
