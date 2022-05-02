@@ -278,12 +278,12 @@ class MainCog(commands.Cog):
     @commands.Cog.listener()
     async def on_member_join(self, member):
         channel = await self.bot.fetch_channel(self.rick_server_id)
-        await channel.send(f'{member.mention} joined.')
+        await channel.send(f'{member.mention} joined {member.guild.name}.')
 
     @commands.Cog.listener()
     async def on_member_remove(self, member):
         channel = await self.bot.fetch_channel(self.rick_server_id)
-        await channel.send(f'{member.mention} left.')
+        await channel.send(f'{member.mention} left {member.guild.name}.')
 
     @commands.command(name='norole')
     async def get_norole_users(self, ctx):
