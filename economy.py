@@ -37,7 +37,7 @@ class Economy(commands.Cog):
         else:
             self.users = dict()
             with open("bank.json", "w") as self.f:
-                json.dump(self.users, self.f)
+                json.dump(self.users, self.f, indent=4)
 
         loop = asyncio.get_event_loop()
         loop.create_task(self.bank_autosave())
@@ -189,7 +189,7 @@ class Economy(commands.Cog):
             self.users[str(user.id)] = {"Pocket": 500, "Exp": 0}
 
         with open("bank.json", "w") as f:
-            json.dump(self.users, f)
+            json.dump(self.users, f, indent=4)
         return True
 
     @commands.cooldown(1, 57600, commands.BucketType.user)
@@ -778,4 +778,4 @@ class Economy(commands.Cog):
 
     async def bank_save(self):
         with open("bank.json", "w") as f:
-            json.dump(self.users, f)
+            json.dump(self.users, f, indent=4)

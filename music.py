@@ -246,7 +246,7 @@ class VoiceState:
 
             await self.next.wait()
             if not self.voice.is_playing():
-                # if not len(self.songs):
+                if not len(self.songs):
                 await self.auto_disconnect()
 
     def play_next_song(self, error=None):

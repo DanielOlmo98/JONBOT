@@ -13,7 +13,7 @@ class Subscribe(commands.Cog):
         else:
             self.users = list()
             with open("subscribe.json", "w") as self.f:
-                json.dump(self.users, self.f)
+                json.dump(self.users, self.f, indent=4)
 
     @commands.command()
     async def subscribe(self, ctx):
@@ -40,4 +40,4 @@ class Subscribe(commands.Cog):
     async def add_user(self, user):
         self.users.append(user)
         with open("subscribe.json", "w") as self.f:
-            json.dump(self.users, self.f)
+            json.dump(self.users, self.f, indent =4)
