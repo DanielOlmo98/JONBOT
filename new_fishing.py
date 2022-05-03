@@ -24,20 +24,48 @@ class NewFishingCog(commands.Cog):
         self.inventory = Inventory(inv_filename)
 
     def get_fishdict(self, split=True):
-        common_fish = [{'flopper': {'name': '<:flopper:970067116583702578>', 'size_lims': (10, 50), 'mean': 20}},
-                       {'green flopper': {'name': 'Green flopper', 'size_lims': (10, 50), 'mean': 20}},
+        common_fish = [{'Orange flopper': {'name': '<:flopper:970067116583702578>', 'size_lims': (10, 50), 'mean': 20}},
+                       {'Green flopper': {'name': '<:green:971000839562993705>', 'size_lims': (10, 50), 'mean': 20}},
+                       {'Blue flopper': {'name': '<:Blueflopper:971004859937611786>', 'size_lims': (10, 50), 'mean': 20}},
+                       {'Light blue Small fry': {'name': '<:LightblueSmallfry:971004859153285141>', 'size_lims': (10, 50),'mean': 20}}
                        ]
+        uncommon_fish = [{'Yellow sweetfin': {'name': '🐠 ', 'size_lims': (10, 30), 'mean': 15}},
+                         {'Drift hop Flopper': {'name': '<:DrifthopFlopper:971004859270721537> ', 'size_lims': (10, 30), 'mean': 15}},
+                         {'Crab': {'name': '🦀', 'size_lims': (10, 30),'mean': 15}},
+                         {'Shrimp': {'name': '🦐', 'size_lims': (10, 30), 'mean': 15}},
+                         {'Lobster': {'name': '🦞', 'size_lims': (10, 30), 'mean': 15}},
+                         ]
 
-        rare_fish = [{'squid': {'name': 'Squid', 'size_lims': (20, 40)}},
+        rare_fish = [{'Spicy Fish': {'name': '<:spicy:971001500300111883>', 'size_lims': (10, 40), 'mean': 20}},
+                     {'Black and blue Shieldfish': {'name': '<:Blackandblueshieldfish:971004859648180244>', 'size_lims': (10, 40), 'mean': 20}},
+                     {'Slurp Jellyfish': {'name': '<:SlurpJellyfish:971004859438481459>', 'size_lims': (10, 40), 'mean': 20}},
+                     {'Dolphin': {'name': '🐬', 'size_lims': (100, 250),'mean': 150}},
+                     {'Blowfish': {'name': '🐡', 'size_lims': (20, 40), 'mean': 25}},
                      ]
 
-        epic_fish = [{'cockfish': {'name': 'Cock fish', 'size_lims': (1, 10)}},
-                     ]
+        epic_fish = [{'Cockfish': {'name': 'Cock fish', 'size_lims': (1, 10)}},
+                     {'Squid': {'name': '🦑', 'size_lims': (20, 40), 'mean': 25}},
+                     {'Ancient Scale': {'name': '<:Ancientscale:971004858805141504>', 'size_lims': (20, 70), 'mean': 40}},
+                     {'Devilfish': {'name': '<:DevilFish:971004859820171324>', 'size_lims': (20, 50), 'mean': 30}},
+                     {'Blue Slurpfish': {'name': '<:Blueslurpfish:971004858939351110>', 'size_lims': (20, 50), 'mean': 30}},
+                     {'Stormfish': {'name': '<:Stormfish:971004859656585236>', 'size_lims': (20, 50), 'mean': 30}},
+                    ]
 
-        legendary_fish = [{'thermal': {'name': 'Thermal fish', 'size_lims': (10, 60)}},
+        legendary_fish = [{'Thermal': {'name': '<:Thermalfish:970068788991107102>', 'size_lims': (30, 70), 'mean': 40}},
+                          {'Whale': {'name': '🐳', 'size_lims': (2500, 3500), 'mean': 2900}},
+                          {'Octopus': {'name': '🐙', 'size_lims': (40, 90), 'mean': 50}},
+                          {'Stare': {'name': ' <:stare:956548708399452211>', 'size_lims': (1, 10), 'mean': 1}},
+                          {'Crocodile': {'name': '🐊', 'size_lims': (400, 700), 'mean':500}},
+                          {'Shark': {'name': '🦈', 'size_lims': (100, 250), 'mean': 150}},
+                          {'Seal': {'name': '🦭', 'size_lims': (150, 300), 'mean': 200}},
+
+
+                          ]
+        mythical_fish = [{'Midas Flopper': {'name': '', 'size_lims': (30, 70), 'mean': 40}},
                           ]
         if split:
-            return {'common': common_fish, 'rare': rare_fish, 'epic': epic_fish, 'legendary': legendary_fish}
+            return {'common': common_fish, 'uncommon': uncommon_fish, 'rare': rare_fish, 'epic': epic_fish,
+                    'legendary': legendary_fish, 'mythical': mythical_fish,}
         else:
             fishdict = {}
             for fish in (common_fish + rare_fish + epic_fish + legendary_fish):
@@ -45,8 +73,8 @@ class NewFishingCog(commands.Cog):
             return fishdict
 
     def get_fish(self):
-        rarity = ['common', 'rare', 'epic', 'legendary']
-        chance = [0.5, 0.3, 0.15, 0.05]
+        rarity = ['common', 'uncommon', 'rare', 'epic', 'legendary', 'mythical']
+        chance = [0.5, 0.3, 0.1, 0.065, 0.035]
         fish_dict = self.get_fishdict()
         fish = choice(fish_dict[np.random.choice(rarity, p=chance)])
         return fish
@@ -76,8 +104,9 @@ class NewFishingCog(commands.Cog):
         fish = self.Fish(**fish_dict[list(fish_dict)[0]])
         fishsize = fish.get_fish_size()
         userid = ctx.author.id
-
-        await ctx.send(f'<@{userid}> caught a {fishsize:.1f} cm {fish}', delete_after=8)        
+        await ctx.channel.send("fishing.. ", delete_after=5)
+        await asyncio.sleep(5)
+        await ctx.send(f'🎣 | <@{userid}>, you caught a {fishsize:.1f} cm {fish}', delete_after=8)
         await self.inventory.add_fish(userid, fish_dict, fishsize)
         
         try:
