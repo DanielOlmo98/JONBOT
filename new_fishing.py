@@ -126,7 +126,7 @@ class NewFishingCog(commands.Cog):
             await ctx.send(str(error.retry_after))
 
     @commands.command(name='topfish')
-    async def fish_leaderboard(self, ctx, fish: str = "flopper"):
+    async def fish_leaderboard(self,  ctx, *, fish: str = "flopper"):
         # inv = [inv[id] for id in inv.keys() if fish in inv[id]]
         inv = self.inventory.load_invs()
         filtered_inv = {k: v for k, v in inv.items() if fish in v}
