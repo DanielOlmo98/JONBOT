@@ -82,7 +82,7 @@ class NewFishingCog(commands.Cog, cooldown = 10):
 
     def get_fish(self):
         rarity = ['common', 'uncommon', 'rare', 'epic', 'legendary', 'mythical']
-        chance = [0.5, 0.3, 0.1, 0.06, 0.025, 0.015]
+        chance = [0.5, 0.25, 0.15, 0.07, 0.005, 0.0025]
         fish_dict = self.get_fishdict()
         fish = choice(fish_dict[np.random.choice(rarity, p=chance)])
         return fish
