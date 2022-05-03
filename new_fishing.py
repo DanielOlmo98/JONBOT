@@ -106,7 +106,6 @@ class NewFishingCog(commands.Cog):
         def __str__(self):
             return f'{self.name}'
 
-
     @commands.command(name='newfish')
     @commands.cooldown(1, 10, commands.BucketType.user)
     async def fish(self, ctx):
@@ -114,7 +113,10 @@ class NewFishingCog(commands.Cog):
         fish = self.Fish(**fish_dict[list(fish_dict)[0]])
         fishsize = fish.get_fish_size()
         userid = ctx.author.id
-
+        try:
+            await ctx.message.delete()
+        except discord.Forbidden:
+            pass
         await ctx.channel.send("fishing.. ", delete_after=5)
         await asyncio.sleep(5)
         await ctx.send(f'🎣 | <@{userid}>, you caught a {fishsize:.1f} cm {fish}', delete_after=10)
@@ -126,7 +128,7 @@ class NewFishingCog(commands.Cog):
             await ctx.send(str(error.retry_after))
 
     @commands.command(name='topfish')
-    async def fish_leaderboard(self,  ctx, *, fish: str = "flopper"):
+    async def fish_leaderboard(self, ctx, *, fish: str = "flopper"):
         # inv = [inv[id] for id in inv.keys() if fish in inv[id]]
         inv = self.inventory.load_invs()
         filtered_inv = {k: v for k, v in inv.items() if fish in v}
