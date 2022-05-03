@@ -1,0 +1,311 @@
+{
+    "fish": {
+        "1": {
+            "name": "Orange flopper",
+            "chat_name": "<:flopper:970067116583702578>",
+            "rarity": "common",
+            "chance": 0.9905423967034253,
+            "size_lims": [
+                10,
+                50
+            ],
+            "mean": 20
+        },
+        "2": {
+            "name": "Green flopper",
+            "chat_name": "<:green:971000839562993705>",
+            "rarity": "common",
+            "chance": 0.7121707218097797,
+            "size_lims": [
+                10,
+                50
+            ],
+            "mean": 20
+        },
+        "3": {
+            "name": "Blue flopper",
+            "chat_name": "<:Blueflopper:971004859937611786>",
+            "rarity": "common",
+            "chance": 0.41403516445093236,
+            "size_lims": [
+                10,
+                50
+            ],
+            "mean": 20
+        },
+        "4": {
+            "name": "Light blue Small fry",
+            "chat_name": "<:LightblueSmallfry:971004859153285141>",
+            "rarity": "common",
+            "chance": 0.5187339801106716,
+            "size_lims": [
+                10,
+                50
+            ],
+            "mean": 20
+        },
+        "5": {
+            "name": "Yellow sweetfin",
+            "chat_name": "\ud83d\udc20 ",
+            "rarity": "uncommon",
+            "chance": 0.4602206358110117,
+            "size_lims": [
+                10,
+                30
+            ],
+            "mean": 15
+        },
+        "6": {
+            "name": "Drift hop Flopper",
+            "chat_name": "<:DrifthopFlopper:971004859270721537> ",
+            "rarity": "uncommon",
+            "chance": 0.3841229741883966,
+            "size_lims": [
+                10,
+                30
+            ],
+            "mean": 15
+        },
+        "7": {
+            "name": "Crab",
+            "chat_name": "\ud83e\udd80",
+            "rarity": "uncommon",
+            "chance": 0.7122459178377136,
+            "size_lims": [
+                10,
+                30
+            ],
+            "mean": 15
+        },
+        "8": {
+            "name": "Shrimp",
+            "chat_name": "\ud83e\udd90",
+            "rarity": "uncommon",
+            "chance": 0.46078552741897905,
+            "size_lims": [
+                10,
+                30
+            ],
+            "mean": 15
+        },
+        "9": {
+            "name": "Lobster",
+            "chat_name": "\ud83e\udd9e",
+            "rarity": "uncommon",
+            "chance": 0.3843974930044858,
+            "size_lims": [
+                10,
+                30
+            ],
+            "mean": 15
+        },
+        "10": {
+            "name": "Spicy Fish",
+            "chat_name": "<:spicy:971001500300111883>",
+            "rarity": "rare",
+            "chance": 0.040574804773579776,
+            "size_lims": [
+                10,
+                40
+            ],
+            "mean": 20
+        },
+        "11": {
+            "name": "Black and blue Shieldfish",
+            "chat_name": "<:Blackandblueshieldfish:971004859648180244>",
+            "rarity": "rare",
+            "chance": 0.229525599300626,
+            "size_lims": [
+                10,
+                40
+            ],
+            "mean": 20
+        },
+        "12": {
+            "name": "Slurp Jellyfish",
+            "chat_name": "<:SlurpJellyfish:971004859438481459>",
+            "rarity": "rare",
+            "chance": 0.8672794579711447,
+            "size_lims": [
+                10,
+                40
+            ],
+            "mean": 20
+        },
+        "13": {
+            "name": "Dolphin",
+            "chat_name": "\ud83d\udc2c",
+            "rarity": "rare",
+            "chance": 0.48146232720270765,
+            "size_lims": [
+                100,
+                250
+            ],
+            "mean": 150
+        },
+        "14": {
+            "name": "Blowfish",
+            "chat_name": "\ud83d\udc21",
+            "rarity": "rare",
+            "chance": 0.9753159676518749,
+            "size_lims": [
+                20,
+                40
+            ],
+            "mean": 25
+        },
+        "15": {
+            "name": "Cockfish",
+            "chat_name": "Cock fish",
+            "rarity": "epic",
+            "chance": 0.7109024880802451,
+            "size_lims": [
+                1,
+                10
+            ]
+        },
+        "16": {
+            "name": "Squid",
+            "chat_name": "\ud83e\udd91",
+            "rarity": "epic",
+            "chance": 0.08041863543037198,
+            "size_lims": [
+                20,
+                40
+            ],
+            "mean": 25
+        },
+        "17": {
+            "name": "Ancient Scale",
+            "chat_name": "<:Ancientscale:971004858805141504>",
+            "rarity": "epic",
+            "chance": 0.6934384453141506,
+            "size_lims": [
+                20,
+                70
+            ],
+            "mean": 40
+        },
+        "18": {
+            "name": "Devilfish",
+            "chat_name": "<:DevilFish:971004859820171324>",
+            "rarity": "epic",
+            "chance": 0.8701725580479998,
+            "size_lims": [
+                20,
+                50
+            ],
+            "mean": 30
+        },
+        "19": {
+            "name": "Blue Slurpfish",
+            "chat_name": "<:Blueslurpfish:971004858939351110>",
+            "rarity": "epic",
+            "chance": 0.3573976158273937,
+            "size_lims": [
+                20,
+                50
+            ],
+            "mean": 30
+        },
+        "20": {
+            "name": "Stormfish",
+            "chat_name": "<:Stormfish:971004859656585236>",
+            "rarity": "epic",
+            "chance": 0.33585497433459977,
+            "size_lims": [
+                20,
+                50
+            ],
+            "mean": 30
+        },
+        "21": {
+            "name": "Thermal",
+            "chat_name": "<:Thermalfish:970068788991107102>",
+            "rarity": "legendary",
+            "chance": 0.02846422714868091,
+            "size_lims": [
+                30,
+                70
+            ],
+            "mean": 40
+        },
+        "22": {
+            "name": "Whale",
+            "chat_name": "\ud83d\udc33",
+            "rarity": "legendary",
+            "chance": 0.45215346578911353,
+            "size_lims": [
+                2500,
+                3500
+            ],
+            "mean": 2900
+        },
+        "23": {
+            "name": "Octopus",
+            "chat_name": "\ud83d\udc19",
+            "rarity": "legendary",
+            "chance": 0.28458314179323363,
+            "size_lims": [
+                40,
+                90
+            ],
+            "mean": 50
+        },
+        "24": {
+            "name": "Stare",
+            "chat_name": " <:stare:956548708399452211>",
+            "rarity": "legendary",
+            "chance": 0.6756206654488918,
+            "size_lims": [
+                1,
+                10
+            ],
+            "mean": 1
+        },
+        "25": {
+            "name": "Crocodile",
+            "chat_name": "\ud83d\udc0a",
+            "rarity": "legendary",
+            "chance": 0.2967570373560203,
+            "size_lims": [
+                400,
+                700
+            ],
+            "mean": 500
+        },
+        "26": {
+            "name": "Shark",
+            "chat_name": "\ud83e\udd88",
+            "rarity": "legendary",
+            "chance": 0.9451955406161658,
+            "size_lims": [
+                100,
+                250
+            ],
+            "mean": 150
+        },
+        "27": {
+            "name": "Seal",
+            "chat_name": "\ud83e\uddad",
+            "rarity": "legendary",
+            "chance": 0.2869678123182112,
+            "size_lims": [
+                150,
+                300
+            ],
+            "mean": 200
+        },
+        "28": {
+            "name": "Midas Flopper",
+            "chat_name": "",
+            "rarity": "mythical",
+            "chance": 0.11563787174401718,
+            "size_lims": [
+                30,
+                70
+            ],
+            "mean": 40
+        }
+    }
+}

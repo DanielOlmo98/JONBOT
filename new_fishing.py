@@ -16,13 +16,15 @@ from os import path
 from random import randint
 from errors import ChatError
 from discord.ext.commands import errors, bot
+from tinydb import TinyDB, Query
+from tinydb.table import Document
 
 
-class NewFishingCog(commands.Cog, cooldown = 10):
+class NewFishingCog(commands.Cog):
 
     def __init__(self, bot: commands.Bot, inv_filename="fish"):
         self.bot = bot
-        self.inventory = Inventory(inv_filename)
+        self.inventory = Inventory()
         self.cooldown = 10
 
     def get_fishdict(self, split=True):
@@ -195,8 +197,23 @@ class NewFishingCog(commands.Cog, cooldown = 10):
         await ctx.send(message)
 
 
-@dataclass
 class Inventory:
+
+    def __init__(self):
+        self.db = TinyDB("test.json", indent=4)
+        self.inv_table = self.db.table('inv')
+        self.fish_table = self.db.table('fish')
+
+    async def add_fish(self, userid, fishname, size):
+        User = Query()
+        results = self.inv_table.get(User[fishname], doc_id=123)
+
+        self.inv_table.insert(Document({'flopper': {'amount': 2, 'size': 10.0}}, doc_id=userid))
+        print()
+
+
+@dataclass
+class OldInventory:
 
     def __init__(self, inv_filename):
         if not os.path.exists(f'{inv_filename}.json'):
