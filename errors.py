@@ -13,7 +13,7 @@ class ErrorCog(commands.Cog):
             all_words = ctx.message.content.split()
             first_word = all_words[0]
 
-            await ctx.send(f'Wait {error.retry_after:2fs} before using {first_word} again',
+            await ctx.send(f'Wait {int(error.retry_after)}s before using {first_word} again',
                            delete_after=error.retry_after)
             return
 
