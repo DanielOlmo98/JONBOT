@@ -7,25 +7,27 @@ from random import random
 import numpy as np
 from numpy.random import default_rng
 import embeds
+import random
 
 from tabulate import tabulate
 from dataclasses import dataclass
-from discord.ext.commands import errors, bot
+from discord.ext.commands import errors
 from discord.ext import commands
 from os import path
 from random import randint
 from errors import ChatError
-from discord.ext.commands import errors, bot
-from tinydb import TinyDB, Query
+from discord.ext.commands import errors
+from tinydb import TinyDB, Query, where
 from tinydb.table import Document
 
 
 class NewFishingCog(commands.Cog):
 
-    def __init__(self, bot: commands.Bot, inv_filename="fish"):
+    def __init__(self, bot: commands.Bot):
         self.bot = bot
-        self.inventory = Inventory()
-        self.cooldown = 10
+        self.db = TinyDB("test.json", indent=4)
+        self.fish_table = self.db.table('fish')
+        self.inventory = Inventory(self.db)
 
     def get_fishdict(self, split=True):
         common_fish = [{'orange flopper': {'name': '<:flopper:970067116583702578>', 'size_lims': (10, 50), 'mean': 20}},
@@ -83,16 +85,23 @@ class NewFishingCog(commands.Cog):
             return fishdict
 
     def get_fish(self):
-        rarity = ['common', 'uncommon', 'rare', 'epic', 'legendary', 'mythical']
-        chance = [0.5, 0.25, 0.15, 0.07, 0.005, 0.0025]
-        fish_dict = self.get_fishdict()
-        fish = choice(fish_dict[np.random.choice(rarity, p=chance)])
-        return fish
+        results = self.fish_table.search(where('chance') > random.random())
+        smallest = 2
+        fish = None
+        for result in results:
+            fish_chance = result['chance']
+            if smallest > fish_chance:
+                fish = result
+                smallest = fish_chance
+        return self.Fish(**fish)
 
     @dataclass
     class Fish:
         name: str
+        chat_name: str
         size_lims: (float, float)
+        chance: float = 0.5
+        rarity: str = 'common'
         mean: float = None
         sigma: float = None
 
@@ -106,13 +115,12 @@ class NewFishingCog(commands.Cog):
             return np.clip(np.random.normal(self.mean, self.sigma), a_min=self.size_lims[0], a_max=self.size_lims[1])
 
         def __str__(self):
-            return f'{self.name}'
+            return f'{self.chat_name}'
 
-    @commands.command(name='newfish')
-    @commands.cooldown(1, 10, commands.BucketType.user)
+    @commands.command(name='fish')
+    @commands.cooldown(1, 15, commands.BucketType.user)
     async def fish(self, ctx):
-        fish_dict = self.get_fish()
-        fish = self.Fish(**fish_dict[list(fish_dict)[0]])
+        fish = self.get_fish()
         fishsize = fish.get_fish_size()
         userid = ctx.author.id
         try:
@@ -121,137 +129,99 @@ class NewFishingCog(commands.Cog):
             pass
         await ctx.channel.send("fishing.. ", delete_after=5)
         await asyncio.sleep(5)
-        await ctx.send(f'🎣 | <@{userid}>, you caught a {fishsize:.1f} cm {fish}', delete_after=5)
-        await self.inventory.add_fish(userid, fish_dict, fishsize)
+        await ctx.send(f'🎣 | <@{userid}>, you caught a {fishsize:.1f} cm {fish}', delete_after=10)
+        await self.inventory.add_fish(userid, fish.name, fishsize)
 
     @fish.error
     async def cd_error(self, error, ctx):
         if isinstance(error, errors.CommandOnCooldown):
             await ctx.send(str(error.retry_after))
 
+    @commands.cooldown(1, 10, commands.BucketType.user)
     @commands.command(name='topfish')
-    async def fish_leaderboard(self, ctx, *, fish: str = "orange flopper"):
-        # inv = [inv[id] for id in inv.keys() if fish in inv[id]]
-        inv = self.inventory.load_invs()
-        filtered_inv = {k: v for k, v in inv.items() if fish in v}
+    async def fish_leaderboard(self, ctx, *, fishname: str):
 
-        async with ctx.typing():
-            sorted_user_level_dict = dict()
-            sorted_user_id = sorted(filtered_inv.keys(),
-                                    key=lambda x: (filtered_inv[x][fish]["largest"]), reverse=True)
+        fishname = fishname.lower()
+        fish = self.fish_table.get(where('name') == fishname)
+        if fish is None:
+            raise ChatError('That fish does not exist.')
+        chat_name = fish['chat_name']
 
-            for user_id in sorted_user_id[:10]:
-                username = await self.bot.fetch_user(user_id)
-                sorted_user_level_dict[username.display_name] = (
-                    filtered_inv[user_id][fish]["largest"], filtered_inv[user_id][fish]["count"])
+        inv = self.inventory.fish_leaderboard(fishname)
+        if not len(inv):
+            raise ChatError('No one has this fish.')
 
-        table = tabulate([(k,) + v for k, v in sorted_user_level_dict.items()],
-                         headers=["User:", "Largest:", "Amount:"],
+        users_largest = []
+        for userinv in inv:
+            username = await self.bot.fetch_user(userinv.doc_id)
+            users_largest.append([username, inv[0][fishname]['size']])
+
+        sorted_sizelist = sorted(users_largest, key=lambda i: i[-1])
+
+        table = tabulate(sorted_sizelist,
+                         headers=["User:", "Largest:"],
                          tablefmt="plain", numalign="right", floatfmt=".1f")
 
-        name, _ = self.get_fishproperties(fish)
+        await ctx.send(f'{chat_name} leaderboard')
+        await ctx.send("```\n" + table + "\n```")
 
-        await ctx.message.channel.send(f'{name} leaderboard')
-        await ctx.message.channel.send("```\n" + table + "\n```")
-
-    def get_fishproperties(self, fish=None):
-        fish = fish.lower()
-        fishes = self.get_fishdict(split=False)
-        if fish is not None:
-            try:
-                name = fishes[fish]["name"]
-                size_lims = fishes[fish]["size_lims"]
-            except KeyError:
-                raise ChatError("Fish not found")
-
-            return name, size_lims
-        else:
-            names = []
-            size_lims = []
-            for fish in fishes.values():
-                names.append(fish["name"])
-                size_lims.append(fish["size_lims"])
-            return names, size_lims
-
+    @commands.cooldown(1, 60 * 15, commands.BucketType.guild)
     @commands.command(name='fishes')
-    async def send_fishes(self, ctx, fish: str = None):
-        if fish is not None:
-            name, size_lim = self.get_fishproperties(fish)
-            message = f'**{name}:** {size_lim[0]} - {size_lim[1]} cm'
+    async def send_fish_info(self, ctx, *, fishname: str = None):
+        if fishname is None:
+            fish_list = self.fish_table.all()
         else:
-            names, size_lims = self.get_fishproperties(None)
-            message = ""
-            for name, size_lim in zip(names, size_lims):
-                message += f'**{name}:** {size_lim[0]} - {size_lim[1]} cm\n'
+            fish_list = self.fish_table.get(where('name') == fishname)
+            if fish_list is None:
+                raise ChatError('That fish does not exist.')
+
+        message = ''
+        for fish in fish_list:
+            size_lim = fish['size_lims']
+            message += f'**{fish["chat_name"]}:** {size_lim[0]} - {size_lim[1]} cm\n'
         await ctx.send(message)
 
+    @commands.cooldown(1, 10, commands.BucketType.user)
     @commands.command(name='inv')
     async def send_inv(self, ctx, user: discord.User = None):
         userid = user.id if user is not None else ctx.message.author.id
-        userinv = self.inventory.get_userinv(userid)
-        fishes = self.get_fishdict(split=False)
+        userinv = self.inventory.inv_table.get(doc_id=userid)
+        if userinv is None:
+            raise ChatError('How bout you get some fishes.')
         message = ""
-        for fish, inv in userinv.items():
-            message += f'{fishes[fish]["name"]}:\n Amount: {inv["count"]}\n Largest: {inv["largest"]:.1f}cm\n\n'
+        for fishname in userinv:
+            chat_name = self.fish_table.get(where('name') == fishname)['chat_name']
+            inv_fish_dict = userinv.get(fishname)
+            message += f'{chat_name}:\n Amount: {inv_fish_dict["amount"]}\n Largest: {inv_fish_dict["size"]:.1f}cm\n\n'
 
         await ctx.send(message)
 
 
 class Inventory:
 
-    def __init__(self):
-        self.db = TinyDB("test.json", indent=4)
-        self.inv_table = self.db.table('inv')
-        self.fish_table = self.db.table('fish')
+    def __init__(self, db):
+        self.inv_table = db.table('inv')
 
     async def add_fish(self, userid, fishname, size):
-        User = Query()
-        results = self.inv_table.get(User[fishname], doc_id=123)
 
-        self.inv_table.insert(Document({'flopper': {'amount': 2, 'size': 10.0}}, doc_id=userid))
-        print()
+        def _edit_inv(size):
+            def transform(doc):
+                inv_fish = list(doc.values())[0]
+                inv_fish['amount'] += 1
+                if size > inv_fish['size']:
+                    inv_fish['size'] = size
 
+            return transform
 
-@dataclass
-class OldInventory:
+        if not self.inv_table.contains(where(fishname).exists()):
+            if not self.inv_table.contains(doc_id=userid):
+                self.inv_table.insert(Document({fishname: {'amount': 1, 'size': size}}, doc_id=userid))
+                return
 
-    def __init__(self, inv_filename):
-        if not os.path.exists(f'{inv_filename}.json'):
-            with open(f'{inv_filename}.json', 'w') as file:
-                json.dump({}, file)
-        self.inv_filename = inv_filename
-
-    def load_invs(self):
-        with open(f'{self.inv_filename}.json', 'r') as file:
-            return json.load(file)
-
-    def save_inv(self, inv):
-        with open(f'{self.inv_filename}.json', 'w') as file:
-            json.dump(inv, file, indent=4)
-
-    async def add_fish(self, userid, fish, size):
-        userid = str(userid)
-        fishname = str(list(fish)[0])
-        inv = self.load_invs()
-        newcount = 1
-        largest = size
-        try:
-            userinv = inv[userid]
-        except KeyError:
-            inv.update({userid: {fishname: {"count": newcount, "largest": largest}}})
-            self.save_inv(inv)
+            self.inv_table.update({fishname: {'amount': 1, 'size': size}}, doc_ids=[userid])
             return
 
-        try:
-            newcount = userinv[fishname]["count"] + 1
-            largest = size if size > userinv[fishname]["largest"] else userinv[fishname]["largest"]
-            userinv.update({fishname: {"count": newcount, "largest": largest}})
-        except KeyError:
-            userinv.update({fishname: {"count": newcount, "largest": largest}})
-        self.save_inv(inv)
+        self.inv_table.update(_edit_inv(size), where(fishname), doc_ids=[userid])
 
-    def get_userinv(self, userid):
-        try:
-            return self.load_invs()[str(userid)]
-        except KeyError:
-            raise ChatError("User not found")
+    def fish_leaderboard(self, fishname):
+        return self.inv_table.search(where(fishname).exists())

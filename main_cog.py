@@ -227,7 +227,6 @@ class MainCog(commands.Cog):
             voice_channel = ctx.author.voice.channel
             if ctx.voice_client is None:
                 vc = await voice_channel.connect()
-                print(f"Voice Channel: {voice_channel}")
 
             elif voice_channel is not ctx.voice_client.channel:
                 await ctx.voice_client.move_to(voice_channel)
@@ -235,7 +234,6 @@ class MainCog(commands.Cog):
 
             else:
                 vc = ctx.voice_client
-                print(f"Voice Channel: {voice_channel}")
 
             try:
                 sounds_list = os.listdir(sounds_path + arg)

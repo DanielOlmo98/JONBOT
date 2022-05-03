@@ -51,7 +51,6 @@ class ImgProcessing(commands.Cog):
                                 too_fast = True
                             frame_time.append(f_time)
 
-                        print(frame_time)
                         gif.save("assets/temp.gif", save_all=True, duration=frame_time)
                         if too_fast:
                             await message.channel.send("SLOW DOWN COWBOY ✋🤠🚫")

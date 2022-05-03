@@ -133,7 +133,7 @@
             "mean": 20
         },
         "13": {
-            "name": "Dolphin",
+            "name": "dolphin",
             "chat_name": "\ud83d\udc2c",
             "rarity": "rare",
             "chance": 0.48146232720270765,
@@ -306,6 +306,27 @@
                 70
             ],
             "mean": 40
+        }
+    },
+    "inv": {
+        "90182404404170752": {
+            "Slurp Jellyfish": {
+                "amount": 5,
+                "size": 2585.054275692982
+            },
+            "Black and blue Shieldfish": {
+                "amount": 1,
+                "size": 16.667362365471856
+            }
+        },
+        "540175819033542666": {
+            "dolphin": {
+                "amount": 5,
+                "size": 170.17434943391325
+            },
+            "cocker": {
+                "a": 1
+            }
         }
     }
 }

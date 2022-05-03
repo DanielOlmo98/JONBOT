@@ -80,7 +80,6 @@ class Economy(commands.Cog):
             self.users[str(message.author.id)]["Exp"] = self.users[str(message.author.id)]["Exp"] - randint(10, 20)
         if self.users[str(message.author.id)]["Exp"] <= 0:
             level_exp = (self.users[str(message.author.id)]["Level"] + 1) ** 2 * 35
-            print(level_exp)
             await message.channel.send("Level up pog")
             self.users[str(message.author.id)]["Exp"] = self.users[str(message.author.id)]["Exp"] + int(level_exp)
 
@@ -202,7 +201,6 @@ class Economy(commands.Cog):
     @commands.command(name='beg')
     async def beg(self, ctx):
         amount = randint(3, 7)
-        print(amount)
         self.users[str(ctx.author.id)]["Pocket"] = self.users[str(ctx.author.id)]["Pocket"] + amount
         await ctx.send(f'A kind stranger gave you {amount} 💰 ..')
 
@@ -217,7 +215,7 @@ class Economy(commands.Cog):
             await ctx.send(f'Gave {amount} to {mention.mention}')
 
     @commands.cooldown(1, 15.0, commands.BucketType.user)
-    @commands.command(name='fish', invoke_without_subcommand=True)
+    @commands.command(name='oldfish', invoke_without_subcommand=True)
     async def fish(self, message, mode: str = None):
         rarity = random()
         try:
@@ -366,7 +364,6 @@ class Economy(commands.Cog):
 
         else:
 
-            print(rarity)
             self.users[str(message.author.id)]["Pocket"] = self.users[str(message.author.id)]["Pocket"] - 10
             if self.users[str(message.author.id)]["Pocket"] < 10:
                 await message.channel.send(f'get some more jonbucks man,'
