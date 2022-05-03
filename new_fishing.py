@@ -68,7 +68,7 @@ class NewFishingCog(commands.Cog):
                     'legendary': legendary_fish, 'mythical': mythical_fish,}
         else:
             fishdict = {}
-            for fish in (common_fish + rare_fish + epic_fish + legendary_fish):
+            for fish in (common_fish +  uncommon_fish + epic_fish + legendary_fish + mythical_fish):
                 fishdict.update(fish)
             return fishdict
 
