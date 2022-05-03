@@ -18,7 +18,7 @@ from errors import ChatError
 from discord.ext.commands import errors, bot
 
 
-class NewFishingCog(commands.Cog):
+class NewFishingCog(commands.Cog, cooldown = 10):
 
     def __init__(self, bot: commands.Bot, inv_filename="fish"):
         self.bot = bot
@@ -119,7 +119,7 @@ class NewFishingCog(commands.Cog):
             pass
         await ctx.channel.send("fishing.. ", delete_after=5)
         await asyncio.sleep(5)
-        await ctx.send(f'🎣 | <@{userid}>, you caught a {fishsize:.1f} cm {fish}', delete_after=10)
+        await ctx.send(f'🎣 | <@{userid}>, you caught a {fishsize:.1f} cm {fish}', delete_after=5)
         await self.inventory.add_fish(userid, fish_dict, fishsize)
 
     @fish.error
@@ -128,7 +128,7 @@ class NewFishingCog(commands.Cog):
             await ctx.send(str(error.retry_after))
 
     @commands.command(name='topfish')
-    async def fish_leaderboard(self, ctx, *, fish: str = "flopper"):
+    async def fish_leaderboard(self, ctx, *, fish: str = "orange flopper"):
         # inv = [inv[id] for id in inv.keys() if fish in inv[id]]
         inv = self.inventory.load_invs()
         filtered_inv = {k: v for k, v in inv.items() if fish in v}
