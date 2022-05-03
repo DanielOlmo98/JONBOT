@@ -311,12 +311,24 @@
     "inv": {
         "90182404404170752": {
             "Slurp Jellyfish": {
-                "amount": 5,
+                "amount": 6,
                 "size": 2585.054275692982
             },
             "Black and blue Shieldfish": {
+                "amount": 2,
+                "size": 17.69788232079315
+            },
+            "Orange flopper": {
                 "amount": 1,
-                "size": 16.667362365471856
+                "size": 28.63182497409437
+            },
+            "Cockfish": {
+                "amount": 1,
+                "size": 7.862394019461999
+            },
+            "Stare": {
+                "amount": 1,
+                "size": 1.0
             }
         },
         "540175819033542666": {
@@ -326,6 +338,40 @@
             },
             "cocker": {
                 "a": 1
+            }
+        },
+        "281546366793285633": {
+            "Black and blue Shieldfish": {
+                "amount": 4,
+                "size": 10.729805047687009
+            },
+            "Shark": {
+                "amount": 1,
+                "size": 183.78580239956403
+            },
+            "Stare": {
+                "amount": 1,
+                "size": 1.0
+            },
+            "Thermal": {
+                "amount": 1,
+                "size": 42.67426173373034
+            },
+            "Slurp Jellyfish": {
+                "amount": 1,
+                "size": 15.07831458607218
+            },
+            "Yellow sweetfin": {
+                "amount": 1,
+                "size": 20.39060146534127
+            },
+            "Octopus": {
+                "amount": 1,
+                "size": 56.85416913682296
+            },
+            "Blowfish": {
+                "amount": 1,
+                "size": 30.323979538040373
             }
         }
     }

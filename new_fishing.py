@@ -128,9 +128,9 @@ class NewFishingCog(commands.Cog):
         except discord.Forbidden:
             pass
         await ctx.channel.send("fishing.. ", delete_after=5)
+        await self.inventory.add_fish(userid, fish.name, fishsize)
         await asyncio.sleep(5)
         await ctx.send(f'🎣 | <@{userid}>, you caught a {fishsize:.1f} cm {fish}', delete_after=10)
-        await self.inventory.add_fish(userid, fish.name, fishsize)
 
     @fish.error
     async def cd_error(self, error, ctx):
@@ -204,24 +204,24 @@ class Inventory:
 
     async def add_fish(self, userid, fishname, size):
 
-        def _edit_inv(size):
+        def _edit_inv(size, fishname):
             def transform(doc):
-                inv_fish = list(doc.values())[0]
+                inv_fish = doc.get(fishname)
                 inv_fish['amount'] += 1
                 if size > inv_fish['size']:
                     inv_fish['size'] = size
 
             return transform
 
-        if not self.inv_table.contains(where(fishname).exists()):
-            if not self.inv_table.contains(doc_id=userid):
-                self.inv_table.insert(Document({fishname: {'amount': 1, 'size': size}}, doc_id=userid))
-                return
+        if not self.inv_table.contains(doc_id=userid):
+            self.inv_table.insert(Document({fishname: {'amount': 1, 'size': size}}, doc_id=userid))
+            return
 
+        if self.inv_table.get(doc_id=userid).get(fishname) is None:
             self.inv_table.update({fishname: {'amount': 1, 'size': size}}, doc_ids=[userid])
             return
 
-        self.inv_table.update(_edit_inv(size), where(fishname), doc_ids=[userid])
+        self.inv_table.update(_edit_inv(size, fishname), where(fishname), doc_ids=[userid])
 
     def fish_leaderboard(self, fishname):
         return self.inv_table.search(where(fishname).exists())
