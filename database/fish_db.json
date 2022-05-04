@@ -5,7 +5,7 @@
             "chat_name": "<:flopper:970067116583702578>",
             "rarity": "Common",
             "catching_restrictions": [],
-            "chance": 0.9,
+            "chance": 0.5,
             "size_lims": [
                 10,
                 50
@@ -17,7 +17,7 @@
             "chat_name": "<:green:971000839562993705>",
             "rarity": "Common",
             "catching_restrictions": [],
-            "chance": 0,
+            "chance": 0.5,
             "size_lims": [
                 10,
                 50
@@ -29,7 +29,7 @@
             "chat_name": "<:Blueflopper:971004859937611786>",
             "rarity": "Common",
             "catching_restrictions": [],
-            "chance": 0,
+            "chance": 0.5,
             "size_lims": [
                 10,
                 50

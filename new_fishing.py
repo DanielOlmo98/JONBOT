@@ -2,8 +2,7 @@ import json
 import asyncio
 import os.path
 import discord
-from random import choice
-from random import random
+from random import choice, random, shuffle
 import numpy as np
 from numpy.random import default_rng
 import embeds
@@ -19,7 +18,7 @@ from errors import ChatError
 from discord.ext.commands import errors
 from tinydb import TinyDB, Query, where
 from tinydb.table import Document
-
+from typing import List
 
 class NewFishingCog(commands.Cog):
 
@@ -32,6 +31,7 @@ class NewFishingCog(commands.Cog):
 
     def get_fish(self):
         results = self.fish_table.search(where('chance') > random.random())
+        shuffle(results)        
         smallest = 2
         fish = None
         for result in results:
@@ -51,6 +51,7 @@ class NewFishingCog(commands.Cog):
         name: str
         chat_name: str
         size_lims: (float, float)
+        catching_restrictions: List
         chance: float = 0.5
         rarity: str = 'common'
         mean: float = None
@@ -150,7 +151,7 @@ class NewFishingCog(commands.Cog):
         for fishname in userinv:
             chat_name = self.fish_table.get(where('name') == fishname)['chat_name']
             inv_fish_dict = userinv.get(fishname)
-            message += f'{chat_name}:\n Amount: {inv_fish_dict["amount"]}\n Largest: {inv_fish_dict["size"]:.1f}cm\n\n'
+            message += f'**{chat_name}:** Amount: {inv_fish_dict["amount"]}, Largest: {inv_fish_dict["size"]:.1f}cm\n'
 
         await ctx.send(message)
 
@@ -169,18 +170,21 @@ class Inventory:
                 inv_fish['amount'] += 1
                 if size > inv_fish['size']:
                     inv_fish['size'] = size
+                    size_record = True
 
             return transform
 
         if not self.inv_table.contains(doc_id=userid):
             self.inv_table.insert(Document({fishname: {'amount': 1, 'size': size}}, doc_id=userid))
-            return
+            return f'Welcome to the fishing paradise.'
 
         if self.inv_table.get(doc_id=userid).get(fishname) is None:
             self.inv_table.update({fishname: {'amount': 1, 'size': size}}, doc_ids=[userid])
-            return
-
+            return f'New fish!'
+        
+        size_record = False
         self.inv_table.update(_edit_inv(size, fishname), where(fishname), doc_ids=[userid])
+        return 'New personal best!' if size_record else ''
 
     def fish_leaderboard(self, fishname):
         return self.inv_table.search(where(fishname).exists())
