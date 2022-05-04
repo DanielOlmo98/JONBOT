@@ -176,7 +176,7 @@ class Inventory:
         record = ''
         if user_fish_inv['size'] < size:
             record = f'🎣 | Personal best! {size}cm'
-            sorted_usrlist = self.fish_leaderboard(fishname)
+            sorted_usrlist = await self.fish_leaderboard(fishname)
             if sorted_usrlist[0][-1] < size:
                 record = f'🎣 | New record! {size}cm'
 
@@ -192,6 +192,5 @@ class Inventory:
         users_largest = []
         for userinv in inv:
             username = await self.bot.fetch_user(userinv.doc_id)
-            users_largest.append([username, inv[0][fishname]['size']])
-
+            users_largest.append([username.display_name, inv[0][fishname]['size']])
         return sorted(users_largest, key=lambda i: i[-1])
