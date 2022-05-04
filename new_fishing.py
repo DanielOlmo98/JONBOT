@@ -104,7 +104,7 @@ class NewFishingCog(commands.Cog):
         if fish is None:
             raise ChatError('That fish does not exist.')
 
-        sorted_sizelist = self.inventory.fish_leaderboard(fishname)[1:]
+        sorted_sizelist = self.inventory.fish_leaderboard(fishname)
         table = tabulate(sorted_sizelist,
                          headers=["User:", "Largest:"],
                          tablefmt="plain", numalign="right", floatfmt=".1f")
@@ -175,15 +175,15 @@ class Inventory:
 
         record = ''
         if user_fish_inv['size'] < size:
-            record = '🎣 | Personal best!'
+            record = f'🎣 | Personal best! {size}cm'
             sorted_usrlist = self.fish_leaderboard(fishname)
             if sorted_usrlist[0][-1] < size:
-                record = '🎣 | New record!'
+                record = f'🎣 | New record! {size}cm'
 
         self.inv_table.update(_edit_inv(size, fishname), where(fishname), doc_ids=[userid])
         return record
 
-    def fish_leaderboard(self, fishname):
+    async def fish_leaderboard(self, fishname):
         fishname = fishname.lower()
         inv = self.inv_table.search(where(fishname).exists())
         if not len(inv):
@@ -191,7 +191,7 @@ class Inventory:
 
         users_largest = []
         for userinv in inv:
-            username = self.bot.fetch_user(userinv.doc_id)
-            users_largest.append([userinv.doc_id, username, inv[0][fishname]['size']])
+            username = await self.bot.fetch_user(userinv.doc_id)
+            users_largest.append([username, inv[0][fishname]['size']])
 
         return sorted(users_largest, key=lambda i: i[-1])
