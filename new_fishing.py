@@ -71,13 +71,14 @@ class NewFishingCog(commands.Cog):
     @commands.command(name='fish')
     @commands.cooldown(1, 15, commands.BucketType.user)
     async def fish(self, ctx):
+        try:
+            await ctx.message.delete()
+        except discord.Forbidden:
+            pass
+
         userid = ctx.author.id
         try:
             fish = self.get_fish()
-            await ctx.message.delete()
-
-        except discord.Forbidden:
-            pass
         except ChatError as e:
             await ctx.send(f'🎣 | <@{userid}>, {e}', delete_after=15)
             return
