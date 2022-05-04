@@ -4,8 +4,11 @@
 /.idea/
 .idea
 bank.json
+database/fish_inv.json
 !/.env
 __pycache__/
 
 !/ - Copy.env
 !/bank.json
+assets/
+/assets/
