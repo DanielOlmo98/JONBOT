@@ -97,7 +97,7 @@ class NewFishingCog(commands.Cog):
                                'mean': 40}},
             {'dragon': {'name': 'DORAGON 🐉', 'size_lims': (800, 1500), 'mean': 1000}},
             {'tengu': {'name': 'japanese goburin 👺', 'size_lims': (130, 180), 'mean': 140}},
-            {'majima': {'name': 'MAJIMA NO NII SAN?? <:majimbo:971356122822877234>', 'size_lims': (130, 180),
+            {'majima': {'name': 'MAJIMA NO NII SAN??? <:majimbo:971356122822877234>', 'size_lims': (130, 180),
                         'mean': 140}},
         ]
         if split:
@@ -142,7 +142,7 @@ class NewFishingCog(commands.Cog):
         def __str__(self):
             return f'{self.chat_name}'
 
-    @commands.command(name='fishk')
+    @commands.command(name='fish')
     @commands.cooldown(1, 15, commands.BucketType.user)
     async def fish(self, ctx):
         fish = self.get_fish()
