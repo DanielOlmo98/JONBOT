@@ -93,7 +93,7 @@ class NewFishingCog(commands.Cog):
             {'tuna': {'name': '<:Tuna:971344403304185866>', 'size_lims': (40, 200), 'mean': 80}},
         ]
         mythical_fish = [
-            {'midas Flopper': {'name': '<:MidasFlopper:971004859803398154>', 'size_lims': (30, 70),
+            {'midas Flopper': {'name': '<:MidasFlopper:971004859803398154>', 'size_lims': (35, 70),
                                'mean': 40}},
             {'dragon': {'name': 'DORAGON 🐉', 'size_lims': (800, 1500), 'mean': 1000}},
             {'tengu': {'name': 'japanese goburin 👺', 'size_lims': (130, 180), 'mean': 140}},
