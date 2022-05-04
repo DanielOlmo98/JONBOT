@@ -175,10 +175,10 @@ class Inventory:
 
         record = ''
         if user_fish_inv['size'] < size:
-            record = f'🎣 | Personal best! {size}cm'
+            record = f'🎣 | Personal best! {size:.1f}cm'
             sorted_usrlist = await self.fish_leaderboard(fishname)
             if sorted_usrlist[0][-1] < size:
-                record = f'🎣 | New record! {size}cm'
+                record = f'🎣 | New record! {size:.1f}cm'
 
         self.inv_table.update(_edit_inv(size, fishname), where(fishname), doc_ids=[userid])
         return record
