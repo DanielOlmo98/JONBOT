@@ -23,11 +23,11 @@ from tinydb.table import Document
 
 class NewFishingCog(commands.Cog):
 
-    def __init__(self, bot: commands.Bot, inv_filename="fish"):
+    def __init__(self, bot: commands.Bot):
         self.bot = bot
-        self.db = TinyDB("test.json", indent=4)
+        self.db = TinyDB("database/fish_db.json", indent=4)
         self.fish_table = self.db.table('fish')
-        self.inventory = Inventory(self.db)
+        self.inventory = Inventory()
 
     def get_fishdict(self, split=True):
         common_fish = [
@@ -35,7 +35,7 @@ class NewFishingCog(commands.Cog):
             {'green flopper': {'name': '<:green:971000839562993705>', 'size_lims': (10, 50), 'mean': 20}},
             {'blue flopper': {'name': '<:Blueflopper:971004859937611786>', 'size_lims': (10, 50),
                               'mean': 20}},
-            {'light blue Small fry': {'name': '<:LightblueSmallfry:971004859153285141>',
+            {'light blue small fry': {'name': '<:LightblueSmallfry:971004859153285141>',
                                       'size_lims': (10, 50), 'mean': 20}},
             {'magikarp': {'name': '<:magikar: 971342209196654642>', 'size_lims': (10, 50), 'mean': 20}},
             {'feebas': {'name': '<:feebas: 971344403060903936> ', 'size_lims': (10, 50), 'mean': 20}},
@@ -93,7 +93,7 @@ class NewFishingCog(commands.Cog):
             {'tuna': {'name': '<:Tuna:971344403304185866>', 'size_lims': (40, 200), 'mean': 80}},
         ]
         mythical_fish = [
-            {'midas Flopper': {'name': '<:MidasFlopper:971004859803398154>', 'size_lims': (35, 70),
+            {'midas flopper': {'name': '<:MidasFlopper:971004859803398154>', 'size_lims': (35, 70),
                                'mean': 40}},
             {'dragon': {'name': 'DORAGON 🐉', 'size_lims': (800, 1500), 'mean': 1000}},
             {'tengu': {'name': 'japanese goburin 👺', 'size_lims': (130, 180), 'mean': 140}},
@@ -101,13 +101,29 @@ class NewFishingCog(commands.Cog):
                         'mean': 140}},
         ]
         if split:
-            return {'common': common_fish, 'uncommon': uncommon_fish, 'rare': rare_fish, 'epic': epic_fish,
-                    'legendary': legendary_fish, 'mythical': mythical_fish, }
+            return {'Common': common_fish, 'Uncommon': uncommon_fish, 'Rare': rare_fish, 'Epic': epic_fish,
+                    'Legendary': legendary_fish, 'Mythical': mythical_fish, }
         else:
             fishdict = {}
             for fish in (common_fish + uncommon_fish + rare_fish + epic_fish + legendary_fish + mythical_fish):
                 fishdict.update(fish)
             return fishdict
+
+    @commands.command(name='dump')
+    async def dict_fish_into_db(self, ctx):
+        if ctx.author.id != 90182404404170752:
+            return
+        else:
+            for rarity, list in self.get_fishdict().items():
+                for fish in list:
+                    for name, props in fish.items():
+                        fishdict = {'name': name, 'chat_name': props['name'], 'rarity': rarity, 'catching_restrictions': [],
+                                    'chance': 0}
+                        del props['name']
+                        fishdict = {**fishdict, **props}
+                        print(fishdict)
+                        self.fish_table.insert(fishdict)
+
 
     def get_fish(self):
         results = self.fish_table.search(where('chance') > random.random())
@@ -118,6 +134,10 @@ class NewFishingCog(commands.Cog):
             if smallest > fish_chance:
                 fish = result
                 smallest = fish_chance
+
+        if fish is None:
+            raise ChatError('You caught nothing')
+
         return self.Fish(**fish)
 
     @dataclass
@@ -203,7 +223,7 @@ class NewFishingCog(commands.Cog):
         message = ''
         for fish in fish_list:
             size_lim = fish['size_lims']
-            message += f'**{fish["chat_name"]}:** {size_lim[0]} - {size_lim[1]} cm\n'
+            message += f'**{fish["chat_name"]}:** {fish["rarity"]}, {size_lim[0]} - {size_lim[1]} cm\n'
         await ctx.send(message)
 
     @commands.cooldown(1, 10, commands.BucketType.user)
@@ -224,8 +244,9 @@ class NewFishingCog(commands.Cog):
 
 class Inventory:
 
-    def __init__(self, db):
-        self.inv_table = db.table('inv')
+    def __init__(self):
+        self.db = TinyDB("database/fish_inv.json", indent=4)
+        self.inv_table = self.db.table('inv')
 
     async def add_fish(self, userid, fishname, size):
 
@@ -250,3 +271,7 @@ class Inventory:
 
     def fish_leaderboard(self, fishname):
         return self.inv_table.search(where(fishname).exists())
+
+
+
+
