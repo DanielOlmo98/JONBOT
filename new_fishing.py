@@ -8,7 +8,7 @@ import numpy as np
 from numpy.random import default_rng
 import embeds
 import random
-
+import re
 from tabulate import tabulate
 from dataclasses import dataclass
 from discord.ext.commands import errors
@@ -30,22 +30,6 @@ class NewFishingCog(commands.Cog):
         self.inventory = Inventory()
 
 
-    @commands.command(name='dump')
-    async def dict_fish_into_db(self, ctx):
-        if ctx.author.id != 90182404404170752:
-            return
-        else:
-            for rarity, list in self.get_fishdict().items():
-                for fish in list:
-                    for name, props in fish.items():
-                        fishdict = {'name': name, 'chat_name': props['name'], 'rarity': rarity, 'catching_restrictions': [],
-                                    'chance': 0}
-                        del props['name']
-                        fishdict = {**fishdict, **props}
-                        print(fishdict)
-                        self.fish_table.insert(fishdict)
-
-
     def get_fish(self):
         results = self.fish_table.search(where('chance') > random.random())
         smallest = 2
@@ -57,9 +41,10 @@ class NewFishingCog(commands.Cog):
                 smallest = fish_chance
 
         if fish is None:
-            raise ChatError('You caught nothing')
+            raise ChatError('you caught nothing')
 
         return self.Fish(**fish)
+
 
     @dataclass
     class Fish:
@@ -86,14 +71,16 @@ class NewFishingCog(commands.Cog):
     @commands.command(name='fish')
     @commands.cooldown(1, 15, commands.BucketType.user)
     async def fish(self, ctx):
+        userid = ctx.author.id
         try:
             await ctx.message.delete()
             fish = self.get_fish()
 
         except discord.Forbidden:
             pass
-        except ChatError:
-            await ctx.send(str(ChatError), delete_after = 5)
+        except ChatError as e:
+            await ctx.send(f'🎣 | <@{userid}>, {e}' , delete_after = 15)
+            return
 
         fishsize = fish.get_fish_size()
         userid = ctx.author.id
@@ -135,20 +122,21 @@ class NewFishingCog(commands.Cog):
         await ctx.send(f'{chat_name} leaderboard')
         await ctx.send("```\n" + table + "\n```")
 
-    @commands.cooldown(1, 60 * 15, commands.BucketType.guild)
+    @commands.cooldown(1, 30, commands.BucketType.guild)
     @commands.command(name='fishes')
-    async def send_fish_info(self, ctx, *, fishname: str = None):
-        if fishname is None:
-            fish_list = self.fish_table.all()
-        else:
-            fish_list = self.fish_table.get(where('name') == fishname)
-            if fish_list is None:
-                raise ChatError('That fish does not exist.')
+    async def send_fish_info(self, ctx, rarity: str = None):
+        if rarity is None:
+            raise ChatError('What rarity?')
 
-        message = ''
+        fish_list = self.fish_table.search(Query().rarity.matches(rarity, flags = re.IGNORECASE))
+        if fish_list is None:
+            raise ChatError('No fish found.')
+
+        message = f'**{rarity.lower().title()} fishes:**\n'
+        print(fish_list)
         for fish in fish_list:
             size_lim = fish['size_lims']
-            message += f'**{fish["chat_name"]}:** {fish["rarity"]}, {size_lim[0]} - {size_lim[1]} cm\n'
+            message += f'{fish["chat_name"]}: {size_lim[0]} - {size_lim[1]} cm\n'
         await ctx.send(message)
 
     @commands.cooldown(1, 10, commands.BucketType.user)
