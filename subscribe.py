@@ -3,7 +3,7 @@ from discord.ext import commands
 import discord
 from os import path
 
-# cock
+
 class Subscribe(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
