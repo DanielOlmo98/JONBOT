@@ -5,7 +5,7 @@
             "chat_name": "<:flopper:970067116583702578>",
             "rarity": "Common",
             "catching_restrictions": [],
-            "chance": 0,
+            "chance": 0.9,
             "size_lims": [
                 10,
                 50
