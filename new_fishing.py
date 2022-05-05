@@ -153,6 +153,16 @@ class Inventory:
         self.inv_table = self.db.table('inv')
 
     async def add_fish(self, userid, fishname, size):
+        async def check_record():
+            try:
+                sorted_usrlist = await self.fish_leaderboard(fishname)
+                if sorted_usrlist[0][-1] < size:
+                    return f'\n🎣 | New record! {size:.1f}cm'
+            except ChatError:
+                return f'\n🎣 | You are the first person to catch a'
+
+            return ''
+
 
         def _edit_inv(size, fishname):
             def transform(doc):
@@ -165,19 +175,20 @@ class Inventory:
 
         if not self.inv_table.contains(doc_id=userid):
             self.inv_table.insert(Document({fishname: {'amount': 1, 'size': size}}, doc_id=userid))
-            return f'🎣 | Welcome to the fishing paradise'
+            record = await check_record()
+            return f'🎣 | Welcome to the fishing paradise{record}'
 
         user_fish_inv = self.inv_table.get(doc_id=userid).get(fishname)
         if user_fish_inv is None:
             self.inv_table.update({fishname: {'amount': 1, 'size': size}}, doc_ids=[userid])
-            return f'🎣 | New fish!'
+            record = await check_record()
+            return f'🎣 | New fish!{record}'
 
         record = ''
         if user_fish_inv['size'] < size:
-            record = f'🎣 | Personal best! {size:.1f}cm'
-            sorted_usrlist = await self.fish_leaderboard(fishname)
-            if sorted_usrlist[0][-1] < size:
-                record = f'🎣 | New record! {size:.1f}cm'
+            pb = f'🎣 | Personal best! {size:.1f}cm'
+            record = await check_record()
+            record = record if record else pb
 
         self.inv_table.update(_edit_inv(size, fishname), where(fishname), doc_ids=[userid])
         return record
