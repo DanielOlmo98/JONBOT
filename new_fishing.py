@@ -104,7 +104,7 @@ class NewFishingCog(commands.Cog):
         if fish is None:
             raise ChatError('That fish does not exist.')
 
-        sorted_sizelist = self.inventory.fish_leaderboard(fishname)
+        sorted_sizelist = await self.inventory.fish_leaderboard(fishname)
         table = tabulate(sorted_sizelist,
                          headers=["User:", "Largest:"],
                          tablefmt="plain", numalign="right", floatfmt=".1f")
@@ -124,7 +124,6 @@ class NewFishingCog(commands.Cog):
             raise ChatError('No fish found.')
 
         message = f'**{rarity.lower().title()} fishes:**\n'
-        print(fish_list)
         for fish in fish_list:
             size_lim = fish['size_lims']
             message += f'{fish["chat_name"]}: {size_lim[0]} - {size_lim[1]} cm\n'
@@ -192,5 +191,5 @@ class Inventory:
         users_largest = []
         for userinv in inv:
             username = await self.bot.fetch_user(userinv.doc_id)
-            users_largest.append([username.display_name, inv[0][fishname]['size']])
-        return sorted(users_largest, key=lambda i: i[-1])
+            users_largest.append([username.display_name, userinv[fishname]['size']])
+        return sorted(users_largest, key=lambda i: i[-1], reverse=True)
