@@ -192,6 +192,9 @@ class NewFishingCog(commands.Cog):
     @commands.command(name='buyf')
     async def buy_item(self, ctx, itemname: str = None):
         userid = ctx.author.id
+        if await self.equipment.user_hasitem(userid, itemname):
+            raise ChatError('You already have this item.')
+
         price = await self.equipment.get_item_price(itemname)
 
         if price is None:
@@ -221,6 +224,13 @@ class NewFishingCog(commands.Cog):
         userid = user.id if user is not None else ctx.message.author.id
         equipment = await self.equipment.get_items(userid)
         await ctx.send(equipment)
+
+    @commands.cooldown(1, 10, commands.BucketType.user)
+    @commands.command(name='equip')
+    async def equip_item(self, ctx, itemname: str = None):
+        userid = ctx.author.id
+        await self.equipment.equip_item(userid, itemname)
+        ctx.send('Item equiped.')
 
 
 class Inventory:
@@ -339,12 +349,20 @@ class Equipment:
             return empty_inv
         return equiped
 
+    async def equip_item(self, userid, itemname):
+        item_category = self.items_table.get(where('name') == itemname)['type']
+
+        if not self.user_hasitem(userid, itemname):
+            raise ChatError('You do not have this item.')
+
+        self.equiped_table.update({item_category: itemname}, doc_ids=[userid])
+
     async def get_items(self, userid):
         if not self.item_inv_table.contains(doc_id=userid):
             self.item_inv_table.insert(Document({'rod': [], 'lure': [], 'bait': []}, doc_id=userid))
             raise ChatError('Empy inventory')
-        equiped = self.item_inv_table.get(doc_id=userid)
-        return equiped
+        inv = self.item_inv_table.get(doc_id=userid)
+        return inv
 
     async def add_item(self, userid, itemname):
         def _edit_inv(itemname, item_category):
@@ -355,9 +373,11 @@ class Equipment:
 
         item_category = self.items_table.get(where('name') == itemname)['type']
         self.item_inv_table.update(_edit_inv(itemname, item_category), doc_ids=[userid])
-        # self.inv_table.upsert(Document({item_category: []}, doc_id=userid))
 
     async def get_item_price(self, itemname):
-        item_price = self.items_table.get(where('name') == itemname)['price']
+        return self.items_table.get(where('name') == itemname)['price']
 
-        return item_price
+    async def user_hasitem(self, userid, itemname):
+        item_category = self.items_table.get(where('name') == itemname)['type']
+        user_inv = await self.get_items(userid)
+        return itemname in user_inv[item_category]
