@@ -21,13 +21,10 @@ from tinydb.table import Document
 from typing import List
 
 
-class NewFishingCog(commands.Cog):
+class Fishing:
 
-    def __init__(self, bot: commands.Bot):
-        self.bot = bot
-        self.db = TinyDB("database/fish_db.json", indent=4)
-        self.fish_table = self.db.table('fish')
-        self.inventory = Inventory(self.bot)
+    def __init__(self, fish_table):
+        self.fish_table = fish_table
 
     def get_fish(self):
         results = self.fish_table.search(where('chance') > random.random())
@@ -68,6 +65,19 @@ class NewFishingCog(commands.Cog):
         def __str__(self):
             return f'{self.chat_name}'
 
+
+class NewFishingCog(commands.Cog):
+
+    def __init__(self, bot: commands.Bot):
+        self.bot = bot
+        self.db = TinyDB("database/fish_db.json", indent=4)
+        self.fish_table = self.db.table('fish')
+        self.inventory = Inventory(self.bot)
+        self.equipment = Equipment(self.bot)
+
+    async def get_chatname(self, fishname):
+        return self.fish_table.get(where('name') == fishname).get('chat_name')
+
     @commands.command(name='fish')
     @commands.cooldown(1, 15, commands.BucketType.user)
     async def fish(self, ctx):
@@ -77,8 +87,9 @@ class NewFishingCog(commands.Cog):
             pass
 
         userid = ctx.author.id
+
         try:
-            fish = self.get_fish()
+            fish = Fishing(self.fish_table).get_fish()
         except ChatError as e:
             await ctx.send(f'🎣 | <@{userid}>, {e}', delete_after=15)
             return
@@ -131,18 +142,59 @@ class NewFishingCog(commands.Cog):
 
     @commands.cooldown(1, 10, commands.BucketType.user)
     @commands.command(name='inv')
-    async def send_inv(self, ctx, user: discord.User = None):
+    async def send_inv(self, ctx, user: discord.User = None, rarity: str = None):
+        if rarity is None:
+            raise ChatError('What rarity?')
+
         userid = user.id if user is not None else ctx.message.author.id
         userinv = self.inventory.inv_table.get(doc_id=userid)
+
         if userinv is None:
             raise ChatError('How bout you get some fishes.')
+
         message = ""
         for fishname in userinv:
-            chat_name = self.fish_table.get(where('name') == fishname)['chat_name']
-            inv_fish_dict = userinv.get(fishname)
-            message += f'**{chat_name}:** Amount: {inv_fish_dict["amount"]}, Largest: {inv_fish_dict["size"]:.1f}cm\n'
+            fish_dict = self.fish_table.get(where('name') == fishname)
+            if fish_dict['rarity'].lower() == rarity.lower():
+                chat_name = fish_dict['chat_name']
+                inv_fish_dict = userinv.get(fishname)
+                message += f'**{chat_name}:** Amount: {inv_fish_dict["amount"]}, Largest: {inv_fish_dict["size"]:.1f}cm\n'
 
         await ctx.send(message)
+
+    @commands.cooldown(1, 30, commands.BucketType.guild)
+    @commands.command(name='pricecheck')
+    async def check_balance(self, ctx, itemname: str = None):
+        userid = ctx.author.id
+        price = await self.equipment.get_item_price(itemname)
+        user_balance = await self.inventory.user_balance_check(userid, price)
+
+        can_afford = True
+        message = 'Balance:     |   Price:\n'
+        for fishname in price.keys():
+            chatname = self.get_chatname(fishname)
+            fish_price = price[fishname]
+            balance = user_balance[fishname]
+
+            if balance < fish_price:
+                can_afford = False
+
+            message += f'{chatname}: {balance}   |   {fish_price}\n'
+
+        await ctx.send(message)
+        return can_afford
+
+    @commands.cooldown(1, 30, commands.BucketType.guild)
+    @commands.command(name='buyf')
+    async def buy_item(self, ctx, itemname: str = None):
+        userid = ctx.author.id
+        price = await self.equipment.get_item_price(itemname)
+        can_afford = await self.check_balance(ctx, itemname)
+        if can_afford:
+            for fishname, cost in price.items():
+                await self.inventory.pay(userid, fishname, cost)
+        else:
+            raise ChatError('You cannot afford this.')
 
 
 class Inventory:
@@ -162,7 +214,6 @@ class Inventory:
                 return f'\n🎣 | You are the first person to catch a'
 
             return ''
-
 
         def _edit_inv(size, fishname):
             def transform(doc):
@@ -193,6 +244,24 @@ class Inventory:
         self.inv_table.update(_edit_inv(size, fishname), where(fishname), doc_ids=[userid])
         return record
 
+    async def user_balance_check(self, userid, price):
+        user_balance = {}
+        for fishname, cost in price.items():
+            user_fish_amount = self.inv_table.get(doc_id=userid).get(fishname)['amount']
+            user_balance[fishname] = user_fish_amount
+
+        return user_balance
+
+    async def pay(self, userid, fishname, cost):
+        def _edit_inv(cost, fishname):
+            def transform(doc):
+                inv_fish = doc.get(fishname)
+                inv_fish['amount'] -= cost
+
+            return transform
+
+        self.inv_table.update(_edit_inv(cost, fishname), where(fishname), doc_ids=[userid])
+
     async def fish_leaderboard(self, fishname):
         fishname = fishname.lower()
         inv = self.inv_table.search(where(fishname).exists())
@@ -204,3 +273,43 @@ class Inventory:
             username = await self.bot.fetch_user(userinv.doc_id)
             users_largest.append([username.display_name, userinv[fishname]['size']])
         return sorted(users_largest, key=lambda i: i[-1], reverse=True)
+
+
+class Equipment:
+
+    def __init__(self, bot: commands.Bot):
+        self.bot = bot
+        self.items_db = TinyDB("database/items.json", indent=4)
+        self.items_inv_db = TinyDB("database/items_inv.json", indent=4)
+        self.items_table = self.items_db.table('items')
+        self.equiped_table = self.items_inv_db.table('equiped')
+        self.inv_table = self.items_inv_db.table('items_inv')
+
+        # self.items_table.insert(
+        #     {'name': 'cock bait',
+        #      'price': {'green flopper': 1, 'orange flopper': 2},
+        #      'stats': {'nothing chance': 0.1}
+        #      })
+        # self.items_table.insert(
+        #     {'name': 'cock lure',
+        #      'price': {'green flopper': 1, 'orange flopper': 2},
+        #      'stats': {'rarity chance modifier': {'epic': 0.2, 'legendary': -0.2}}
+        #      })
+        # self.items_table.insert(
+        #     {'name': 'cock rod',
+        #      'price': {'green flopper': 1},
+        #      'stats': {'cooldown': -5}
+        #      })
+
+    async def get_equiped_items(self, userid):
+        equiped = self.equiped_table.get(doc_id=userid)
+        if equiped is None:
+            empty_inv = {'rod': None, 'lure': None, 'bait': None}
+            self.equiped_table.insert(Document(empty_inv, doc_id=userid))
+            return empty_inv
+        return equiped
+
+    async def get_item_price(self, itemname):
+        item_price = self.items_table.get(where('name') == itemname)['price']
+
+        return item_price

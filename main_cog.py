@@ -12,6 +12,7 @@ from replies import rick_reply
 from replies import sick
 from discord.ext import commands
 from youtube_api import YouTubeDataAPI
+from errors import ChatError
 
 
 class MainCog(commands.Cog):
@@ -71,13 +72,13 @@ class MainCog(commands.Cog):
                 await starboard_channel.send(embed=embeds.starboard_embed(message))
                 await message.add_reaction("🌟")
 
-    @commands.Cog.listener()
-    async def on_message_delete(self, message):
-        if message.author.bot:
-            logs_channel = await self.bot.fetch_channel(self.jonbot_logs_bots)  # jonbot-logs-bots 718399485616717894
-            return await logs_channel.send(embed=embeds.log_delete_embed(message))
-        logs_channel = await self.bot.fetch_channel(self.jonbot_logs)  # jonbot-logs 568434065582325770
-        await logs_channel.send(embed=embeds.log_delete_embed(message))
+    # @commands.Cog.listener()
+    # async def on_message_delete(self, message):
+    #     if message.author.bot:
+    #         logs_channel = await self.bot.fetch_channel(self.jonbot_logs_bots)  # jonbot-logs-bots 718399485616717894
+    #         return await logs_channel.send(embed=embeds.log_delete_embed(message))
+    #     logs_channel = await self.bot.fetch_channel(self.jonbot_logs)  # jonbot-logs 568434065582325770
+    #     await logs_channel.send(embed=embeds.log_delete_embed(message))
 
     @commands.command()
     @commands.cooldown(1, 15)
@@ -257,7 +258,7 @@ class MainCog(commands.Cog):
 
             vc.play(discord.FFmpegPCMAudio("assets/sounds/" + arg + "/" + filename))
         else:
-            await ctx.send("join a channel retard")
+            await ctx.send("join a channel")
 
     @commands.command()
     async def help(self, ctx, arg: str = None):
@@ -301,4 +302,8 @@ class MainCog(commands.Cog):
         if args is None:
             return
         search_result = ddg_images(" ".join(args), max_results=1, safesearch='On')
-        await ctx.send(search_result[0]['image'])
+        try:
+            image = search_result[0]['image']
+        except IndexError:
+            raise ChatError("No results.")
+        await ctx.send(image)

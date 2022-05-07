@@ -4,6 +4,7 @@ from PIL import Image
 import requests
 import re
 from discord.utils import get
+import os
 
 
 class ImgProcessing(commands.Cog):
@@ -51,10 +52,12 @@ class ImgProcessing(commands.Cog):
                                 too_fast = True
                             frame_time.append(f_time)
 
-                        gif.save("assets/temp.gif", save_all=True, duration=frame_time)
+                        temp_gif_filename = "assets/temp.gif"
+                        gif.save(temp_gif_filename, save_all=True, duration=frame_time)
                         if too_fast:
                             await message.channel.send("SLOW DOWN COWBOY ✋🤠🚫")
-                        await channel.send(file=discord.File("assets/temp.gif"))
+                        await channel.send(file=discord.File(temp_gif_filename))
+                        os.remove(temp_gif_filename)
         except requests.exceptions.MissingSchema:
             return
 
@@ -76,9 +79,11 @@ class ImgProcessing(commands.Cog):
                         new_image = Image.new('RGBA', (mmgm.size), (255, 0, 255, 0))
                         new_image.paste(react_img, (332, 9), react_img)
                         new_image.paste(mmgm, (0, 0), mmgm)
-                        new_image.save('assets/mmgm_temp.png', 'PNG')
 
-                        await channel.send(file=discord.File("assets/mmgm_temp.png"))
+                        mmm_temp_filename = 'assets/mmgm_temp.png'
+                        new_image.save(mmm_temp_filename, 'PNG')
+                        await channel.send(file=discord.File(mmm_temp_filename))
+                        os.remove(mmm_temp_filename)
 
         except requests.exceptions.MissingSchema:
             return

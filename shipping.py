@@ -6,12 +6,14 @@ from PIL import Image
 from PIL import ImageDraw
 from PIL import ImageFont
 import requests
+import os
 
 
 # TODO add image thingin
 class Shipping(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
+        self.temp_filename = 'assets/shipping_temp.png'
 
     @commands.cooldown(1, 10, commands.BucketType.user)
     @commands.command(name='ship')
@@ -37,8 +39,9 @@ class Shipping(commands.Cog):
             async with ctx.typing():
                 response = self.love_response(ship_percent)
                 await self.img_gen(ship_percent, mention_id_1, mention_id_2)
-                await ctx.channel.send(file=discord.File('assets/shipping_temp.png'))
+                await ctx.channel.send(file=discord.File(self.temp_filename))
                 await ctx.send(response)
+                os.remove(self.temp_filename)
             return
 
         else:
@@ -85,7 +88,7 @@ class Shipping(commands.Cog):
         heart = Image.open("assets/heart.png")
         heart_size = (4 * ship_percent + 1, 4 * ship_percent + 1)
         heart = heart.resize(heart_size, Image.ANTIALIAS)
-        font = ImageFont.truetype("assets/Verdana.ttf",  ship_percent + 1)
+        font = ImageFont.truetype("assets/Verdana.ttf", ship_percent + 1)
 
         pfp_1 = Image.open(requests.get(pfp_url_1, stream=True).raw)
         pfp_2 = Image.open(requests.get(pfp_url_2, stream=True).raw)
@@ -108,6 +111,6 @@ class Shipping(commands.Cog):
         drawing = ImageDraw.Draw(new_image)
         txt_w, txt_h = drawing.textsize(str(ship_percent) + "%", font=font)
         txt_x, txt_y = self.center_coords(img_w, img_h, txt_w, txt_h)
-        drawing.text((txt_x, txt_y - ship_percent/2 + 1), str(ship_percent) + "%", (255, 255, 255), font=font)
+        drawing.text((txt_x, txt_y - ship_percent / 2 + 1), str(ship_percent) + "%", (255, 255, 255), font=font)
 
-        new_image.save('assets/shipping_temp.png', 'PNG')
+        new_image.save(self.temp_filename, 'PNG')
