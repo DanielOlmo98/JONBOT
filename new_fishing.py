@@ -218,7 +218,9 @@ class NewFishingCog(commands.Cog):
     @commands.cooldown(1, 10, commands.BucketType.user)
     @commands.command(name='equipment')
     async def equipment(self, ctx, user: discord.User = None):
-        self.equipment.get_items(ctx.author.id)
+        userid = user.id if user is not None else ctx.message.author.id
+        equipment = await self.equipment.get_items(userid)
+        await ctx.send(equipment)
 
 
 class Inventory:
@@ -328,6 +330,7 @@ class Equipment:
         #      'stats': {'cooldown': -5}
         #      })
         #
+
     async def get_equiped_items(self, userid):
         equiped = self.equiped_table.get(doc_id=userid)
         if equiped is None:
