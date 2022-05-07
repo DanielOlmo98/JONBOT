@@ -350,7 +350,7 @@ class Equipment:
         return equiped
 
     async def equip_item(self, userid, itemname):
-        item_category = self.items_table.get(where('name') == itemname)['type']
+        item_category = await self.get_item_category(itemname)
 
         if not self.user_hasitem(userid, itemname):
             raise ChatError('You do not have this item.')
@@ -371,13 +371,22 @@ class Equipment:
 
             return transform
 
-        item_category = self.items_table.get(where('name') == itemname)['type']
+        item_category = await self.get_item_category(itemname)
         self.item_inv_table.update(_edit_inv(itemname, item_category), doc_ids=[userid])
 
+    async def get_item_category(self, itemname):
+        try:
+            return self.items_table.get(where('name') == itemname)['type']
+        except TypeError:
+            raise ChatError('Item not found.')
+
     async def get_item_price(self, itemname):
-        return self.items_table.get(where('name') == itemname)['price']
+        try:
+            return self.items_table.get(where('name') == itemname)['price']
+        except TypeError:
+            raise ChatError('Item not found.')
 
     async def user_hasitem(self, userid, itemname):
-        item_category = self.items_table.get(where('name') == itemname)['type']
+        item_category = await self.get_item_category(itemname)
         user_inv = await self.get_items(userid)
         return itemname in user_inv[item_category]
