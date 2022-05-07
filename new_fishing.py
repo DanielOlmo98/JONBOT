@@ -230,7 +230,7 @@ class NewFishingCog(commands.Cog):
     async def equip_item(self, ctx, itemname: str = None):
         userid = ctx.author.id
         await self.equipment.equip_item(userid, itemname)
-        ctx.send('Item equiped.')
+        await ctx.send('Item equiped.')
 
 
 class Inventory:
