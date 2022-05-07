@@ -142,7 +142,7 @@ class NewFishingCog(commands.Cog):
 
     @commands.cooldown(1, 10, commands.BucketType.user)
     @commands.command(name='inv')
-    async def send_inv(self, ctx, user: discord.User = None, rarity: str = None):
+    async def send_inv(self, ctx, rarity: str = None, user: discord.User = None):
         if rarity is None:
             raise ChatError('What rarity?')
 
@@ -162,17 +162,21 @@ class NewFishingCog(commands.Cog):
 
         await ctx.send(message)
 
-    @commands.cooldown(1, 30, commands.BucketType.guild)
+    @commands.cooldown(1, 10, commands.BucketType.guild)
     @commands.command(name='pricecheck')
     async def check_balance(self, ctx, itemname: str = None):
         userid = ctx.author.id
         price = await self.equipment.get_item_price(itemname)
+
+        if price is None:
+            raise ChatError('Item not found.')
+
         user_balance = await self.inventory.user_balance_check(userid, price)
 
         can_afford = True
         message = 'Balance:     |   Price:\n'
         for fishname in price.keys():
-            chatname = self.get_chatname(fishname)
+            chatname = await self.get_chatname(fishname)
             fish_price = price[fishname]
             balance = user_balance[fishname]
 
@@ -184,7 +188,7 @@ class NewFishingCog(commands.Cog):
         await ctx.send(message)
         return can_afford
 
-    @commands.cooldown(1, 30, commands.BucketType.guild)
+    @commands.cooldown(1, 10, commands.BucketType.guild)
     @commands.command(name='buyf')
     async def buy_item(self, ctx, itemname: str = None):
         userid = ctx.author.id
@@ -195,6 +199,13 @@ class NewFishingCog(commands.Cog):
                 await self.inventory.pay(userid, fishname, cost)
         else:
             raise ChatError('You cannot afford this.')
+
+    @commands.cooldown(1, 10, commands.BucketType.user)
+    @commands.command(name='inv')
+    async def send_inv(self, ctx, user: discord.User = None):
+        userid = user.id if user is not None else ctx.message.author.id
+        equiped = await self.equipment.get_equiped_items(userid)
+        await ctx.send(equiped)
 
 
 class Inventory:
