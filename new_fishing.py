@@ -142,7 +142,7 @@ class NewFishingCog(commands.Cog):
 
     @commands.cooldown(1, 10, commands.BucketType.user)
     @commands.command(name='inv')
-    async def send_inv(self, ctx, *, rarity: str = None):
+    async def send_fish_inv(self, ctx, *, rarity: str = None):
         if rarity is None:
             raise ChatError('What rarity?')
 
@@ -213,7 +213,7 @@ class NewFishingCog(commands.Cog):
 
     @commands.cooldown(1, 10, commands.BucketType.user)
     @commands.command(name='equiped')
-    async def send_inv(self, ctx, user: discord.User = None):
+    async def send_equipment_inv(self, ctx, user: discord.User = None):
         userid = user.id if user is not None else ctx.message.author.id
         equiped = await self.equipment.get_equiped_items(userid)
         await ctx.send(equiped)
