@@ -142,11 +142,11 @@ class NewFishingCog(commands.Cog):
 
     @commands.cooldown(1, 10, commands.BucketType.user)
     @commands.command(name='inv')
-    async def send_inv(self, ctx, rarity: str = None, user: discord.User = None):
+    async def send_inv(self, ctx, *, rarity: str = None):
         if rarity is None:
             raise ChatError('What rarity?')
 
-        userid = user.id if user is not None else ctx.message.author.id
+        userid = ctx.message.author.id
         userinv = self.inventory.inv_table.get(doc_id=userid)
 
         if userinv is None:
@@ -164,7 +164,7 @@ class NewFishingCog(commands.Cog):
 
     @commands.cooldown(1, 10, commands.BucketType.guild)
     @commands.command(name='pricecheck')
-    async def check_balance(self, ctx, itemname: str = None):
+    async def check_balance(self, ctx, *, itemname: str = None):
         userid = ctx.author.id
         price = await self.equipment.get_item_price(itemname)
 
@@ -190,7 +190,7 @@ class NewFishingCog(commands.Cog):
 
     @commands.cooldown(1, 10, commands.BucketType.guild)
     @commands.command(name='buyf')
-    async def buy_item(self, ctx, itemname: str = None):
+    async def buy_item(self, ctx, *, itemname: str = None):
         userid = ctx.author.id
         if await self.equipment.user_hasitem(userid, itemname):
             raise ChatError('You already have this item.')
@@ -227,7 +227,7 @@ class NewFishingCog(commands.Cog):
 
     @commands.cooldown(1, 10, commands.BucketType.user)
     @commands.command(name='equip')
-    async def equip_item(self, ctx, itemname: str = None):
+    async def equip_item(self, ctx, *, itemname: str = None):
         userid = ctx.author.id
         await self.equipment.equip_item(userid, itemname)
         await ctx.send('Item equiped.')
