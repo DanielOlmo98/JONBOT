@@ -828,6 +828,42 @@
                 70
             ],
             "mean": 30
+        },
+        "71": {
+            "name": "chucklefish",
+            "chat_name": "<:Chucklefish:973510562229125160>",
+            "rarity": "mythical",
+            "catching_restrictions": [],
+            "chance": 0.05,
+            "size_lims": [
+                20,
+                80
+            ],
+            "mean": 35
+        },
+        "72": {
+            "name": "cheep cheep",
+            "chat_name": "<:cheepcheep:973514490140319824>",
+            "rarity": "uncommon",
+            "catching_restrictions": [],
+            "chance": 0.25,
+            "size_lims": [
+                20,
+                60
+            ],
+            "mean": 30
+        },
+        "73": {
+            "name": "deep cheep",
+            "chat_name": "<:deepcheep:973515204107337738>",
+            "rarity": "uncommon",
+            "catching_restrictions": [],
+            "chance": 0.25,
+            "size_lims": [
+                20,
+                60
+            ],
+            "mean": 30
         }
     }
 }
