@@ -50,7 +50,7 @@
         },
         "5": {
             "name": "magikarp",
-            "chat_name": "<:magikar:971342209196654642>",
+            "chat_name": "<:magikarp:971344402544988180>",
             "rarity": "Common",
             "catching_restrictions": [],
             "chance": 0.6,
@@ -86,7 +86,7 @@
         },
         "8": {
             "name": "goldeen",
-            "chat_name": "<:goldeen:971344403270619156 > ",
+            "chat_name": "<:goldeen:971344403270619156> ",
             "rarity": "Common",
             "catching_restrictions": [],
             "chance": 0.6,
