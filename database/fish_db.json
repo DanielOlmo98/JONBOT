@@ -97,7 +97,7 @@
             "mean": 20
         },
         "9": {
-            "name": "yellow sweetfin",
+            "name": "tropicalfish",
             "chat_name": "\ud83d\udc20 ",
             "rarity": "Uncommon",
             "catching_restrictions": [],
@@ -288,7 +288,7 @@
             "mean": 25
         },
         "25": {
-            "name": "ancient Scale",
+            "name": "ancient scale",
             "chat_name": "<:Ancientscale:971004858805141504>",
             "rarity": "Epic",
             "catching_restrictions": [],
@@ -706,6 +706,128 @@
                 90
             ],
             "mean": 55
+        },
+        "61": {
+            "name": "fallen starfish",
+            "chat_name": "<:Fallen_Starfish:973501967500472320>",
+            "rarity": "rare",
+            "catching_restrictions": [],
+            "chance": 0.16,
+            "size_lims": [
+                20,
+                60
+            ],
+            "mean": 40
+        },
+        "62": {
+            "name": "guide voodoofish",
+            "chat_name": "<:Guide_Voodoo_Fish:973500765547159563>",
+            "rarity": "common",
+            "catching_restrictions": [],
+            "chance": 0.5,
+            "size_lims": [
+                40,
+                90
+            ],
+            "mean": 55
+        },
+        "63": {
+            "name": "fishron",
+            "chat_name": "<:Fishron:973501967127150603>",
+            "rarity": "epic",
+            "catching_restrictions": [],
+            "chance": 0.08,
+            "size_lims": [
+                60,
+                90
+            ],
+            "mean": 75
+        },
+        "64": {
+            "name": "pixiefish",
+            "chat_name": "<:pixiefish:973501967575965716>",
+            "rarity": "rare",
+            "catching_restrictions": [],
+            "chance": 0.15,
+            "size_lims": [
+                60,
+                90
+            ],
+
+            "mean": 75
+        },
+        "65": {
+            "name": "slimefish",
+            "chat_name": "<:Slimefish:973501967311732747>",
+            "rarity": "uncommon",
+            "catching_restrictions": [],
+            "chance": 0.25,
+            "size_lims": [
+                30,
+                60
+            ],
+            "mean": 40
+        },
+        "66": {
+            "name": "fish of cthulhu",
+            "chat_name": "<:The_Fish_of_Cthulhu:973501967622078494>",
+            "rarity": "legendary",
+            "catching_restrictions": [],
+            "chance": 0.11,
+            "size_lims": [
+                70,
+                110
+            ],
+            "mean": 90
+        },
+        "67": {
+            "name": "eater of plankton",
+            "chat_name": "<:Eater_of_Plankton:973502052804214825>",
+            "rarity": "legendary",
+            "catching_restrictions": [],
+            "chance": 0.11,
+            "size_lims": [
+                90,
+                150
+            ],
+            "mean": 130
+        },
+        "68": {
+            "name": "dirtfish",
+            "chat_name": "<:Dirtfish:973502052477075507>",
+            "rarity": "common",
+            "catching_restrictions": [],
+            "chance": 0.50,
+            "size_lims": [
+                20,
+                60
+            ],
+            "mean": 40
+
+        },
+        "69": {
+            "name": "bonefish",
+            "chat_name": "<:Bonefish:973502052737122324>",
+            "rarity": "legendary",
+            "catching_restrictions": [],
+            "chance": 0.06,
+            "size_lims": [
+                10,
+                60
+            ],
+            "mean": 25
+        },
+        "70": {
+            "name": "bumblebee tuna",
+            "chat_name": "<:Bumblebee_Tuna:973502052477050902>",
+            "rarity": "uncommon",
+            "catching_restrictions": [],
+            "chance": 0.25,
+            "size_lims": [
+                10,
+                70
+            ],
+            "mean": 30
         }
     }
 }
