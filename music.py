@@ -270,8 +270,11 @@ class VoiceState:
 
     @tasks.loop(count=1)
     async def auto_disconnect(self):
-        await sleep(5*60)
-        if not self.voice.is_playing():
+        for _ in range(60):
+            await sleep(1)
+            if len(self.songs):
+                return
+        if not self.voice.is_playing() and not len(self.songs):
             await self.stop()
 
 
