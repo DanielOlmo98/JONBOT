@@ -19,15 +19,31 @@ from discord.ext.commands import errors
 from tinydb import TinyDB, Query, where
 from tinydb.table import Document
 from typing import List
-# test
+
 
 class Fishing:
 
-    def __init__(self, fish_table):
+    def __init__(self, fish_table, modifiers):
         self.fish_table = fish_table
+        self.modifiers = modifiers
 
+    @commands.cooldown(1, 15, commands.BucketType.user)
     def get_fish(self):
-        results = self.fish_table.search(where('chance') > random.random())
+        def cast_rod():
+            roll = random.random()
+            results = self.fish_table.search(where('chance') > roll)
+            return roll, results
+
+        roll, results = cast_rod()
+
+        none_chance = self.modifiers.pop('nothing chance', 1)
+
+        while not len(results):
+            if none_chance < (1 - roll):
+                _, results = cast_rod()
+            else:
+                raise ChatError('you caught nothing')
+
         shuffle(results)
         smallest = 2
         fish = None
@@ -80,7 +96,8 @@ class NewFishingCog(commands.Cog):
 
     @commands.command(name='fish')
     @commands.cooldown(1, 15, commands.BucketType.user)
-    async def fish(self, ctx):
+    async def fish_command(self, ctx):
+        cooldown = 15
         try:
             await ctx.message.delete()
         except discord.Forbidden:
@@ -88,10 +105,12 @@ class NewFishingCog(commands.Cog):
 
         userid = ctx.author.id
 
+        modifiers = await self.get_item_modifiers(userid)
+        cooldown += modifiers.pop('cooldown', 0)
         try:
-            fish = Fishing(self.fish_table).get_fish()
+            fish = Fishing(self.fish_table, modifiers).get_fish()
         except ChatError as e:
-            await ctx.send(f'🎣 | <@{userid}>, {e}', delete_after=15)
+            await ctx.send(f'🎣 | <@{userid}>, {e}', delete_after=cooldown)
             return
 
         fishsize = fish.get_fish_size()
@@ -99,11 +118,12 @@ class NewFishingCog(commands.Cog):
         await ctx.channel.send("fishing.. ", delete_after=5)
         record_msg = await self.inventory.add_fish(userid, fish.name, fishsize)
         await asyncio.sleep(5)
-        await ctx.send(f'🎣 | <@{userid}>, you caught a {fishsize:.1f} cm {fish}', delete_after=10)
+        await ctx.send(f'🎣 | <@{userid}>, you caught a {fishsize:.1f} cm {fish}', delete_after=cooldown - 5)
+        self.fish_command.reset_cooldown(ctx)
         if record_msg:
             await ctx.send(f'{record_msg} {fish}')
 
-    @fish.error
+    @fish_command.error
     async def cd_error(self, error, ctx):
         if isinstance(error, errors.CommandOnCooldown):
             await ctx.send(str(error.retry_after))
@@ -189,7 +209,7 @@ class NewFishingCog(commands.Cog):
         return can_afford
 
     @commands.cooldown(1, 10, commands.BucketType.guild)
-    @commands.command(name='buyf')
+    @commands.command(name='buy')
     async def buy_item(self, ctx, *, itemname: str = None):
         userid = ctx.author.id
         if await self.equipment.user_hasitem(userid, itemname):
@@ -200,7 +220,7 @@ class NewFishingCog(commands.Cog):
         if price is None:
             raise ChatError('Item not found.')
 
-        can_afford = await self.check_balance(ctx, itemname)
+        can_afford = await self.check_balance(ctx, itemname=itemname)
 
         if can_afford:
             for fishname, cost in price.items():
@@ -208,7 +228,7 @@ class NewFishingCog(commands.Cog):
         else:
             raise ChatError('You cannot afford this.')
 
-        await self.equipment.add_item(userid, itemname)
+        await self.equipment.add_item(userid, itemname=itemname)
         await ctx.send('Item purchased.')
 
     @commands.cooldown(1, 10, commands.BucketType.user)
@@ -231,6 +251,27 @@ class NewFishingCog(commands.Cog):
         userid = ctx.author.id
         await self.equipment.equip_item(userid, itemname)
         await ctx.send('Item equiped.')
+
+    async def get_item_modifiers(self, userid):
+        equipment = await self.equipment.get_equiped_items(userid)
+        modifiers = {}
+        stats_list = []
+        for item in equipment.values():
+            if item is None:
+                continue
+            stat = await self.equipment.get_item_stats(item)
+            if stat is None:
+                continue
+            else:
+                stats_list.append(stat)
+
+        for stat in stats_list:
+            for k, v in stat.items():
+                # merge dicts, duplicate key values in list
+                modifiers[k] = ([modifiers[k], v] if k in modifiers and type(modifiers[k]) != list
+                                else [*modifiers[k], v] if k in modifiers else v)
+
+        return modifiers
 
 
 class Inventory:
@@ -358,7 +399,7 @@ class Equipment:
         else:
             item_category = await self.get_item_category(itemname)
 
-            if not self.user_hasitem(userid, itemname):
+            if not await self.user_hasitem(userid, itemname):
                 raise ChatError('You do not have this item.')
 
         self.equiped_table.update({item_category: itemname}, doc_ids=[userid])
@@ -366,7 +407,7 @@ class Equipment:
     async def get_items(self, userid):
         if not self.item_inv_table.contains(doc_id=userid):
             self.item_inv_table.insert(Document({'rod': [], 'lure': [], 'bait': []}, doc_id=userid))
-            raise ChatError('Empy inventory')
+            raise ChatError('Empty inventory')
         inv = self.item_inv_table.get(doc_id=userid)
         return inv
 
@@ -389,6 +430,12 @@ class Equipment:
     async def get_item_price(self, itemname):
         try:
             return self.items_table.get(where('name') == itemname)['price']
+        except TypeError:
+            raise ChatError('Item not found.')
+
+    async def get_item_stats(self, itemname):
+        try:
+            return self.items_table.get(where('name') == itemname)['stats']
         except TypeError:
             raise ChatError('Item not found.')
 

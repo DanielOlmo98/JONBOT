@@ -682,7 +682,7 @@ class Economy(commands.Cog):
             self.users[str(mention)]["Pocket"] = self.users[str(mention)]["Pocket"] + int(amount)
             await message.channel.send("you gave " + str(amount + "💰 jonbucks to " + str(user)))
 
-    @commands.command(name='buy')
+    @commands.command(name='buy2')
     async def buy(self, ctx, fish: str = None, amount: str = None):
         try:
             author = ctx.author.id
