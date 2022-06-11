@@ -350,10 +350,16 @@ class Equipment:
         return equiped
 
     async def equip_item(self, userid, itemname):
-        item_category = await self.get_item_category(itemname)
+        if 'none' in itemname.lower():
+            item_category = itemname.split()[1]
+            if item_category not in ['rod', 'lure', 'bait']:
+                raise ChatError('You do not have this item.')
+            itemname = None
+        else:
+            item_category = await self.get_item_category(itemname)
 
-        if not self.user_hasitem(userid, itemname):
-            raise ChatError('You do not have this item.')
+            if not self.user_hasitem(userid, itemname):
+                raise ChatError('You do not have this item.')
 
         self.equiped_table.update({item_category: itemname}, doc_ids=[userid])
 
