@@ -26,21 +26,27 @@ class Fishing:
     def __init__(self, fish_table, modifiers):
         self.fish_table = fish_table
         self.modifiers = modifiers
+        self.rarity_mods = {'common': 0, "uncommon": 0, "rare": 0, "epic": 0, "legendary": 0, "mythical": 0}
+        self.rarity_mods.update(self.modifiers.pop("rarity chance modifier", []))
 
     @commands.cooldown(1, 15, commands.BucketType.user)
     def get_fish(self):
-        def cast_rod():
-            roll = random.random()
-            results = self.fish_table.search(where('chance') > roll)
-            return roll, results
+        def cast_rod(roll):
+            results = []
+            for rarity, mod in self.rarity_mods.items():
+                results.append(self.fish_table.search(
+                    (where('chance') > (roll + mod))
+                    & (where('rarity').lower() == rarity)))
+            return results
 
-        roll, results = cast_rod()
+        roll = random()
+        results = cast_rod(roll)
 
         none_chance = self.modifiers.pop('nothing chance', 1)
 
         while not len(results):
             if none_chance < (1 - roll):
-                _, results = cast_rod()
+                results = cast_rod(random())
             else:
                 raise ChatError('you caught nothing')
 
