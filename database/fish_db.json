@@ -3,7 +3,7 @@
         "1": {
             "name": "orange flopper",
             "chat_name": "<:flopper:970067116583702578>",
-            "rarity": "Common",
+            "rarity": "common",
             "catching_restrictions": [],
             "chance": 0.6,
             "size_lims": [
@@ -15,7 +15,7 @@
         "2": {
             "name": "green flopper",
             "chat_name": "<:green:971000839562993705>",
-            "rarity": "Common",
+            "rarity": "common",
             "catching_restrictions": [],
             "chance": 0.6,
             "size_lims": [
@@ -27,7 +27,7 @@
         "3": {
             "name": "blue flopper",
             "chat_name": "<:Blueflopper:971004859937611786>",
-            "rarity": "Common",
+            "rarity": "common",
             "catching_restrictions": [],
             "chance": 0.6,
             "size_lims": [
@@ -39,7 +39,7 @@
         "4": {
             "name": "light blue small fry",
             "chat_name": "<:LightblueSmallfry:971004859153285141>",
-            "rarity": "Common",
+            "rarity": "common",
             "catching_restrictions": [],
             "chance": 0.6,
             "size_lims": [
@@ -51,7 +51,7 @@
         "5": {
             "name": "magikarp",
             "chat_name": "<:magikarp:971344402544988180>",
-            "rarity": "Common",
+            "rarity": "common",
             "catching_restrictions": [],
             "chance": 0.6,
             "size_lims": [
@@ -63,7 +63,7 @@
         "6": {
             "name": "feebas",
             "chat_name": "<:feebas:971344403060903936> ",
-            "rarity": "Common",
+            "rarity": "common",
             "catching_restrictions": [],
             "chance": 0.6,
             "size_lims": [
@@ -75,7 +75,7 @@
         "7": {
             "name": "horsea",
             "chat_name": "<:horsea:971344402612117524> ",
-            "rarity": "Common",
+            "rarity": "common",
             "catching_restrictions": [],
             "chance": 0.6,
             "size_lims": [
@@ -87,7 +87,7 @@
         "8": {
             "name": "goldeen",
             "chat_name": "<:goldeen:971344403270619156> ",
-            "rarity": "Common",
+            "rarity": "common",
             "catching_restrictions": [],
             "chance": 0.6,
             "size_lims": [
@@ -99,7 +99,7 @@
         "9": {
             "name": "tropicalfish",
             "chat_name": "\ud83d\udc20 ",
-            "rarity": "Uncommon",
+            "rarity": "uncommon",
             "catching_restrictions": [],
             "chance": 0.3,
             "size_lims": [
@@ -111,7 +111,7 @@
         "10": {
             "name": "drift hop flopper",
             "chat_name": "<:DrifthopFlopper:971004859270721537> ",
-            "rarity": "Uncommon",
+            "rarity": "uncommon",
             "catching_restrictions": [],
             "chance": 0.3,
             "size_lims": [
@@ -123,7 +123,7 @@
         "11": {
             "name": "crab",
             "chat_name": "\ud83e\udd80",
-            "rarity": "Uncommon",
+            "rarity": "uncommon",
             "catching_restrictions": [],
             "chance": 0.3,
             "size_lims": [
@@ -135,7 +135,7 @@
         "12": {
             "name": "shrimp",
             "chat_name": "\ud83e\udd90",
-            "rarity": "Uncommon",
+            "rarity": "uncommon",
             "catching_restrictions": [],
             "chance": 0.3,
             "size_lims": [
@@ -147,7 +147,7 @@
         "13": {
             "name": "lobster",
             "chat_name": "\ud83e\udd9e",
-            "rarity": "Uncommon",
+            "rarity": "uncommon",
             "catching_restrictions": [],
             "chance": 0.3,
             "size_lims": [
@@ -159,7 +159,7 @@
         "14": {
             "name": "seadra",
             "chat_name": "<:seadra:971344402544996362>",
-            "rarity": "Uncommon",
+            "rarity": "uncommon",
             "catching_restrictions": [],
             "chance": 0.3,
             "size_lims": [
@@ -171,7 +171,7 @@
         "15": {
             "name": "finneon",
             "chat_name": "<:finneon:971344403144794152>",
-            "rarity": "Uncommon",
+            "rarity": "uncommon",
             "catching_restrictions": [],
             "chance": 0.3,
             "size_lims": [
@@ -183,7 +183,7 @@
         "16": {
             "name": "carvanha",
             "chat_name": "<:carvanha:971344402687619072>",
-            "rarity": "Uncommon",
+            "rarity": "uncommon",
             "catching_restrictions": [],
             "chance": 0.3,
             "size_lims": [
@@ -195,7 +195,7 @@
         "17": {
             "name": "spicyfish",
             "chat_name": "<:spicy:971001500300111883>",
-            "rarity": "Rare",
+            "rarity": "rare",
             "catching_restrictions": [],
             "chance": 0.17,
             "size_lims": [
@@ -207,7 +207,7 @@
         "18": {
             "name": "black and blue shieldfish",
             "chat_name": "<:Blackandblueshieldfish:971004859648180244>",
-            "rarity": "Rare",
+            "rarity": "rare",
             "catching_restrictions": [],
             "chance": 0.17,
             "size_lims": [
@@ -219,7 +219,7 @@
         "19": {
             "name": "slurp jellyfish",
             "chat_name": "<:SlurpJellyfish:971004859438481459>",
-            "rarity": "Rare",
+            "rarity": "rare",
             "catching_restrictions": [],
             "chance": 0.17,
             "size_lims": [
@@ -231,7 +231,7 @@
         "20": {
             "name": "dolphin",
             "chat_name": "\ud83d\udc2c",
-            "rarity": "Rare",
+            "rarity": "rare",
             "catching_restrictions": [],
             "chance": 0.17,
             "size_lims": [
@@ -243,7 +243,7 @@
         "21": {
             "name": "blowfish",
             "chat_name": "\ud83d\udc21",
-            "rarity": "Rare",
+            "rarity": "rare",
             "catching_restrictions": [],
             "chance": 0.17,
             "size_lims": [
@@ -255,7 +255,7 @@
         "22": {
             "name": "seaking",
             "chat_name": "<:Seaking:971344403396456458>",
-            "rarity": "Rare",
+            "rarity": "rare",
             "catching_restrictions": [],
             "chance": 0.17,
             "size_lims": [
@@ -267,7 +267,7 @@
         "23": {
             "name": "cockfish",
             "chat_name": "Cock fish",
-            "rarity": "Epic",
+            "rarity": "epic",
             "catching_restrictions": [],
             "chance": 0.1,
             "size_lims": [
@@ -278,7 +278,7 @@
         "24": {
             "name": "squid",
             "chat_name": "\ud83e\udd91",
-            "rarity": "Epic",
+            "rarity": "epic",
             "catching_restrictions": [],
             "chance": 0.1,
             "size_lims": [
@@ -290,7 +290,7 @@
         "25": {
             "name": "ancient scale",
             "chat_name": "<:Ancientscale:971004858805141504>",
-            "rarity": "Epic",
+            "rarity": "epic",
             "catching_restrictions": [],
             "chance": 0.1,
             "size_lims": [
@@ -302,7 +302,7 @@
         "26": {
             "name": "devilfish",
             "chat_name": "<:DevilFish:971004859820171324>",
-            "rarity": "Epic",
+            "rarity": "epic",
             "catching_restrictions": [],
             "chance": 0.1,
             "size_lims": [
@@ -314,7 +314,7 @@
         "27": {
             "name": "blue slurpfish",
             "chat_name": "<:Blueslurpfish:971004858939351110>",
-            "rarity": "Epic",
+            "rarity": "epic",
             "catching_restrictions": [],
             "chance": 0.1,
             "size_lims": [
@@ -326,7 +326,7 @@
         "28": {
             "name": "stormfish",
             "chat_name": "<:Stormfish:971004859656585236>",
-            "rarity": "Epic",
+            "rarity": "epic",
             "catching_restrictions": [],
             "chance": 0.1,
             "size_lims": [
@@ -338,7 +338,7 @@
         "29": {
             "name": "kingdra",
             "chat_name": "<:kingdra:971345631325081680>",
-            "rarity": "Epic",
+            "rarity": "epic",
             "catching_restrictions": [],
             "chance": 0.1,
             "size_lims": [
@@ -350,7 +350,7 @@
         "30": {
             "name": "milotic",
             "chat_name": "<:milotic:971344402670825523>",
-            "rarity": "Epic",
+            "rarity": "epic",
             "catching_restrictions": [],
             "chance": 0.1,
             "size_lims": [
@@ -362,7 +362,7 @@
         "31": {
             "name": "gyarados",
             "chat_name": "<:gyarados:971344634196422686>",
-            "rarity": "Epic",
+            "rarity": "epic",
             "catching_restrictions": [],
             "chance": 0.1,
             "size_lims": [
@@ -374,7 +374,7 @@
         "32": {
             "name": "sharpedo",
             "chat_name": "<:sharpedo:971345161118425100>",
-            "rarity": "Epic",
+            "rarity": "epic",
             "catching_restrictions": [],
             "chance": 0.1,
             "size_lims": [
@@ -386,7 +386,7 @@
         "33": {
             "name": "nishikikoi",
             "chat_name": "<:koi:971353716739420230>",
-            "rarity": "Epic",
+            "rarity": "epic",
             "catching_restrictions": [],
             "chance": 0.1,
             "size_lims": [
@@ -398,7 +398,7 @@
         "34": {
             "name": "thermalfish",
             "chat_name": "<:Thermalfish:970068788991107102>",
-            "rarity": "Legendary",
+            "rarity": "legendary",
             "catching_restrictions": [],
             "chance": 0.01,
             "size_lims": [
@@ -410,7 +410,7 @@
         "35": {
             "name": "whale",
             "chat_name": "\ud83d\udc33",
-            "rarity": "Legendary",
+            "rarity": "legendary",
             "catching_restrictions": [],
             "chance": 0.01,
             "size_lims": [
@@ -422,7 +422,7 @@
         "36": {
             "name": "octopus",
             "chat_name": "<:Octopus:971698726454321213>",
-            "rarity": "Legendary",
+            "rarity": "legendary",
             "catching_restrictions": [],
             "chance": 0.01,
             "size_lims": [
@@ -434,7 +434,7 @@
         "37": {
             "name": "stare",
             "chat_name": " <:stare:956548708399452211>",
-            "rarity": "Legendary",
+            "rarity": "legendary",
             "catching_restrictions": [],
             "chance": 0.01,
             "size_lims": [
@@ -446,7 +446,7 @@
         "38": {
             "name": "crocodile",
             "chat_name": "\ud83d\udc0a",
-            "rarity": "Legendary",
+            "rarity": "legendary",
             "catching_restrictions": [],
             "chance": 0.01,
             "size_lims": [
@@ -458,7 +458,7 @@
         "39": {
             "name": "shark",
             "chat_name": "\ud83e\udd88",
-            "rarity": "Legendary",
+            "rarity": "legendary",
             "catching_restrictions": [],
             "chance": 0.01,
             "size_lims": [
@@ -470,7 +470,7 @@
         "40": {
             "name": "seal",
             "chat_name": "\ud83e\uddad",
-            "rarity": "Legendary",
+            "rarity": "legendary",
             "catching_restrictions": [],
             "chance": 0.01,
             "size_lims": [
@@ -482,7 +482,7 @@
         "41": {
             "name": "kyogre",
             "chat_name": "<:kyogre:971344403077677127>",
-            "rarity": "Legendary",
+            "rarity": "legendary",
             "catching_restrictions": [],
             "chance": 0.01,
             "size_lims": [
@@ -494,7 +494,7 @@
         "42": {
             "name": "tuna",
             "chat_name": "<:Tuna:971344403304185866>",
-            "rarity": "Legendary",
+            "rarity": "legendary",
             "catching_restrictions": [],
             "chance": 0.01,
             "size_lims": [
@@ -506,7 +506,7 @@
         "43": {
             "name": "midas flopper",
             "chat_name": "<:MidasFlopper:971004859803398154>",
-            "rarity": "Mythical",
+            "rarity": "mytical",
             "catching_restrictions": [],
             "chance": 0.008,
             "size_lims": [
@@ -518,7 +518,7 @@
         "44": {
             "name": "dragon",
             "chat_name": "DORAGON \ud83d\udc09",
-            "rarity": "Mythical",
+            "rarity": "mytical",
             "catching_restrictions": [],
             "chance": 0.002,
             "size_lims": [
@@ -530,7 +530,7 @@
         "45": {
             "name": "tengu",
             "chat_name": "japanese goburin \ud83d\udc7a",
-            "rarity": "Mythical",
+            "rarity": "mytical",
             "catching_restrictions": [],
             "chance": 0.004,
             "size_lims": [
@@ -542,7 +542,7 @@
         "46": {
             "name": "majima",
             "chat_name": "MAJIMA NO NII SAN??? <:majimbo:971356122822877234>",
-            "rarity": "Mythical",
+            "rarity": "mytical",
             "catching_restrictions": [],
             "chance": 0.006,
             "size_lims": [
@@ -554,7 +554,7 @@
         "47": {
             "name": "alien",
             "chat_name": "ayyy lmao \uD83D\uDC7D",
-            "rarity": "Mythical",
+            "rarity": "mytical",
             "catching_restrictions": [],
             "chance": 0.005,
             "size_lims": [
@@ -566,7 +566,7 @@
         "48": {
             "name": "cthulhu",
             "chat_name": "<:r_tentacle:799786836595048469> <:jontron1:568424285027303434> <:jontron2:568424284947480586> <:l_tentacle:799786690864349204>",
-            "rarity": "Mythical",
+            "rarity": "mytical",
             "catching_restrictions": [],
             "chance": 0.005,
             "size_lims": [
@@ -578,7 +578,7 @@
         "50": {
             "name": "catfish",
             "chat_name": "<:20170225192119Catfish:971698726655655936>",
-            "rarity": "Rare",
+            "rarity": "rare",
             "catching_restrictions": [],
             "chance":0.17 ,
             "size_lims": [
@@ -590,7 +590,7 @@
         "51": {
             "name": "angler",
             "chat_name": "<:Angler:971698726756298792> ",
-            "rarity": "Legendary",
+            "rarity": "legendary",
             "catching_restrictions": [],
             "chance": 0.01 ,
             "size_lims": [
@@ -602,7 +602,7 @@
         "52": {
             "name": "crimsonfish",
             "chat_name": "<:Crimsonfish:971698726362042379> ",
-            "rarity": "Legendary",
+            "rarity": "legendary",
             "catching_restrictions": [],
             "chance": 0.01,
             "size_lims": [
@@ -614,7 +614,7 @@
         "53": {
             "name": "legend",
             "chat_name": "<:Legend:971698726659838032> ",
-            "rarity": "Mythical",
+            "rarity": "mytical",
             "catching_restrictions": [],
             "chance": 0.005,
             "size_lims": [
@@ -626,7 +626,7 @@
         "54": {
             "name": "glacierfish",
             "chat_name": "<:Glacierfish:971698726479470663>",
-            "rarity": "Legendary",
+            "rarity": "legendary",
             "catching_restrictions": [],
             "chance": 0.01,
             "size_lims": [
@@ -638,7 +638,7 @@
         "55": {
             "name": "cucumber",
             "chat_name": "<:Sea_Cucumber:971698726630457394> ",
-            "rarity": "Rare",
+            "rarity": "rare",
             "catching_restrictions": [],
             "chance": 0.16,
             "size_lims": [
@@ -650,7 +650,7 @@
         "56": {
             "name": "eel",
             "chat_name": "<:Eel:971698726345273405>",
-            "rarity": "Rare",
+            "rarity": "rare",
             "catching_restrictions": [],
             "chance": 0.16,
             "size_lims": [
@@ -662,7 +662,7 @@
         "57": {
             "name": "scorpionfish",
             "chat_name": "<:Scorpion_Carp:971698726659825664>",
-            "rarity": "Legendary",
+            "rarity": "legendary",
             "catching_restrictions": [],
             "chance": 0.01,
             "size_lims": [

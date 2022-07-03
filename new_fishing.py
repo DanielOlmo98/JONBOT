@@ -2,18 +2,16 @@ import json
 import asyncio
 import os.path
 import discord
-from random import choice, random, shuffle
+from random import choice, random, shuffle, randint
 import numpy as np
 from numpy.random import default_rng
 import embeds
-import random
 import re
 from tabulate import tabulate
 from dataclasses import dataclass
 from discord.ext.commands import errors
 from discord.ext import commands
 from os import path
-from random import randint
 from errors import ChatError
 from discord.ext.commands import errors
 from tinydb import TinyDB, Query, where
@@ -34,9 +32,9 @@ class Fishing:
         def cast_rod(roll):
             results = []
             for rarity, mod in self.rarity_mods.items():
-                results.append(self.fish_table.search(
+                results.extend(self.fish_table.search(
                     (where('chance') > (roll + mod))
-                    & (where('rarity').lower() == rarity)))
+                    & (where('rarity') == rarity)))
             return results
 
         roll = random()
