@@ -21,9 +21,10 @@ from typing import List
 
 class Fishing:
 
-    def __init__(self, fish_table, modifiers):
+    def __init__(self, fish_table, modifiers, item_names):
         self.fish_table = fish_table
         self.modifiers = modifiers
+        self.item_names = item_names
         self.rarity_mods = {'common': 0, "uncommon": 0, "rare": 0, "epic": 0, "legendary": 0, "mythical": 0}
         self.rarity_mods.update(self.modifiers.pop("rarity chance modifier", []))
 
@@ -52,6 +53,8 @@ class Fishing:
         smallest = 2
         fish = None
         for result in results:
+            if self.check_catch_restrictions(result) is False:
+                continue
             fish_chance = result['chance']
             if smallest > fish_chance:
                 fish = result
@@ -61,6 +64,19 @@ class Fishing:
             raise ChatError('you caught nothing')
 
         return self.Fish(**fish)
+
+
+    def check_catch_restrictions(self, fish):
+        restrictions = fish['catching_restrictions']
+        try:
+            for item in restrictions['items']:
+                if item not in self.item_names:
+                    return False
+        except KeyError:
+            pass
+        
+        return True
+
 
     @dataclass
     class Fish:
@@ -111,8 +127,10 @@ class NewFishingCog(commands.Cog):
 
         modifiers = await self.get_item_modifiers(userid)
         cooldown += modifiers.pop('cooldown', 0)
+        equipment = await self.equipment.get_equiped_items(userid)
+
         try:
-            fish = Fishing(self.fish_table, modifiers).get_fish()
+            fish = Fishing(self.fish_table, modifiers, equipment.values()).get_fish()
         except ChatError as e:
             await ctx.send(f'🎣 | <@{userid}>, {e}', delete_after=cooldown)
             return
