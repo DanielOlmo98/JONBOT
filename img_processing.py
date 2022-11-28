@@ -117,7 +117,7 @@ class ImgProcessing(commands.Cog):
     async def smug(self, ctx, *args):
         await ctx.send(args)
         img_text = ""
-        if args is not None:
+        if args:
             img_text = " ".join(args)
 
         smug_list = os.listdir("assets/smug")

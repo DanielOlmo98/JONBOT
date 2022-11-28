@@ -299,7 +299,7 @@ class MainCog(commands.Cog):
     @commands.cooldown(1, 1)
     async def image_search(self, ctx, *args):
         from duckduckgo_search import ddg_images
-        if args is None:
+        if not args:
             return
         search_result = ddg_images(" ".join(args), max_results=1, safesearch='On')
         try:
