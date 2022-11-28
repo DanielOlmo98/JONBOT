@@ -124,12 +124,12 @@ class ImgProcessing(commands.Cog):
         drawing = ImageDraw.Draw(smug_anime_girl)
         txt_w, txt_h = drawing.textsize(arg, font=font)
         txt_x, txt_y = center_coords(img_w, img_h, txt_w, txt_h)
-        drawing.text((txt_x, txt_y+txt_y//3),
-                     anchor = "ms",
+        drawing.text((txt_x, txt_y*1.8),
+                     anchor = "sm",
                      text = arg,
                      fill =(255,255,255),
                      font = font,
-                     stroke_width = 5,
+                     stroke_width = img_w // (15*6),
                      stroke_fill = (0,0,0)
                      )
 
