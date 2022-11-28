@@ -9,7 +9,7 @@ import requests
 import os
 
 
-def center_coords(self, w_1, h_1, w_2, h_2):
+def center_coords(w_1, h_1, w_2, h_2):
     w = w_1 // 2 - w_2 // 2
     h = h_1 // 2 - h_2 // 2
     return w, h
