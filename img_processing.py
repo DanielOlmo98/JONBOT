@@ -117,15 +117,16 @@ class ImgProcessing(commands.Cog):
     async def smug(self, ctx, *, arg):
         smug_list = os.listdir("assets/smug")
         smug_anime_girl = Image.open(f"assets/smug/{choice(smug_list)}")
+
         img_w, img_h = smug_anime_girl.size
 
         font = ImageFont.truetype("assets/Verdana.ttf", img_w // 15)
 
         drawing = ImageDraw.Draw(smug_anime_girl)
-        txt_w, txt_h = drawing.textsize(arg, font=font)
+        txt_w, txt_h = drawing.textsize("no bitches?", font=font)
         txt_x, txt_y = center_coords(img_w, img_h, txt_w, txt_h)
         drawing.text((txt_x, txt_y),
-                     text = arg,
+                     text = "no bitches?",
                      fill =(255,255,255),
                      font = font,
                      stroke_width = 2,
