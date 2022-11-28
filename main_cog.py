@@ -17,11 +17,11 @@ from errors import ChatError
 from random import choice
 
 
-async def get_random_4chan_image(board):
+def get_random_4chan_image(board):
     board = basc_py4chan.Board(board)
     thread_ids = board.get_all_thread_ids()
     rand_thread = board.get_thread(choice(thread_ids))
-    files_url = rand_thread.files()
+    files_url =  [file for file in rand_thread.files()]
     return choice(files_url)
 
 
