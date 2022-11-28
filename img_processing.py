@@ -115,7 +115,6 @@ class ImgProcessing(commands.Cog):
     @commands.cooldown(1, 5, commands.BucketType.user)
     @commands.command(name='smug')
     async def smug(self, ctx, *args):
-        await ctx.send(args)
         img_text = ""
         if args:
             img_text = " ".join(args)
@@ -129,7 +128,7 @@ class ImgProcessing(commands.Cog):
         drawing = ImageDraw.Draw(smug_anime_girl)
         txt_w, txt_h = drawing.textsize(img_text, font=font)
         txt_x, txt_y = center_coords(img_w, img_h, txt_w, txt_h)
-        drawing.text((txt_x, txt_y*1.95),
+        drawing.text((img_w, txt_y*1.95),
                      anchor = "mm",
                      text = img_text,
                      fill =(255,255,255),
