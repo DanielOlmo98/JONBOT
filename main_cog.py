@@ -4,6 +4,7 @@ import discord
 import embeds
 import asyncio
 import TenGiphPy
+import basc_py4chan
 
 from tenorscrap import Tenor  # https://github.com/suarasiy/tenorscrap
 from reverse_img_search import get_vtuber, img_extensions
@@ -13,6 +14,16 @@ from replies import sick
 from discord.ext import commands
 from youtube_api import YouTubeDataAPI
 from errors import ChatError
+from random import choice
+
+
+async def get_random_4chan_image(board):
+    board = basc_py4chan.Board(board)
+    thread_ids = board.get_all_thread_ids()
+    rand_thread = board.get_thread(choice(thread_ids))
+    files_url = rand_thread.files()
+    return choice(files_url)
+
 
 
 class MainCog(commands.Cog):
@@ -300,7 +311,8 @@ class MainCog(commands.Cog):
     async def image_search(self, ctx, *args):
         from duckduckgo_search import ddg_images
         if not args:
-            return
+            await ctx.send(get_random_4chan_image('wg'))
+            raise ChatError("Have a nice image")
         search_result = ddg_images(" ".join(args), max_results=1, safesearch='On')
         try:
             image = search_result[0]['image']
