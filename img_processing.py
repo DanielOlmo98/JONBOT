@@ -8,6 +8,7 @@ import requests
 import re
 from discord.utils import get
 import os
+from shipping import center_coords
 
 
 class ImgProcessing(commands.Cog):
@@ -113,7 +114,7 @@ class ImgProcessing(commands.Cog):
 
     @commands.cooldown(1, 5, commands.BucketType.user)
     @commands.command(name='smug')
-    async def smug(self, ctx, *args):
+    async def smug(self, ctx, *, arg):
         smug_list = os.listdir("assets/smug")
         smug_anime_girl = Image.open(f"assets/smug/{choice(smug_list)}")
         img_w, img_h = smug_anime_girl.size
@@ -121,7 +122,14 @@ class ImgProcessing(commands.Cog):
         font = ImageFont.truetype("assets/Verdana.ttf", img_w // 15)
 
         drawing = ImageDraw.Draw(smug_anime_girl)
-        drawing.text((0,0), "no bitches?", (255,255,255), font = font)
+        txt_w, txt_h = drawing.textsize(arg, font=font)
+        txt_x, txt_y = center_coords(img_w, img_h, txt_w, txt_h)
+        drawing.text((txt_x, txt_y),
+                     text = arg,
+                     fill =(255,255,255),
+                     font = font,
+                     stroke_width = 2,
+                     stroke_fill = (0,0,0))
 
         temp_filename = 'assets/smug_temp.png'
         smug_anime_girl.save(temp_filename, 'PNG')

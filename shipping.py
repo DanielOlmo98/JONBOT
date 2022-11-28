@@ -9,6 +9,11 @@ import requests
 import os
 
 
+def center_coords(self, w_1, h_1, w_2, h_2):
+    w = w_1 // 2 - w_2 // 2
+    h = h_1 // 2 - h_2 // 2
+    return w, h
+
 # TODO add image thingin
 class Shipping(commands.Cog):
     def __init__(self, bot: commands.Bot):
@@ -73,10 +78,6 @@ class Shipping(commands.Cog):
         if ship_percent == 100:
             return str(ship_percent) + "%❤ mmgmhnhffhngmfhxbfngmvhfhfhmgmggjhhhhh"
 
-    def center_coords(self, w_1, h_1, w_2, h_2):
-        w = w_1 // 2 - w_2 // 2
-        h = h_1 // 2 - h_2 // 2
-        return w, h
 
     async def img_gen(self, ship_percent, mention_id_1, mention_id_2):
 
@@ -106,11 +107,11 @@ class Shipping(commands.Cog):
 
         img_w, img_h = new_image.size
 
-        new_image.paste(heart, self.center_coords(img_w, img_h, width_heart, height_heart), heart)
+        new_image.paste(heart, center_coords(img_w, img_h, width_heart, height_heart), heart)
 
         drawing = ImageDraw.Draw(new_image)
         txt_w, txt_h = drawing.textsize(str(ship_percent) + "%", font=font)
-        txt_x, txt_y = self.center_coords(img_w, img_h, txt_w, txt_h)
+        txt_x, txt_y = center_coords(img_w, img_h, txt_w, txt_h)
         drawing.text((txt_x, txt_y - ship_percent / 2 + 1), str(ship_percent) + "%", (255, 255, 255), font=font)
 
         new_image.save(self.temp_filename, 'PNG')
