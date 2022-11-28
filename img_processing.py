@@ -125,7 +125,7 @@ class ImgProcessing(commands.Cog):
         txt_w, txt_h = drawing.textsize(arg, font=font)
         txt_x, txt_y = center_coords(img_w, img_h, txt_w, txt_h)
         drawing.text((txt_x, txt_y*1.8),
-                     anchor = "sm",
+                     anchor = "mm",
                      text = arg,
                      fill =(255,255,255),
                      font = font,
