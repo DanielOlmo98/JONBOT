@@ -114,10 +114,10 @@ class ImgProcessing(commands.Cog):
 
     @commands.cooldown(1, 5, commands.BucketType.user)
     @commands.command(name='smug')
-    async def smug(self, ctx, *, arg):
+    async def smug(self, ctx, *args):
         img_text = ""
         if arg is not None:
-            img_text = arg
+            img_text = " ".join(args)
 
         smug_list = os.listdir("assets/smug")
         smug_anime_girl = Image.open(f"assets/smug/{choice(smug_list)}")
