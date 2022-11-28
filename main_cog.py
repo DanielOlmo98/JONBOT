@@ -311,7 +311,7 @@ class MainCog(commands.Cog):
     async def image_search(self, ctx, *args):
         from duckduckgo_search import ddg_images
         if not args:
-            await ctx.send(get_random_4chan_image('wg'))
+            await ctx.send(await get_random_4chan_image('wg'))
             raise ChatError("Have a nice image")
         search_result = ddg_images(" ".join(args), max_results=1, safesearch='On')
         try:
