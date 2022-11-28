@@ -1,6 +1,9 @@
 from discord.ext import commands
 import discord
 from PIL import Image
+from PIL import ImageDraw
+from PIL import ImageFont
+from random import choice
 import requests
 import re
 from discord.utils import get
@@ -107,3 +110,20 @@ class ImgProcessing(commands.Cog):
         pfp_url = str(usr.avatar_url)
         pfp = Image.open(requests.get(pfp_url, stream=True).raw)
         await ctx.channel.send(pfp_url)
+
+    @commands.cooldown(1, 5, commands.BucketType.user)
+    @commands.command(name='smug')
+    async def smug(self, ctx):
+        smug_list = os.listdir("assets/smug")
+        smug_anime_girl = Image.open(f"assets/smug/{choice(smug_list)}")
+        img_w, img_h = smug_anime_girl.size
+
+        font = ImageFont.truetype("assets/Verdana.ttf", img_w // 15)
+
+        drawing = ImageDraw.Draw(smug_anime_girl)
+        drawing.text((0,0), "no bitches?", (255,255,255), font = font)
+
+        temp_filename = 'assets/smug_temp.png'
+        smug_anime_girl.save(temp_filename, 'PNG')
+        await channel.send(file=discord.File(temp_filename))
+        os.remove(temp_filename)
