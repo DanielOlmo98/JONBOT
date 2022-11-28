@@ -17,7 +17,7 @@ from errors import ChatError
 from random import choice
 
 
-def get_random_4chan_image(board):
+async def get_random_4chan_image(board):
     board = basc_py4chan.Board(board)
     thread_ids = board.get_all_thread_ids()
     rand_thread = board.get_thread(choice(thread_ids))
@@ -311,6 +311,7 @@ class MainCog(commands.Cog):
     async def image_search(self, ctx, *args):
         from duckduckgo_search import ddg_images
         if not args:
+
             await ctx.send(await get_random_4chan_image('wg'))
             raise ChatError("Have a nice image")
         search_result = ddg_images(" ".join(args), max_results=1, safesearch='On')
