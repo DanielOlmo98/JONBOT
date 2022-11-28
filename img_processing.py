@@ -124,12 +124,14 @@ class ImgProcessing(commands.Cog):
         drawing = ImageDraw.Draw(smug_anime_girl)
         txt_w, txt_h = drawing.textsize(arg, font=font)
         txt_x, txt_y = center_coords(img_w, img_h, txt_w, txt_h)
-        drawing.text((txt_x, txt_y),
+        drawing.text((txt_x, txt_y+txt_y//3),
+                     anchor = "ms",
                      text = arg,
                      fill =(255,255,255),
                      font = font,
-                     stroke_width = 2,
-                     stroke_fill = (0,0,0))
+                     stroke_width = 5,
+                     stroke_fill = (0,0,0)
+                     )
 
         temp_filename = 'assets/smug_temp.png'
         smug_anime_girl.save(temp_filename, 'PNG')
