@@ -115,6 +115,10 @@ class ImgProcessing(commands.Cog):
     @commands.cooldown(1, 5, commands.BucketType.user)
     @commands.command(name='smug')
     async def smug(self, ctx, *, arg):
+        img_text = ""
+        if arg is not None:
+            img_text = arg
+
         smug_list = os.listdir("assets/smug")
         smug_anime_girl = Image.open(f"assets/smug/{choice(smug_list)}")
         img_w, img_h = smug_anime_girl.size
@@ -122,11 +126,11 @@ class ImgProcessing(commands.Cog):
         font = ImageFont.truetype("assets/Verdana.ttf", img_w // 15)
 
         drawing = ImageDraw.Draw(smug_anime_girl)
-        txt_w, txt_h = drawing.textsize(arg, font=font)
+        txt_w, txt_h = drawing.textsize(img_text, font=font)
         txt_x, txt_y = center_coords(img_w, img_h, txt_w, txt_h)
         drawing.text((txt_x, txt_y*1.95),
                      anchor = "mm",
-                     text = arg,
+                     text = img_text,
                      fill =(255,255,255),
                      font = font,
                      stroke_width = img_w // (15*8),
