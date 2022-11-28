@@ -113,7 +113,7 @@ class ImgProcessing(commands.Cog):
 
     @commands.cooldown(1, 5, commands.BucketType.user)
     @commands.command(name='smug')
-    async def smug(self, ctx):
+    async def smug(self, ctx, *args):
         smug_list = os.listdir("assets/smug")
         smug_anime_girl = Image.open(f"assets/smug/{choice(smug_list)}")
         img_w, img_h = smug_anime_girl.size
@@ -125,5 +125,5 @@ class ImgProcessing(commands.Cog):
 
         temp_filename = 'assets/smug_temp.png'
         smug_anime_girl.save(temp_filename, 'PNG')
-        await channel.send(file=discord.File(temp_filename))
+        await ctx.channel.send(file=discord.File(temp_filename))
         os.remove(temp_filename)
