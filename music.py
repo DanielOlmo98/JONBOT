@@ -21,7 +21,10 @@ import functools
 import itertools
 import math
 import random
+import os
 
+import eyed3
+import io
 import discord
 import youtube_dl
 from async_timeout import timeout
@@ -149,7 +152,6 @@ class YTDLSource(discord.PCMVolumeTransformer):
 
         return ', '.join(duration)
 
-
 class Song:
     __slots__ = ('source', 'requester')
 
@@ -158,6 +160,7 @@ class Song:
         self.requester = source.requester
 
     def create_embed(self):
+        file = None
         embed = (discord.Embed(title='Now playing',
                                description='```css\n{0.source.title}\n```'.format(self),
                                color=discord.Color.blurple())
@@ -167,8 +170,70 @@ class Song:
                  .add_field(name='URL', value='[Click]({0.source.url})'.format(self))
                  .set_thumbnail(url=self.source.thumbnail))
 
-        return embed
+        return file, embed
 
+class LocalSource(discord.PCMVolumeTransformer):
+    FFMPEG_OPTIONS = {
+        'before_options': '-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5',
+        'options': '-vn',
+    }
+
+    def __init__(self, ctx: commands.Context, source: discord.FFmpegPCMAudio, *, tags, info, volume: float = 0.5):
+        super().__init__(source, volume)
+
+        self.requester = ctx.author
+        self.channel = ctx.channel
+        self.tags = tags
+
+        self.date = tags.getBestDate()
+        self.title = tags.title
+        self.albumtitle = tags.album
+        self.artist = tags.album_artist
+        self.url = tags.album_artist
+        self.thumbnail = tags.images[0]
+        self.duration = self.parse_duration(int(info.time_secs))
+
+    def __str__(self):
+        return '**{0.title}** by **{0.artist}**'.format(self)
+
+    @classmethod
+    async def create_source(cls, ctx: commands.Context, filepath: str):
+
+        audiometadata = eyed3.load(filepath)
+        return cls(ctx, discord.FFmpegPCMAudio(filepath), tags=audiometadata.tag, info = audiometadata.info)
+
+    @staticmethod
+    def parse_duration(duration: int):
+        minutes, seconds = divmod(duration, 60)
+        hours, minutes = divmod(minutes, 60)
+        days, hours = divmod(hours, 24)
+
+        duration = []
+        if days > 0:
+            duration.append('{} days'.format(days))
+        if hours > 0:
+            duration.append('{} hours'.format(hours))
+        if minutes > 0:
+            duration.append('{} minutes'.format(minutes))
+        if seconds > 0:
+            duration.append('{} seconds'.format(seconds))
+
+        return ', '.join(duration)
+
+class LocalSong:
+    __slots__ = ('source', 'requester')
+
+    def __init__(self, source: LocalSource):
+        self.source = source
+        self.requester = source.requester
+
+    def create_embed(self):
+        file = discord.File(io.BytesIO(self.source.thumbnail.image_data), filename="thumb.png")
+        embed = (discord.Embed(title=f'{self.source.title}', description=f'{self.source.artist}  -  {self.source.albumtitle} [{self.source.date}]', color=discord.Color.blurple())
+                 .add_field(name='Duration', value=self.source.duration, inline=True)
+                 .add_field(name='Requested by', value=self.requester.mention, inline = True)
+                 .set_thumbnail(url="attachment://thumb.png"))
+        return file, embed
 
 class SongQueue(asyncio.Queue):
     def __getitem__(self, item):
@@ -239,10 +304,17 @@ class VoiceState:
             if not self.loop:
                 self.current = await self.songs.get()
 
+            file, embed = self.current.create_embed()
+            await self.current.source.channel.send(file = file, embed = embed)
+
             self.current.source.volume = self._volume
             self.voice.play(self.current.source, after=self.play_next_song)
 
-            await self.current.source.channel.send(embed=self.current.create_embed())
+            # pause for a sec to buffer
+            self.voice.pause()
+            await asyncio.sleep(0.5)
+            self.voice.resume()
+
 
             await self.next.wait()
             if not self.voice.is_playing():
@@ -364,7 +436,8 @@ class Music(commands.Cog):
     async def _now(self, ctx: commands.Context):
         """Displays the currently playing song."""
 
-        await ctx.send(embed=ctx.voice_state.current.create_embed())
+        file, embed = ctx.voice_state.current.create_embed()
+        await ctx.send(file=file, embed=embed)
 
     @commands.command(name='pause')
     @commands.has_permissions(manage_guild=True)
@@ -504,6 +577,25 @@ class Music(commands.Cog):
 
                 await ctx.voice_state.songs.put(song)
                 await ctx.send('Enqueued {}'.format(str(source)))
+
+    @commands.command(name='playlocal')
+    async def _play_local(self, ctx: commands.Context, *, filepath: str):
+
+        if not ctx.voice_state.voice:
+            await ctx.invoke(self._join)
+
+        async with ctx.typing():
+            source = await LocalSource.create_source(ctx, f'/home/pi/NAS/Music/{filepath}')
+            song = LocalSong(source)
+            await ctx.voice_state.songs.put(song)
+            await ctx.send('Enqueued {}'.format(str(source)))
+
+    @commands.command(name='playlocalalbum')
+    async def _play_local_album(self, ctx: commands.Context, *, folderpath: str):
+        song_list = [f for f in os.listdir(f'/home/pi/NAS/Music/{folderpath}') if f.endswith(('.mp3', '.flac'))]
+        for song in sorted(song_list):
+            await self._play_local(ctx, filepath=f'{folderpath}/{song}')
+
 
     @_join.before_invoke
     @_play.before_invoke
