@@ -42,7 +42,7 @@ envs = {
     'daily_verse_channel_id': int(os.getenv('daily_verse_channel_id', default=0)),
     'jonbot_logs_bots': int(os.getenv('jonbot_logs_bots', default=0)),
     'jonbot_logs': int(os.getenv('jonbot_logs', default=0)),
-    'rick_server_id': int(os.getenv('rick_server_id', default=0))
+    'rick_server_id': int(os.getenv('rick_server_id', default=0)),
 }
 
 env_var_exception = None

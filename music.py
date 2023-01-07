@@ -29,6 +29,7 @@ import discord
 import youtube_dl
 from async_timeout import timeout
 from discord.ext import commands, tasks
+from decorators import has_jonbot_perms
 
 # Silence useless bug reports messages
 youtube_dl.utils.bug_reports_message = lambda: ''
@@ -174,8 +175,8 @@ class Song:
 
 class LocalSource(discord.PCMVolumeTransformer):
     FFMPEG_OPTIONS = {
-        'before_options': '-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5',
-        'options': '-vn',
+        #'before_options': '-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5',
+        #'options': '-ar 44100',
     }
 
     def __init__(self, ctx: commands.Context, source: discord.FFmpegPCMAudio, *, tags, info, volume: float = 0.5):
@@ -200,7 +201,7 @@ class LocalSource(discord.PCMVolumeTransformer):
     async def create_source(cls, ctx: commands.Context, filepath: str):
 
         audiometadata = eyed3.load(filepath)
-        return cls(ctx, discord.FFmpegPCMAudio(filepath), tags=audiometadata.tag, info = audiometadata.info)
+        return cls(ctx, discord.FFmpegPCMAudio(filepath, **cls.FFMPEG_OPTIONS), tags=audiometadata.tag, info = audiometadata.info)
 
     @staticmethod
     def parse_duration(duration: int):
@@ -355,6 +356,7 @@ class Music(commands.Cog):
         self.bot = bot
         self.voice_states = {}
 
+
     def get_voice_state(self, ctx: commands.Context):
         state = self.voice_states.get(ctx.guild.id)
         if not state:
@@ -391,7 +393,7 @@ class Music(commands.Cog):
         ctx.voice_state.voice = await destination.connect()
 
     @commands.command(name='summon')
-    @commands.has_permissions(manage_guild=True)
+    @has_jonbot_perms()
     async def _summon(self, ctx: commands.Context, *, channel: discord.VoiceChannel = None):
         """Summons the bot to a voice channel.
 
@@ -409,7 +411,7 @@ class Music(commands.Cog):
         ctx.voice_state.voice = await destination.connect()
 
     @commands.command(name='leave', aliases=['disconnect'])
-    @commands.has_permissions(manage_guild=True)
+    @has_jonbot_perms()
     async def _leave(self, ctx: commands.Context):
         """Clears the queue and leaves the voice channel."""
 
@@ -440,7 +442,7 @@ class Music(commands.Cog):
         await ctx.send(file=file, embed=embed)
 
     @commands.command(name='pause')
-    @commands.has_permissions(manage_guild=True)
+    @has_jonbot_perms()
     async def _pause(self, ctx: commands.Context):
         """Pauses the currently playing song."""
 
@@ -449,7 +451,7 @@ class Music(commands.Cog):
             await ctx.message.add_reaction('⏯')
 
     @commands.command(name='resume')
-    @commands.has_permissions(manage_guild=True)
+    @has_jonbot_perms()
     async def _resume(self, ctx: commands.Context):
         """Resumes a currently paused song."""
 
@@ -458,7 +460,7 @@ class Music(commands.Cog):
             await ctx.message.add_reaction('⏯')
 
     @commands.command(name='stop')
-    @commands.has_permissions(manage_guild=True)
+    @has_jonbot_perms()
     async def _stop(self, ctx: commands.Context):
         """Stops playing song and clears the queue."""
 
