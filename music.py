@@ -27,6 +27,7 @@ import eyed3
 import io
 import discord
 import youtube_dl
+import subprocess
 from async_timeout import timeout
 from discord.ext import commands, tasks
 from decorators import has_jonbot_perms
@@ -191,8 +192,11 @@ class LocalSource(discord.PCMVolumeTransformer):
         self.albumtitle = tags.album
         self.artist = tags.album_artist
         self.url = tags.album_artist
-        self.thumbnail = tags.images[0]
         self.duration = self.parse_duration(int(info.time_secs))
+        try:
+            self.thumbnail = tags.images[0]
+        except IndexError:
+            self.thumbnail = None
 
     def __str__(self):
         return '**{0.title}** by **{0.artist}**'.format(self)
@@ -229,11 +233,15 @@ class LocalSong:
         self.requester = source.requester
 
     def create_embed(self):
-        file = discord.File(io.BytesIO(self.source.thumbnail.image_data), filename="thumb.png")
+        file = None
         embed = (discord.Embed(title=f'{self.source.title}', description=f'{self.source.artist}  -  {self.source.albumtitle} [{self.source.date}]', color=discord.Color.blurple())
                  .add_field(name='Duration', value=self.source.duration, inline=True)
-                 .add_field(name='Requested by', value=self.requester.mention, inline = True)
-                 .set_thumbnail(url="attachment://thumb.png"))
+                 .add_field(name='Requested by', value=self.requester.mention, inline = True))
+
+        if self.source.thumbnail is not None:
+            file = discord.File(io.BytesIO(self.source.thumbnail.image_data), filename="thumb.png")
+            embed.set_thumbnail(url="attachment://thumb.png")
+
         return file, embed
 
 class SongQueue(asyncio.Queue):
@@ -594,7 +602,7 @@ class Music(commands.Cog):
 
     @commands.command(name='playlocalalbum')
     async def _play_local_album(self, ctx: commands.Context, *, folderpath: str):
-        song_list = [f for f in os.listdir(f'/home/pi/NAS/Music/{folderpath}') if f.endswith(('.mp3', '.flac'))]
+        song_list = [f for f in os.listdir(f'/home/pi/NAS/Music/{folderpath}') if f.endswith(('.mp3'))]
         for song in sorted(song_list):
             await self._play_local(ctx, filepath=f'{folderpath}/{song}')
 
@@ -608,3 +616,16 @@ class Music(commands.Cog):
         if ctx.voice_client:
             if ctx.voice_client.channel != ctx.author.voice.channel:
                 raise commands.CommandError('Bot is already in a voice channel.')
+
+class Filetree(commands.Cog):
+    def __init__(self, bot: commands.Bot):
+        self.bot = bot
+        self.root_path = "/home/pi/NAS/Music/"
+
+    @commands.command(name='tree')
+    async def _tree(self, ctx: commands.Context, *, folderpath = ""):
+        full_path = f'{self.root_path}{folderpath}'
+        out = subprocess.check_output(['tree','-L','1',full_path])
+        await ctx.send(out.decode('UTF-8'))
+
+
