@@ -626,6 +626,6 @@ class Filetree(commands.Cog):
     async def _tree(self, ctx: commands.Context, *, folderpath = ""):
         full_path = f'{self.root_path}{folderpath}'
         out = subprocess.check_output(['tree','-L','1',full_path])
-        await ctx.send(out.decode('UTF-8'))
+        await ctx.send(out.decode('UTF-8'), delete_after=30)
 
 

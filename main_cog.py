@@ -17,14 +17,6 @@ from errors import ChatError
 from random import choice
 
 
-async def get_random_4chan_image(board):
-    board = basc_py4chan.Board(board)
-    thread_ids = board.get_all_thread_ids()
-    rand_thread = board.get_thread(choice(thread_ids))
-    files_url =  [file for file in rand_thread.files()]
-    return choice(files_url)
-
-
 
 class MainCog(commands.Cog):
     def __init__(self, rick: commands.Bot, TENOR_API, YT_API, jonbot_logs_bots, jonbot_logs, rick_server_id):
@@ -312,7 +304,7 @@ class MainCog(commands.Cog):
         from duckduckgo_search import ddg_images
         if not args:
 
-            await ctx.send(await get_random_4chan_image('wg'))
+            await ctx.send(await self.get_random_4chan_image('wg'))
             raise ChatError("Have a nice image")
         search_result = ddg_images(" ".join(args), max_results=1, safesearch='On')
         try:
@@ -320,3 +312,13 @@ class MainCog(commands.Cog):
         except IndexError:
             raise ChatError("No results.")
         await ctx.send(image)
+    
+    @staticmethod
+    async def get_random_4chan_image(board):
+        board = basc_py4chan.Board(board)
+        thread_ids = board.get_all_thread_ids()
+        rand_thread = board.get_thread(choice(thread_ids))
+        files_url =  [file for file in rand_thread.files()]
+        return choice(files_url)
+
+

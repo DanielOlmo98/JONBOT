@@ -92,7 +92,7 @@ class Economy(commands.Cog):
         fast = choice(fast_words)
         word = choice(type_challenge)
 
-        if rng > 0.0002:
+        if rng > 0.001:
             return
         else:
             image_length = len(word) * 23

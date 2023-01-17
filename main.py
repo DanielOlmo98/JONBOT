@@ -14,7 +14,7 @@ from tenorscrap import Tenor  # https://github.com/suarasiy/tenorscrap
 from reverse_img_search import get_vtuber, img_extensions
 from subscribe import Subscribe
 from economy import Economy
-from music import Music
+from music import Music, Filetree
 from rick_answers import RickAnswers
 from img_processing import ImgProcessing
 from shipping import Shipping
@@ -61,7 +61,7 @@ except ValueError as x:
 # rick_server_id = 94440780738854912
 intents = discord.Intents.default()
 intents.members = True
-rick = commands.Bot(command_prefix='.', help_command=None, case_insensitive=True, intents=intents)
+rick = commands.Bot(command_prefix=('.', 'rick '), help_command=None, case_insensitive=True, intents=intents)
 
 
 @rick.event
@@ -80,6 +80,7 @@ rick.add_cog(
             envs['rick_server_id']))
 rick.add_cog(ErrorCog(rick))
 rick.add_cog(Music(rick))
+rick.add_cog(Filetree(rick))
 rick.add_cog(Subscribe(rick))
 rick.add_cog(Economy(rick))
 rick.add_cog(RickAnswers(rick, envs['daily_verse_channel_id']))

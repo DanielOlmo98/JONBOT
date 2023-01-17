@@ -8,6 +8,7 @@ import requests
 import re
 from discord.utils import get
 import os
+import io
 from shipping import center_coords
 
 
@@ -23,6 +24,7 @@ class ImgProcessing(commands.Cog):
         reaction = get(message.reactions, emoji=payload.emoji.name)
         if channel in (discord.utils.get(payload.member.guild.text_channels, name="banter")
                        , discord.utils.get(payload.member.guild.text_channels, name="lewd")
+                       , discord.utils.get(payload.member.guild.text_channels, name="general")
                        , discord.utils.get(payload.member.guild.text_channels, name="bible-study")):
 
             if payload.emoji.name == "⏩":
@@ -56,12 +58,9 @@ class ImgProcessing(commands.Cog):
                                 too_fast = True
                             frame_time.append(f_time)
 
-                        temp_gif_filename = "assets/temp.gif"
-                        gif.save(temp_gif_filename, save_all=True, duration=frame_time)
                         if too_fast:
                             await message.channel.send("SLOW DOWN COWBOY ✋🤠🚫")
-                        await channel.send(file=discord.File(temp_gif_filename))
-                        os.remove(temp_gif_filename)
+                        await send_pil_img(channel, gif)
         except requests.exceptions.MissingSchema:
             return
 
@@ -84,10 +83,7 @@ class ImgProcessing(commands.Cog):
                         new_image.paste(react_img, (332, 9), react_img)
                         new_image.paste(mmgm, (0, 0), mmgm)
 
-                        mmm_temp_filename = 'assets/mmgm_temp.png'
-                        new_image.save(mmm_temp_filename, 'PNG')
-                        await channel.send(file=discord.File(mmm_temp_filename))
-                        os.remove(mmm_temp_filename)
+                        await send_pil_img(channel, new_image)
 
         except requests.exceptions.MissingSchema:
             return
@@ -115,29 +111,34 @@ class ImgProcessing(commands.Cog):
     @commands.cooldown(1, 5, commands.BucketType.user)
     @commands.command(name='smug')
     async def smug(self, ctx, *args):
-        img_text = ""
-        if args:
-            img_text = " ".join(args)
+        async with ctx.typing():
+            img_text = ""
+            if args:
+                img_text = " ".join(args)
 
-        smug_list = os.listdir("assets/smug")
-        smug_anime_girl = Image.open(f"assets/smug/{choice(smug_list)}")
-        img_w, img_h = smug_anime_girl.size
+            smug_list = os.listdir("assets/smug")
+            smug_anime_girl = Image.open(f"assets/smug/{choice(smug_list)}")
+            img_w, img_h = smug_anime_girl.size
 
-        font = ImageFont.truetype("assets/Verdana.ttf", img_w // 15)
+            font = ImageFont.truetype("assets/Verdana.ttf", img_w // 15)
 
-        drawing = ImageDraw.Draw(smug_anime_girl)
-        txt_w, txt_h = drawing.textsize(img_text, font=font)
-        txt_x, txt_y = center_coords(img_w, img_h, txt_w, txt_h)
-        drawing.text((img_w//2, txt_y*1.95),
-                     anchor = "mm",
-                     text = img_text,
-                     fill =(255,255,255),
-                     font = font,
-                     stroke_width = img_w // (15*8),
-                     stroke_fill = (0,0,0)
-                     )
+            drawing = ImageDraw.Draw(smug_anime_girl)
+            txt_w, txt_h = drawing.textsize(img_text, font=font)
+            txt_x, txt_y = center_coords(img_w, img_h, txt_w, txt_h)
+            drawing.text((img_w//2, txt_y*1.95),
+                         anchor = "mm",
+                         text = img_text,
+                         fill =(255,255,255),
+                         font = font,
+                         stroke_width = img_w // (15*8),
+                         stroke_fill = (0,0,0)
+                         )
 
-        temp_filename = 'assets/smug_temp.png'
-        smug_anime_girl.save(temp_filename, 'PNG')
-        await ctx.channel.send(file=discord.File(temp_filename))
-        os.remove(temp_filename)
+            await send_pil_img(ctx.channel, smug_anime_girl)
+
+
+async def send_pil_img(channel, image, filetype='png'):
+    with io.BytesIO() as image_binary:
+                    image.save(image_binary, f'{filetype.upper()}')
+                    image_binary.seek(0)
+                    await channel.send(file=discord.File(fp=image_binary, filename=f'temp.{filetype}'))

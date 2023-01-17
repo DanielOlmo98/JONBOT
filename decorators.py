@@ -1,4 +1,3 @@
-from discord.ext.commands import bot
 from discord.ext import commands
 import json
 from os import path
