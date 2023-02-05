@@ -363,6 +363,7 @@ class Music(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
         self.voice_states = {}
+        self.localmusicpath = '/media/Music/'
 
 
     def get_voice_state(self, ctx: commands.Context):
@@ -595,14 +596,14 @@ class Music(commands.Cog):
             await ctx.invoke(self._join)
 
         async with ctx.typing():
-            source = await LocalSource.create_source(ctx, f'/home/pi/NAS/Music/{filepath}')
+            source = await LocalSource.create_source(ctx, f'{self.localmusicpath}{filepath}')
             song = LocalSong(source)
             await ctx.voice_state.songs.put(song)
             await ctx.send('Enqueued {}'.format(str(source)))
 
     @commands.command(name='playlocalalbum')
     async def _play_local_album(self, ctx: commands.Context, *, folderpath: str):
-        song_list = [f for f in os.listdir(f'/home/pi/NAS/Music/{folderpath}') if f.endswith(('.mp3'))]
+        song_list = [f for f in os.listdir(f'{self.localmusicpath}{folderpath}') if f.endswith(('.mp3'))]
         for song in sorted(song_list):
             await self._play_local(ctx, filepath=f'{folderpath}/{song}')
 
@@ -620,7 +621,7 @@ class Music(commands.Cog):
 class Filetree(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
-        self.root_path = "/home/pi/NAS/Music/"
+        self.root_path = '/media/Music/'
 
     @commands.command(name='tree')
     async def _tree(self, ctx: commands.Context, *, folderpath = ""):

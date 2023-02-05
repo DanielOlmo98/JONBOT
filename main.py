@@ -33,59 +33,64 @@ from youtube_api import YouTubeDataAPI
 # os.chdir("C:\\Users\\test2\\PycharmProjects\\JONBOT")
 # ffmpeg_path = "C:/Users/test2/PycharmProjects/JONBOT/venv/Lib/site-packages/ffmpeg-binaries/bin/ffmpeg.exe"
 
-print("Starting JONBOT...")
-load_dotenv()
-envs = {
-    'TOKEN': os.getenv('DISCORD_TOKEN'),
-    'YT_API': os.getenv('YT_API'),
-    'TENOR_API': os.getenv('TENOR_API'),
-    'daily_verse_channel_id': int(os.getenv('daily_verse_channel_id', default=0)),
-    'jonbot_logs_bots': int(os.getenv('jonbot_logs_bots', default=0)),
-    'jonbot_logs': int(os.getenv('jonbot_logs', default=0)),
-    'rick_server_id': int(os.getenv('rick_server_id', default=0)),
-}
+async def startup():
+    print("Starting JONBOT...")
+    load_dotenv()
+    envs = {
+        'TOKEN': os.getenv('DISCORD_TOKEN'),
+        'YT_API': os.getenv('YT_API'),
+        'TENOR_API': os.getenv('TENOR_API'),
+        'daily_verse_channel_id': int(os.getenv('daily_verse_channel_id', default=0)),
+        'jonbot_logs_bots': int(os.getenv('jonbot_logs_bots', default=0)),
+        'jonbot_logs': int(os.getenv('jonbot_logs', default=0)),
+        'rick_server_id': int(os.getenv('rick_server_id', default=0)),
+    }
 
-env_var_exception = None
-missing_envs = []
-try:
-    for key in envs:
-        if envs[key] == 0 or envs[key] is None:
-            missing_envs.append(key)
+    env_var_exception = None
+    missing_envs = []
+    try:
+        for key in envs:
+            if envs[key] == 0 or envs[key] is None:
+                missing_envs.append(key)
 
-    if missing_envs:
-        raise ValueError("Missing enviroment variables: " + ', '.join(missing_envs))
-except ValueError as x:
-    env_var_exception = x
-    pass
+        if missing_envs:
+            raise ValueError("Missing enviroment variables: " + ', '.join(missing_envs))
+    except ValueError as x:
+        env_var_exception = x
+        pass
 
-# rick_server_id = 94440780738854912
-intents = discord.Intents.default()
-intents.members = True
-rick = commands.Bot(command_prefix=('.', 'rick '), help_command=None, case_insensitive=True, intents=intents)
-
-
-@rick.event
-async def on_ready():
-    print('Logged in as:\n{0.user.name}\n{0.user.id}'.format(rick))
-    await rick.change_presence(activity=discord.Activity(type=discord.ActivityType.watching,
-                                                         name=".help  🌶️"))
-
-    if env_var_exception is not None:
-        channel = rick.get_channel(envs['rick_server_id'])
-        await channel.send(env_var_exception)
+    # rick_server_id = 94440780738854912
+    intents = discord.Intents.all()
+    intents.members = True
+    rick = commands.Bot(command_prefix=('.', 'rick '), help_command=None, case_insensitive=True, intents=intents)
 
 
-rick.add_cog(
-    MainCog(rick, envs['TENOR_API'], envs['YT_API'], envs['jonbot_logs_bots'], envs['jonbot_logs'],
-            envs['rick_server_id']))
-rick.add_cog(ErrorCog(rick))
-rick.add_cog(Music(rick))
-rick.add_cog(Filetree(rick))
-rick.add_cog(Subscribe(rick))
-rick.add_cog(Economy(rick))
-rick.add_cog(RickAnswers(rick, envs['daily_verse_channel_id']))
-rick.add_cog(ImgProcessing(rick))
-rick.add_cog(Shipping(rick))
-rick.add_cog(NewFishingCog(rick))
+    @rick.event
+    async def on_ready():
+        print('Logged in as:\n{0.user.name}\n{0.user.id}'.format(rick))
+        await rick.change_presence(activity=discord.Activity(type=discord.ActivityType.watching,
+                                                             name=".help  🌶️"))
 
-rick.run(envs['TOKEN'])
+        if env_var_exception is not None:
+            channel = rick.get_channel(envs['rick_server_id'])
+            await channel.send(env_var_exception)
+
+
+    await rick.add_cog(
+        MainCog(rick, envs['TENOR_API'], envs['YT_API'], envs['jonbot_logs_bots'], envs['jonbot_logs'],
+                envs['rick_server_id']))
+    await rick.add_cog(ErrorCog(rick))
+    await rick.add_cog(Music(rick))
+    await rick.add_cog(Filetree(rick))
+    await rick.add_cog(Subscribe(rick))
+    await rick.add_cog(Economy(rick))
+    await rick.add_cog(RickAnswers(rick, envs['daily_verse_channel_id']))
+    await rick.add_cog(ImgProcessing(rick))
+    await rick.add_cog(Shipping(rick))
+    await rick.add_cog(NewFishingCog(rick))
+
+    # await rick.run(envs['TOKEN'])
+    await rick.start(envs['TOKEN'])
+
+if __name__ == "__main__":
+    asyncio.run(startup())
