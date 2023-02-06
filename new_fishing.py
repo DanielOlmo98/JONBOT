@@ -100,6 +100,9 @@ class Fishing:
 
         def __str__(self):
             return f'{self.chat_name}'
+        def str_rarity(self):
+           return
+
 
 
 class NewFishingCog(commands.Cog):
@@ -140,7 +143,7 @@ class NewFishingCog(commands.Cog):
         await ctx.channel.send("fishing.. ", delete_after=5)
         record_msg = await self.inventory.add_fish(userid, fish.name, fishsize)
         await asyncio.sleep(5)
-        await ctx.send(f'🎣 | <@{userid}>, you caught a {fishsize:.1f} cm {fish}', delete_after=cooldown - 5)
+        await ctx.send(f'🎣 | <@{userid}>, you caught a {fishsize:.1f} cm {fish} (*{fish.rarity.upper()}*)', delete_after=cooldown - 5)
         self.fish_command.reset_cooldown(ctx)
         if record_msg:
             await ctx.send(f'{record_msg} {fish}')
