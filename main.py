@@ -77,10 +77,10 @@ async def startup():
 
 
     await rick.add_cog(
-        MainCog(rick, envs['TENOR_API'], envs['YT_API'], envs['jonbot_logs_bots'], envs['jonbot_logs'],
+        MainCog(rick, envs['TENOR_API'], envs['jonbot_logs_bots'], envs['jonbot_logs'],
                 envs['rick_server_id']))
     await rick.add_cog(ErrorCog(rick))
-    await rick.add_cog(Music(rick))
+    await rick.add_cog(Music(rick, YT_API = envs['YT_API']))
     await rick.add_cog(Filetree(rick))
     await rick.add_cog(Subscribe(rick))
     await rick.add_cog(Economy(rick))

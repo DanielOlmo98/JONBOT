@@ -28,6 +28,7 @@ import io
 import discord
 import youtube_dl
 import subprocess
+from youtube_api import YouTubeDataAPI
 from async_timeout import timeout
 from discord.ext import commands, tasks
 from decorators import has_jonbot_perms
@@ -92,13 +93,14 @@ class YTDLSource(discord.PCMVolumeTransformer):
         self.dislikes = data.get('dislike_count')
         self.stream_url = data.get('url')
 
+
     def __str__(self):
         return '**{0.title}** by **{0.uploader}**'.format(self)
 
     @classmethod
     async def create_source(cls, ctx: commands.Context, search: str, *, loop: asyncio.BaseEventLoop = None):
         loop = loop or asyncio.get_event_loop()
-
+        
         partial = functools.partial(cls.ytdl.extract_info, search, download=False, process=False)
         data = await loop.run_in_executor(None, partial)
 
@@ -360,10 +362,11 @@ class VoiceState:
 
 
 class Music(commands.Cog):
-    def __init__(self, bot: commands.Bot):
+    def __init__(self, bot: commands.Bot, YT_API):
         self.bot = bot
         self.voice_states = {}
         self.localmusicpath = '/media/Music/'
+        self.YT_API = YouTubeDataAPI(YT_API)
 
 
     def get_voice_state(self, ctx: commands.Context):
@@ -424,10 +427,12 @@ class Music(commands.Cog):
     async def _leave(self, ctx: commands.Context):
         """Clears the queue and leaves the voice channel."""
 
-        if not ctx.voice_state.voice:
-            return await ctx.send('Not connected to any voice channel.')
+        # if not ctx.voice_state.voice:
+        #     return await ctx.send('Not connected to any voice channel.')
 
         await ctx.voice_state.stop()
+        await ctx.author.voice.channel.disconnect()
+
         del self.voice_states[ctx.guild.id]
 
     @commands.command(name='volume')
@@ -580,10 +585,11 @@ class Music(commands.Cog):
 
         async with ctx.typing():
             try:
-                source = await YTDLSource.create_source(ctx, search, loop=self.bot.loop)
+                url = await self.search_yt(search)
+                source = await YTDLSource.create_source(ctx, url, loop=self.bot.loop)
             except YTDLError as e:
                 await ctx.send('An error occurred while processing this request: {}'.format(str(e)))
-            else:
+            else: 
                 song = Song(source)
 
                 await ctx.voice_state.songs.put(song)
@@ -618,6 +624,16 @@ class Music(commands.Cog):
             if ctx.voice_client.channel != ctx.author.voice.channel:
                 raise commands.CommandError('Bot is already in a voice channel.')
 
+    @commands.command(name='yt')
+    async def yt(self, ctx, *, arg):
+        url = await self.search_yt(arg)
+        await ctx.send(url)
+
+    async def search_yt(self, search):
+        vid_search = self.YT_API.search(search)
+        url = "https://www.youtube.com/watch?v=" + vid_search[0]["video_id"]
+        return url
+
 class Filetree(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
@@ -628,5 +644,4 @@ class Filetree(commands.Cog):
         full_path = f'{self.root_path}{folderpath}'
         out = subprocess.check_output(['tree','-L','1',full_path])
         await ctx.send(out.decode('UTF-8'), delete_after=30)
-
 

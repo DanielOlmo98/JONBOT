@@ -12,17 +12,16 @@ from discord.utils import get
 from replies import rick_reply
 from replies import sick
 from discord.ext import commands
-from youtube_api import YouTubeDataAPI
 from errors import ChatError
 from random import choice
+# from youtube_api import YouTubeDataAPI
 
 
 
 class MainCog(commands.Cog):
-    def __init__(self, rick: commands.Bot, TENOR_API, YT_API, jonbot_logs_bots, jonbot_logs, rick_server_id):
+    def __init__(self, rick: commands.Bot, TENOR_API, jonbot_logs_bots, jonbot_logs, rick_server_id):
         self.bot = rick
         self.TENOR_API = TENOR_API
-        self.YT_API = YT_API
         self.jonbot_logs_bots = jonbot_logs_bots
         self.jonbot_logs = jonbot_logs
         self.rick_server_id = rick_server_id
@@ -143,11 +142,11 @@ class MainCog(commands.Cog):
         driver.find_element_by_link_text('Download').click()
         vc.play(discord.FFmpegPCMAudio('assets\\tts\\voice.mp3'), after=lambda e: os.remove("assets\\tts\\voice.mp3"))
 
-    @commands.command(name="yt")
-    async def yt(self, ctx, *, arg):
-        yt = YouTubeDataAPI(self.YT_API)
-        vid_search = yt.search(arg)
-        await ctx.send("https://www.youtube.com/watch?v=" + vid_search[0]["video_id"])
+    # @commands.command(name="yt")
+    # async def yt(self, ctx, *, arg):
+    #     yt = YouTubeDataAPI(self.YT_API)
+    #     vid_search = yt.search(arg)
+    #     await ctx.send("https://www.youtube.com/watch?v=" + vid_search[0]["video_id"])
 
     @commands.command()
     async def say(self, ctx, *, message):
