@@ -1,4 +1,5 @@
 import dataclasses
+import re
 import os
 import discord
 import embeds
@@ -6,6 +7,7 @@ import asyncio
 import TenGiphPy
 import basc_py4chan
 
+from typing import Optional
 from tenorscrap import Tenor  # https://github.com/suarasiy/tenorscrap
 from reverse_img_search import get_vtuber, img_extensions
 from discord.utils import get
@@ -14,6 +16,7 @@ from replies import sick
 from discord.ext import commands
 from errors import ChatError
 from random import choice
+from random import randint
 # from youtube_api import YouTubeDataAPI
 
 
@@ -155,7 +158,6 @@ class MainCog(commands.Cog):
 
     @commands.command()
     async def roll(self, ctx, arg1: str = None, arg2: str = None):
-        from random import randint
         if arg2 is None and arg1 is None:
             return await ctx.send("```.roll 1000 would roll 1-1000\n.roll 100 1000 would roll 100-1000```")
         if arg2 is None:
@@ -181,7 +183,6 @@ class MainCog(commands.Cog):
                 "The current available quotes are: " + (", ".join(quotable_user_list)))
         try:
             quote_list = os.listdir(quote_path + arg)
-            from random import choice
             filename = choice(quote_list)
             await ctx.send(file=discord.File(quote_path + arg + "/" + filename))
         except FileNotFoundError:
@@ -203,7 +204,6 @@ class MainCog(commands.Cog):
     async def gamers(self, ctx):
         gamer_path = "assets/gamers/"
         gamer_images = os.listdir(gamer_path)
-        from random import choice
         filename = choice(gamer_images)
         await ctx.send(file=discord.File(gamer_path + filename))
 
@@ -240,7 +240,6 @@ class MainCog(commands.Cog):
 
             try:
                 sounds_list = os.listdir(sounds_path + arg)
-                from random import choice
                 filename = choice(sounds_list)
             except FileNotFoundError:
                 return await ctx.send(arg + " is not a sound buddy")
@@ -297,21 +296,42 @@ class MainCog(commands.Cog):
     async def remind_me(self, ctx, arg):
         await ctx.send('no')
 
+    @commands.command(name='anime')
+    @commands.cooldown(1, 1)
+    async def anime_img(self, ctx, *args):
+        dir_path = 'assets/anime/'
+        anime_list = os.listdir(dir_path)
+        anime_file_path = choice(anime_list)
+        await ctx.send(file=discord.File(dir_path + anime_file_path, spoiler=True))
+
+
+    # class intFlag(commands.FlagConverter, delimiter=' ', prefix = '-'):
+    #     n: Optional[int]
+
     @commands.command(name='imgs')
     @commands.cooldown(1, 1)
     async def image_search(self, ctx, *args):
         from duckduckgo_search import ddg_images
-        if not args:
 
+        if not args:
             await ctx.send(await self.get_random_4chan_image('wg'))
             raise ChatError("Have a nice image")
-        search_result = ddg_images(" ".join(args), max_results=1, safesearch='On')
+
         try:
-            image = search_result[0]['image']
+            if args[0].startswith('-n'):
+                if (n_image := int(args[1])) in range(1,6):
+                    search_result = ddg_images(" ".join(args[2:]), max_results=n_image, safesearch='On')
+                    image = search_result[n_image-1]['image']
+                else:
+                    raise ChatError("Argument '-n' must be an integer between 1-5")
+            else:
+                search_result = ddg_images(" ".join(args), max_results=5, safesearch='On')
+                image = choice(search_result)['image']
+
         except IndexError:
             raise ChatError("No results.")
         await ctx.send(image)
-    
+
     @staticmethod
     async def get_random_4chan_image(board):
         board = basc_py4chan.Board(board)
