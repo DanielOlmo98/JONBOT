@@ -120,31 +120,6 @@ class MainCog(commands.Cog):
     async def ban(self, ctx, *, arg):
         await ctx.send("<:pepebanjon:568424285098606603> " + arg)
 
-    @commands.command()
-    @commands.cooldown(1, 15)
-    async def brian(self, ctx, *, arg):
-        from selenium import webdriver
-        from selenium.webdriver.support.ui import WebDriverWait
-        if ctx.voice_client is None:
-            return await ctx.send("summon me to a vc first, .join or .summon (vc name)")
-        if len(ctx.message.content) > 400:
-            return await ctx.send("a bit too long, buddy")
-        if ctx.voice_client.is_playing() is True:
-            return await ctx.send("wait your turn.")
-        vc = ctx.voice_client
-        options = webdriver.ChromeOptions()
-        options.add_argument('headless')
-        options.add_argument("--mute-audio")
-        prefs = {"download.default_directory": "C:\\Users\\test2\\PycharmProjects\\JONBOT\\assets\\tts"}
-        options.add_experimental_option("prefs", prefs)
-        driver = webdriver.Chrome("C:\Program Files (x86)\chromedriver\chromedriver.exe", options=options)
-        driver.get("http://www.elunduscore.com")
-        driver.find_element_by_id("text").send_keys(arg)
-        driver.find_element_by_css_selector("button[type='submit']").click()
-        WebDriverWait(driver, timeout=20).until(lambda d: driver.find_element_by_link_text('Download'))
-        driver.find_element_by_link_text('Download').click()
-        vc.play(discord.FFmpegPCMAudio('assets\\tts\\voice.mp3'), after=lambda e: os.remove("assets\\tts\\voice.mp3"))
-
     # @commands.command(name="yt")
     # async def yt(self, ctx, *, arg):
     #     yt = YouTubeDataAPI(self.YT_API)
@@ -339,5 +314,3 @@ class MainCog(commands.Cog):
         rand_thread = board.get_thread(choice(thread_ids))
         files_url =  [file for file in rand_thread.files()]
         return choice(files_url)
-
-

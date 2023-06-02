@@ -78,19 +78,19 @@ class YTDLSource(discord.PCMVolumeTransformer):
         self.channel = ctx.channel
         self.data = data
 
-        self.uploader = data.get('uploader')
-        self.uploader_url = data.get('uploader_url')
-        date = data.get('upload_date')
-        self.upload_date = date[6:8] + '.' + date[4:6] + '.' + date[0:4]
-        self.title = data.get('title')
-        self.thumbnail = data.get('thumbnail')
-        self.description = data.get('description')
-        self.duration = self.parse_duration(int(data.get('duration')))
-        self.tags = data.get('tags')
-        self.url = data.get('webpage_url')
-        self.views = data.get('view_count')
-        self.likes = data.get('like_count')
-        self.dislikes = data.get('dislike_count')
+        # self.uploader = data.get('uploader')
+        # self.uploader_url = data.get('uploader_url')
+        # date = data.get('upload_date')
+        # self.upload_date = date[6:8] + '.' + date[4:6] + '.' + date[0:4]
+        # self.title = data.get('title')
+        # self.thumbnail = data.get('thumbnail')
+        # self.description = data.get('description')
+        # self.duration = self.parse_duration(int(data.get('duration')))
+        # self.tags = data.get('tags')
+        # self.url = data.get('webpage_url')
+        # self.views = data.get('view_count')
+        # self.likes = data.get('like_count')
+        # self.dislikes = data.get('dislike_count')
         self.stream_url = data.get('url')
 
 
@@ -136,6 +136,7 @@ class YTDLSource(discord.PCMVolumeTransformer):
                 except IndexError:
                     raise YTDLError('Couldn\'t retrieve any matches for `{}`'.format(webpage_url))
 
+        print(info['url'])
         return cls(ctx, discord.FFmpegPCMAudio(info['url'], **cls.FFMPEG_OPTIONS), data=info)
 
     @staticmethod
@@ -595,6 +596,11 @@ class Music(commands.Cog):
                 await ctx.voice_state.songs.put(song)
                 await ctx.send('Enqueued {}'.format(str(source)))
 
+    async def search_yt(self, search):
+        vid_search = self.YT_API.search(search)
+        url = "https://www.youtube.com/watch?v=" + vid_search[0]["video_id"]
+        return url
+
     @commands.command(name='playlocal')
     async def _play_local(self, ctx: commands.Context, *, filepath: str):
 
@@ -624,15 +630,15 @@ class Music(commands.Cog):
             if ctx.voice_client.channel != ctx.author.voice.channel:
                 raise commands.CommandError('Bot is already in a voice channel.')
 
-    @commands.command(name='yt')
-    async def yt(self, ctx, *, arg):
-        url = await self.search_yt(arg)
-        await ctx.send(url)
+    # @commands.command(name='yt')
+    # async def yt(self, ctx, *, arg):
+    #     url = await self.search_yt(arg)
+    #     await ctx.send(url)
 
-    async def search_yt(self, search):
-        vid_search = self.YT_API.search(search)
-        url = "https://www.youtube.com/watch?v=" + vid_search[0]["video_id"]
-        return url
+    # async def search_yt(self, search):
+    #     vid_search = self.YT_API.search(search)
+    #     url = "https://www.youtube.com/watch?v=" + vid_search[0]["video_id"]
+    #     return url
 
 class Filetree(commands.Cog):
     def __init__(self, bot: commands.Bot):

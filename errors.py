@@ -25,7 +25,8 @@ class ErrorCog(commands.Cog):
             return
         
         if isinstance(error, commands.errors.BadArgument):
-            await ctx.send("huh")
+            await ctx.send(error)
+            # await ctx.send("huh")
             return
 
         try:

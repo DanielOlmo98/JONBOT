@@ -7,7 +7,9 @@ chardet~=3.0.4
 discord~=1.0.1
 discord.py>1.7.1 # pip install -U "discord.py[voice]"
 idna~=2.10
-lxml~=4.6.2
+# libxml2
+# libxslt
+# lxml~=4.6.2
 multidict~=4.7.6
 numpy~=1.19.4
 pandas~=1.2.0
@@ -19,7 +21,7 @@ six~=1.15.0
 soupsieve~=2.1
 tabulate~=0.8.7
 TenGiphPy~=2.0.0
-tenorscrap~=0.0.3 # pip install git+https://github.com/suarasiy/tenorscrap
+# tenorscrap~=0.0.3 # pip install git+https://github.com/suarasiy/tenorscrap
 urllib3~=1.26.2
 yarl~=1.5.1
 youtube-data-api~=0.0.20
@@ -27,3 +29,7 @@ youtube-dl~=2021.1.8
 youtube-search~=1.1.1
 youtube-search-python~=1.3.4
 feedparser~=6.0.2
+basc_py4chan
+pillow
+eyed3
+tinydb

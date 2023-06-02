@@ -14,7 +14,8 @@ from tenorscrap import Tenor  # https://github.com/suarasiy/tenorscrap
 from reverse_img_search import get_vtuber, img_extensions
 from subscribe import Subscribe
 from economy import Economy
-from music import Music, Filetree
+from music import Filetree
+from new_music import MusicPlayerCog
 from rick_answers import RickAnswers
 from img_processing import ImgProcessing
 from shipping import Shipping
@@ -80,7 +81,8 @@ async def startup():
         MainCog(rick, envs['TENOR_API'], envs['jonbot_logs_bots'], envs['jonbot_logs'],
                 envs['rick_server_id']))
     await rick.add_cog(ErrorCog(rick))
-    await rick.add_cog(Music(rick, YT_API = envs['YT_API']))
+    # await rick.add_cog(Music(rick, YT_API = envs['YT_API']))
+    await rick.add_cog(MusicPlayerCog(rick, YT_API = envs['YT_API']))
     await rick.add_cog(Filetree(rick))
     await rick.add_cog(Subscribe(rick))
     await rick.add_cog(Economy(rick))
