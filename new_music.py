@@ -161,6 +161,9 @@ class MusicPlayerCog(commands.Cog):
                 await self._queue_yt(ctx, url, print_queue = False)
             await self.post_queue(ctx)
 
+        else:
+            await self._queue_yt(ctx, yt_url)
+
 
     async def _queue_yt(self, ctx: commands.Context, yt_url: str, print_queue = True):
         song = await Song.create_yt_source(yt_url, ctx)
