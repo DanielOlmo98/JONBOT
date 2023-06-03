@@ -9,6 +9,7 @@ import math
 import random
 import os
 import typing
+import pathlib
 
 
 import eyed3
@@ -17,7 +18,8 @@ import discord
 import yt_dlp
 import subprocess
 from errors import ChatError
-from youtube_api import YouTubeDataAPI
+from youtube_api import YouTubeDataAPI, youtube_api
+from youtube_api.parsers import parse_playlist_metadata
 from async_timeout import timeout
 from discord.ext import commands, tasks
 from decorators import has_jonbot_perms
@@ -90,43 +92,80 @@ class MusicPlayerCog(commands.Cog):
         except TimeoutError:
             await self._disconnect()
 
-    async def queue_song(self, songs : typing.List['Song'], ctx: commands.Context):
+    async def queue_song(self, song, ctx: commands.Context, print_queue = True):
 
-
-        songname_list = []
-
-        for song in songs:
-            self.song_queue.put_nowait(song)
-            songname_list.append(song.songname)
-
-
-        songqueue_size = self.song_queue.qsize()
-        if (songqueue_size > 1) and (self.current_song is not None):
-            await ctx.send(embed =
-                        discord.Embed(color=discord.Color.blurple())
-                        .set_footer(text=f'{songqueue_size} songs in queue')
-                        .add_field(name='Queued:', value='\n'.join(songname_list), inline=True)
-                        )
+        self.song_queue.put_nowait(song)
 
         if self.playback_task:
+            if print_queue:
+                await self.post_queue(ctx)
             return
         else:
             self.playback_task = asyncio.create_task(self.playback())
 
 
-    @Commands.command(name='playlocal')
-    async def queue_local(self, ctx: commands.Context, *, filepath: str):
-        song = await Song.create_local_song(filepath, ctx)
+    @commands.command(name='queue')
+    async def post_queue(self, ctx: commands.Context):
+        songqueue_size = self.song_queue.qsize()
+        if songqueue_size == 0:
+            await ctx.send('No songs in queue.')
+            return
+
+        queue_songname_list = [song.songname for song in list(self.song_queue._queue)]
+        await ctx.send(embed =
+                    discord.Embed(color=discord.Color.blurple())
+                    .set_footer(text=f'{songqueue_size} songs in queue')
+                    .add_field(name='Queued:', value='\n'.join(queue_songname_list), inline=True)
+                    )
+
+
+    @commands.command(name='playlocal')
+    async def play_local(self, ctx: commands.Context, *, filepath: str):
+        media_path = pathlib.Path('/', 'media', 'Music')
+        path = media_path.joinpath(pathlib.Path(*filepath.split('/')))
+
+        if path.is_file():
+            await self._queue_local(ctx, path)
+            return
+        if path.is_dir():
+            song_paths = list(path.glob('*.mp3'))
+            for song_path in song_paths:
+                await self._queue_local(ctx, song_path, print_queue=False)
+
+            await self.post_queue(ctx)
+            return
+
+
+    async def _queue_local(self, ctx: commands.Context, path, print_queue = True):
+        song = await Song.create_local_song(path, ctx)
         await self._join_voice(ctx.author.voice.channel)
-        await self.queue_song([song], ctx)
+        await self.queue_song(song, ctx, print_queue)
+
+    @commands.command(name='ls')
+    async def list_dir(self, ctx: commands.Context, *, filepath=''):
+        media_path = pathlib.Path('/', 'media', 'Music')
+        path = media_path.joinpath(pathlib.Path(*filepath.split('/')))
+
+        dir_contents = [f'{filepath}/{x.name}' for x in path.iterdir() if (x.is_dir() or (x.suffix == '.mp3'))]
+        await ctx.send('\n'.join(dir_contents), delete_after=60)
+
 
     @commands.command(name='play')
-    async def queue_yt(self, ctx: commands.Context, *, search_query: str):
+    async def play_yt(self, ctx: commands.Context, *search_query: str):
         yt_url = await self.search_yt(search_query)
-        # print(yt_url)
+        if 'playlist?list' in yt_url:
+            _, playlist_id = yt_url.split('=')
+            playlist_vid_ids = self.YT_API.get_videos_from_playlist_id(playlist_id)
+            for vid_id in playlist_vid_ids:
+                url = "https://www.youtube.com/watch?v=" + vid_id['video_id']
+                await self._queue_yt(ctx, url, print_queue = False)
+            await self.post_queue(ctx)
+
+
+    async def _queue_yt(self, ctx: commands.Context, yt_url: str, print_queue = True):
         song = await Song.create_yt_source(yt_url, ctx)
         await self._join_voice(ctx.author.voice.channel)
-        await self.queue_song([song], ctx)
+        await self.queue_song(song, ctx, print_queue)
 
     @commands.command(name='skip')
     async def skip(self, ctx: commands.Context):
@@ -137,13 +176,21 @@ class MusicPlayerCog(commands.Cog):
             # self.done_playing.set()
 
     @commands.command(name='yt')
-    async def yt(self, ctx, *, arg):
-        url = await self.search_yt(arg)
+    async def yt(self, ctx, *args):
+        print(args)
+        url = await self.search_yt(args)
         await ctx.send(url)
 
-    async def search_yt(self, search):
-        vid_search = self.YT_API.search(search)
-        url = "https://www.youtube.com/watch?v=" + vid_search[0]["video_id"]
+    async def search_yt(self, query : typing.List[str]):
+        if query[0] == '--playlist':
+
+            print(' '.join(query[1:]))
+            playlist_search = self.YT_API.search(' '.join(query[1:]), max_results=1, search_type='playlist', parser=None)
+            url = "https://www.youtube.com/playlist?list=" + playlist_search[0]["id"]["playlistId"]
+        else:
+            vid_search = self.YT_API.search(' '.join(query), max_results=1, search_type='video')
+            url = "https://www.youtube.com/watch?v=" + vid_search[0]["video_id"]
+
         return url
 
 
