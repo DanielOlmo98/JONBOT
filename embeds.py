@@ -58,7 +58,7 @@ def starboard_embed(message):
         if message.embeds[0].url.endswith(("jpg", "png", "gif")):
             embed = discord.Embed(description=re.sub(r'http\S+', '\n', message.content), colour=random.choice(colors))
             embed.set_author(name=message.author.name + " in " + "#" + message.channel.name,
-                             icon_url=message.author.avatar_url)
+                             icon_url=message.author.avatar.url)
             embedURL = message.embeds[0].url
             embed.set_image(url=embedURL)
             date = message.created_at.strftime("%Y-%m-%d at %H:%M")
@@ -76,7 +76,7 @@ def starboard_embed(message):
                                   "\n\n" + "[[Jump to message]](" + jump + ")",
                                   colour=random.choice(colors))
             embed.set_author(name=message.author.name + " in " + "#" + message.channel.name,
-                             icon_url=message.author.avatar_url)
+                             icon_url=message.author.avatar.url)
             attachmentURL = message.attachments[0].url
             embed.set_image(url=attachmentURL)
             date = message.created_at.strftime("%Y-%m-%d at %H:%M")
@@ -91,7 +91,7 @@ def starboard_embed(message):
                 description="**Content**\n" + message.content + "\n\n**File**\n" + message.attachments[0].url,
                 colour=random.choice(colors))
             embed.set_author(name=message.author.name + " in " + "#" + message.channel.name,
-                             icon_url=message.author.avatar_url)
+                             icon_url=message.author.avatar.url)
             date = message.created_at.strftime("%Y-%m-%d at %H:%M")
             embed.add_field(name="​", value="[[Jump to message]](" + jump + ")", inline=False)
             embed.set_footer(text=str(get(message.reactions, emoji="📌").count),
@@ -110,7 +110,7 @@ def starboard_embed(message):
             description=re.sub(r'http\S+', '\n', message.content),
             colour=random.choice(colors))
         embed.set_author(name=message.author.name + " in " + "#" + message.channel.name,
-                         icon_url=message.author.avatar_url)
+                         icon_url=message.author.avatar.url)
         embed.set_image(url=result[0]['src'])
         date = message.created_at.strftime("%Y-%m-%d at %H:%M")
         embed.add_field(name="​", value="[[Jump to message]](" + jump + ")", inline=False)
@@ -125,7 +125,7 @@ def starboard_embed(message):
             description=message.content + "\n\n" + "[[Jump to message]](" + jump + ")",
             colour=random.choice(colors))
         embed.set_author(name=message.author.name + " in " + "#" + message.channel.name,
-                         icon_url=message.author.avatar_url)
+                         icon_url=message.author.avatar.url)
         date = message.created_at.strftime("%Y-%m-%d at %H:%M")
         embed.set_footer(text=str(get(message.reactions, emoji="📌").count),
                          icon_url="https://cdn2.iconfinder.com/data/icons/objects-23/50/1F4CC-pushpin-128.png")
@@ -143,7 +143,7 @@ def log_delete_embed(message):
                                                      f"(Message ID: {message.id})\n\n"
                                                      f"**Message**\n{message.content}\n\n**Image** "),
                                   colour=0xff4000)
-            embed.set_thumbnail(url=message.author.avatar_url)
+            embed.set_thumbnail(url=message.author.avatar.url)
             embed.set_image(url=attachment_url)
             embed.set_footer(text="Brought to you by Dav#3945 and IZpixl5#5264")
             embed.timestamp = message.created_at
@@ -154,7 +154,7 @@ def log_delete_embed(message):
                                               f"(Message ID: {message.id})\n\n**Message**\n{message.content}\n\n"
                                               f"**Attachment** {message.attachments[0].proxy_url}",
                                   colour=0xff4000)
-            embed.set_thumbnail(url=message.author.avatar_url)
+            embed.set_thumbnail(url=message.author.avatar.url)
             embed.set_footer(text="Brought to you by Dav#3945 and IZpixl5#5264")
             embed.timestamp = message.created_at
             return embed
@@ -166,7 +166,7 @@ def log_delete_embed(message):
                                                      f"**Message**\n{message.content}\n\n"
                                                      f"**Image**"),
                                   colour=0xff4000)
-            embed.set_thumbnail(url=message.author.avatar_url)
+            embed.set_thumbnail(url=message.author.avatar.url)
             embed.set_image(url=message.embeds[0].url)
             embed.set_footer(text="Brought to you by Dav#3945 and IZpixl5#5264")
             embed.timestamp = message.created_at
@@ -176,7 +176,7 @@ def log_delete_embed(message):
                                               f"**was deleted in** <#{message.channel.id}>\n "
                                               f"(Message ID: {message.id})\n\n**Message**\n{message.content}\n\n",
                                   colour=0xff4000)
-            embed.set_thumbnail(url=message.author.avatar_url)
+            embed.set_thumbnail(url=message.author.avatar.url)
             embed.set_footer(text="Brought to you by Dav#3945 and IZpixl5#5264")
             embed.timestamp = message.created_at
             return embed
@@ -185,7 +185,7 @@ def log_delete_embed(message):
                                             f"**was deleted in** <#{message.channel.id}>\n "
                                             f"(Message ID: {message.id})\n\n**Message**\n{message.content}\n\n",
                               colour=0xff4000)
-        embed.set_thumbnail(url=message.author.avatar_url)
+        embed.set_thumbnail(url=message.author.avatar.url)
         embed.set_footer(text="Brought to you by Dav#3945 and IZpixl5#5264")
         embed.timestamp = message.created_at
         return embed

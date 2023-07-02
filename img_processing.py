@@ -104,7 +104,7 @@ class ImgProcessing(commands.Cog):
             await ctx.send("Something weird happen")
             return
         usr = await self.bot.fetch_user(mention_id)
-        pfp_url = str(usr.avatar_url)
+        pfp_url = str(usr.avatar.url)
         pfp = Image.open(requests.get(pfp_url, stream=True).raw)
         await ctx.channel.send(pfp_url)
 

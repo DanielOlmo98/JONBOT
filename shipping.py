@@ -83,8 +83,8 @@ class Shipping(commands.Cog):
 
         usr1 = await self.bot.fetch_user(mention_id_1)
         usr2 = await self.bot.fetch_user(mention_id_2)
-        pfp_url_1 = str(usr1.avatar_url)
-        pfp_url_2 = str(usr2.avatar_url)
+        pfp_url_1 = str(usr1.avatar.url)
+        pfp_url_2 = str(usr2.avatar.url)
 
         heart = Image.open("assets/heart.png")
         heart_size = (4 * ship_percent + 1, 4 * ship_percent + 1)
