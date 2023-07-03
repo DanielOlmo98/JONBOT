@@ -1,8 +1,10 @@
 from discord.ext import commands
+import pathlib
 import discord
 from PIL import Image
 from PIL import ImageDraw
 from PIL import ImageFont
+import imagetext_py
 from random import choice
 import requests
 import re
@@ -15,6 +17,7 @@ from shipping import center_coords
 class ImgProcessing(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
+        self.load_fonts()
 
     @commands.cooldown(1, 10, commands.BucketType.user)
     @commands.Cog.listener()
@@ -104,9 +107,32 @@ class ImgProcessing(commands.Cog):
             await ctx.send("Something weird happen")
             return
         usr = await self.bot.fetch_user(mention_id)
-        pfp_url = str(usr.avatar.url)
+
+        if "server" in ctx.message.content:
+            member = ctx.guild.get_member(mention_id)
+            pfp_url = str(member.guild_avatar.url)
+        else:
+            pfp_url = str(usr.avatar.url)
         pfp = Image.open(requests.get(pfp_url, stream=True).raw)
         await ctx.channel.send(pfp_url)
+
+
+    def load_fonts(self):
+        imagetext_py.FontDB.SetDefaultEmojiOptions(imagetext_py.EmojiOptions(parse_discord_emojis=True))
+        font_folder_path = pathlib.Path('/', 'usr', 'share', 'fonts', 'noto')
+        font_list = list(font_folder_path.glob('*.ttf'))
+        for font_path in font_list:
+            imagetext_py.FontDB.LoadFromPath(font_path.name, str(font_path))
+        # imagetext_py.FontDB.LoadFromDir(str(font_folder_path))
+        # imagetext_py.FontDB.LoadFromDir("/usr/share/fonts/")
+
+
+        # cjk_font_list = list(font_folder_path.glob('*.ttc'))
+        # for font_path in cjk_font_list:
+        #     imagetext_py.FontDB.LoadFromPath(font_path.name, str(font_path))
+        # imagetext_py.FontDB.LoadFromDir(str(cjk_font_folder_path))
+
+        print("loaded fonts")
 
     @commands.cooldown(1, 5, commands.BucketType.user)
     @commands.command(name='smug')
@@ -120,21 +146,33 @@ class ImgProcessing(commands.Cog):
             smug_anime_girl = Image.open(f"assets/smug/{choice(smug_list)}")
             img_w, img_h = smug_anime_girl.size
 
-            font = ImageFont.truetype("assets/Verdana.ttf", img_w // 15)
+            font = imagetext_py.FontDB.Query("NotoSans-Regular.ttf")
+            # font = imagetext_py.FontDB.Query("NotoSansCuneiform-Regular.ttf")
 
             drawing = ImageDraw.Draw(smug_anime_girl)
-            txt_w, txt_h = drawing.textsize(img_text, font=font)
-            txt_x, txt_y = center_coords(img_w, img_h, txt_w, txt_h)
-            drawing.text((img_w//2, txt_y*1.95),
-                         anchor = "mm",
-                         text = img_text,
-                         fill =(255,255,255),
-                         font = font,
-                         stroke_width = img_w // (15*8),
-                         stroke_fill = (0,0,0)
-                         )
+            # txt_w, txt_h = drawing.textsize(img_text, font=font)
+            # txt_x, txt_y = center_coords(img_w, img_h, txt_w, txt_h)
 
-            await send_pil_img(ctx.channel, smug_anime_girl)
+            black = imagetext_py.Paint.Color((0, 0, 0, 255))
+            white = imagetext_py.Paint.Color((255,255,255,255))
+
+            with smug_anime_girl.convert("RGBA") as draw:
+                with imagetext_py.Writer(draw) as w:
+                    w.draw_text_wrapped(
+                        width = img_w - 10,
+                        x = img_w//2, y = img_h - ( img_h // 5 ),
+                        ax = 0.5, ay = 0.9,
+                        size = img_w // 8,
+                        text = img_text,
+                        align = imagetext_py.TextAlign.Center,
+                        font = font,
+                        draw_emojis = True,
+                        stroke = img_w // (15*8),
+                        stroke_color=black,
+                        fill=white,
+                    )
+
+                await send_pil_img(ctx.channel, draw)
 
 
 async def send_pil_img(channel, image, filetype='png'):
