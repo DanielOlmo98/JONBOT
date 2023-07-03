@@ -1,4 +1,5 @@
 from discord.ext import commands
+from math import exp
 import pathlib
 import discord
 from PIL import Image
@@ -17,7 +18,7 @@ from shipping import center_coords
 class ImgProcessing(commands.Cog):
     def __init__(self, bot: commands.Bot):
         self.bot = bot
-        self.load_fonts()
+        # self.load_fonts()
 
     @commands.cooldown(1, 10, commands.BucketType.user)
     @commands.Cog.listener()
@@ -142,11 +143,14 @@ class ImgProcessing(commands.Cog):
             if args:
                 img_text = " ".join(args)
 
+            imagetext_py.FontDB.SetDefaultEmojiOptions(imagetext_py.EmojiOptions(parse_discord_emojis=True))
             smug_list = os.listdir("assets/smug")
             smug_anime_girl = Image.open(f"assets/smug/{choice(smug_list)}")
             img_w, img_h = smug_anime_girl.size
 
-            font = imagetext_py.FontDB.Query("NotoSans-Regular.ttf")
+            imagetext_py.FontDB.LoadFromPath('notosans', '/usr/share/fonts/noto/NotoSans-Regular.ttf')
+            imagetext_py.FontDB.LoadFromPath('notosansemoji', '/usr/share/fonts/noto/NotoColorEmoji.ttf')
+            font = imagetext_py.FontDB.Query('notosans')
             # font = imagetext_py.FontDB.Query("NotoSansCuneiform-Regular.ttf")
 
             drawing = ImageDraw.Draw(smug_anime_girl)
@@ -159,10 +163,11 @@ class ImgProcessing(commands.Cog):
             with smug_anime_girl.convert("RGBA") as draw:
                 with imagetext_py.Writer(draw) as w:
                     w.draw_text_wrapped(
-                        width = img_w - 10,
-                        x = img_w//2, y = img_h - ( img_h // 5 ),
-                        ax = 0.5, ay = 0.9,
-                        size = img_w // 8,
+                        width = img_w,
+                        x = img_w//2, y = img_h - ( img_h // 6 ),
+                        # x = 0, y = 0,
+                        ax = 0.5, ay = 0.5,
+                        size = (img_w / 8) * (1 + (5 / exp(len(img_text)))) * (img_h / (img_w * 1.3)),
                         text = img_text,
                         align = imagetext_py.TextAlign.Center,
                         font = font,
@@ -170,6 +175,7 @@ class ImgProcessing(commands.Cog):
                         stroke = img_w // (15*8),
                         stroke_color=black,
                         fill=white,
+                        wrap_style=imagetext_py.WrapStyle.Word
                     )
 
                 await send_pil_img(ctx.channel, draw)
