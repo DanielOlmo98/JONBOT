@@ -68,6 +68,7 @@ class MusicPlayerCog(commands.Cog):
         self.playback_task = None
         self.current_song = None
         self.done_playing.clear()
+        self.song_queue = asyncio.Queue()
 
 
     @commands.command(name='leave')

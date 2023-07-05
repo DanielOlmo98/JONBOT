@@ -1,3 +1,5 @@
+from random import random, choice
+import os
 reply_dict = {
     "cock": "cock",
     "test": "icles",
@@ -41,8 +43,7 @@ sick = ["vtuber",
         ]
 
 
-async def rick_reply(message):
-    from random import random, choice
+async def rick_reply(message, ctx):
 
     if stfu_alba(message):
         await message.reply("stfu alba")
@@ -52,12 +53,14 @@ async def rick_reply(message):
         # any(word in message.content for word in reply_dict)
         reply = reply_dict[(message.content.lower())]
     except KeyError:
-        if random() < 0.005:
+        rand = random()
+        if rand < 0.005:
             return choice(random_replies)
-        else:
-            if random() < 0.0001:
-                return "<@" + str(message.author.id) + "> I LOVE YOU"
-            return None
+        elif rand < 0.001:
+            await say_meme(ctx)
+        elif rand < 0.0001:
+            return "<@" + str(message.author.id) + "> I LOVE YOU"
+        return None
 
     if type(reply) is list:
         if random() < reply[1]:
@@ -84,3 +87,7 @@ def stfu_alba(message):
         if message.content == ("-daily" or "- daily"):
             return True
     return False
+
+async def say_meme(ctx):
+    say_list = os.listdir("assets/say")
+    await ctx.send(f"assets/say/{choice(say_list)}")

@@ -58,7 +58,7 @@ class MainCog(commands.Cog):
                 if await get_vtuber(message.content):
                     await message.add_reaction("🤢")
 
-            reply = await rick_reply(message)
+            reply = await rick_reply(message, self.bot.get_context(message))
             if reply is None:
                 return
             else:

@@ -1,4 +1,5 @@
 from discord.ext import commands
+import re
 from math import exp
 import pathlib
 import discord
@@ -159,6 +160,14 @@ class ImgProcessing(commands.Cog):
 
             black = imagetext_py.Paint.Color((0, 0, 0, 255))
             white = imagetext_py.Paint.Color((255,255,255,255))
+            if (mention := re.search(r'<@(!*&*[0-9]+)>', img_text)):
+                try:
+                    username = self.bot.get_user(int(mention.group(1))).display_name
+                except AttributeError:
+                    username = 'yo mama'
+                img_text = re.sub(r'<@!*&*[0-9]+>', username , img_text )
+
+            text_len = len(re.sub(r'<:\w+:[0-9]+>', ' ',img_text))
 
             with smug_anime_girl.convert("RGBA") as draw:
                 with imagetext_py.Writer(draw) as w:
@@ -167,7 +176,7 @@ class ImgProcessing(commands.Cog):
                         x = img_w//2, y = img_h - ( img_h // 6 ),
                         # x = 0, y = 0,
                         ax = 0.5, ay = 0.5,
-                        size = (img_w / 8) * (1 + (5 / exp(len(img_text)))) * (img_h / (img_w * 1.3)),
+                        size = (img_w / 8) * (1 + (5 / exp(text_len))) * (img_h / (img_w * 1.3)),
                         text = img_text,
                         align = imagetext_py.TextAlign.Center,
                         font = font,
@@ -177,6 +186,7 @@ class ImgProcessing(commands.Cog):
                         fill=white,
                         wrap_style=imagetext_py.WrapStyle.Word
                     )
+
 
                 await send_pil_img(ctx.channel, draw)
 
