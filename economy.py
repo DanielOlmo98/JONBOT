@@ -77,7 +77,7 @@ class Economy(commands.Cog):
             self.users[str(message.author.id)].update({"Exp": 100, "Level": 1})
         if str(message.author.id) in self.users:
             self.users[str(message.author.id)]["Pocket"] = self.users[str(message.author.id)]["Pocket"] + 2
-            self.users[str(message.author.id)]["Exp"] = self.users[str(message.author.id)]["Exp"] - randint(10, 20)
+            self.users[str(message.author.id)]["Exp"] = self.users[str(message.author.id)]["Exp"] - randint(1, 2)*(len(message.content))
         if self.users[str(message.author.id)]["Exp"] <= 0:
             level_exp = (self.users[str(message.author.id)]["Level"] + 1) ** 2 * 35
             await message.channel.send("Level up pog")
