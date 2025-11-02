@@ -8,11 +8,16 @@ from PIL import ImageFont
 import requests
 import os
 
-
 def center_coords(w_1, h_1, w_2, h_2):
     w = w_1 // 2 - w_2 // 2
     h = h_1 // 2 - h_2 // 2
     return w, h
+
+def textsize(text, font):
+    im = Image.new(mode="P", size=(0, 0))
+    draw = ImageDraw.Draw(im)
+    _, _, width, height = draw.textbbox((0, 0), text=text, font=font)
+    return width, height
 
 # TODO add image thingin
 class Shipping(commands.Cog):
@@ -88,14 +93,14 @@ class Shipping(commands.Cog):
 
         heart = Image.open("assets/heart.png")
         heart_size = (4 * ship_percent + 1, 4 * ship_percent + 1)
-        heart = heart.resize(heart_size, Image.ANTIALIAS)
+        heart = heart.resize(heart_size, Image.LANCZOS)
         font = ImageFont.truetype("assets/Verdana.ttf", ship_percent + 1)
 
         pfp_1 = Image.open(requests.get(pfp_url_1, stream=True).raw)
         pfp_2 = Image.open(requests.get(pfp_url_2, stream=True).raw)
 
-        pfp_1 = pfp_1.resize((512, 512), Image.ANTIALIAS)
-        pfp_2 = pfp_2.resize((512, 512), Image.ANTIALIAS)
+        pfp_1 = pfp_1.resize((512, 512), Image.LANCZOS)
+        pfp_2 = pfp_2.resize((512, 512), Image.LANCZOS)
 
         width_1, height_1 = pfp_1.size
         width_heart, height_heart = heart.size
@@ -110,7 +115,7 @@ class Shipping(commands.Cog):
         new_image.paste(heart, center_coords(img_w, img_h, width_heart, height_heart), heart)
 
         drawing = ImageDraw.Draw(new_image)
-        txt_w, txt_h = drawing.textsize(str(ship_percent) + "%", font=font)
+        txt_w, txt_h = textsize(str(ship_percent) + "%", font=font)
         txt_x, txt_y = center_coords(img_w, img_h, txt_w, txt_h)
         drawing.text((txt_x, txt_y - ship_percent / 2 + 1), str(ship_percent) + "%", (255, 255, 255), font=font)
 

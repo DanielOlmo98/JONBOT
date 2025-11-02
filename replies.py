@@ -1,5 +1,7 @@
 from random import random, choice
 import os
+
+import discord
 reply_dict = {
     "cock": "cock",
     "test": "icles",
@@ -90,4 +92,4 @@ def stfu_alba(message):
 
 async def say_meme(ctx):
     say_list = os.listdir("assets/say")
-    await ctx.send(f"assets/say/{choice(say_list)}")
+    await ctx.send(file = discord.File(f"assets/say/{choice(say_list)}"))

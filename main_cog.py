@@ -22,12 +22,22 @@ from random import randint
 
 
 class MainCog(commands.Cog):
-    def __init__(self, rick: commands.Bot, TENOR_API, jonbot_logs_bots, jonbot_logs, rick_server_id):
+    def __init__(self, rick: commands.Bot, TENOR_API, google_api, google_id, jonbot_logs_bots, jonbot_logs, rick_server_id):
         self.bot = rick
         self.TENOR_API = TENOR_API
+        self.google_api = google_api
+        self.google_id = google_id
         self.jonbot_logs_bots = jonbot_logs_bots
         self.jonbot_logs = jonbot_logs
         self.rick_server_id = rick_server_id
+
+    
+    @commands.command(name='sync')
+    async def sync(self, ctx):
+        await ctx.channel.send('sync')
+        synced = await self.bot.tree.sync()
+        print(f"Synced {len(synced)} command(s).")
+        await ctx.channel.send(f"Synced {len(synced)} command(s).")
 
     @commands.Cog.listener()
     async def on_message(self, message):
@@ -58,7 +68,7 @@ class MainCog(commands.Cog):
                 if await get_vtuber(message.content):
                     await message.add_reaction("🤢")
 
-            reply = await rick_reply(message, self.bot.get_context(message))
+            reply = await rick_reply(message, await self.bot.get_context(message))
             if reply is None:
                 return
             else:
@@ -286,22 +296,32 @@ class MainCog(commands.Cog):
     @commands.command(name='imgs')
     @commands.cooldown(1, 1)
     async def image_search(self, ctx, *args):
-        from duckduckgo_search import ddg_images
+        from duckduckgo_search import DDGS
+        from googleapiclient.discovery import build
 
         if not args:
             await ctx.send(await self.get_random_4chan_image('wg'))
             raise ChatError("Have a nice image")
 
         try:
-            if args[0].startswith('-n'):
-                if (n_image := int(args[1])) in range(1,6):
-                    search_result = ddg_images(" ".join(args[2:]), max_results=n_image, safesearch='On')
-                    image = search_result[n_image-1]['image']
-                else:
-                    raise ChatError("Argument '-n' must be an integer between 1-5")
-            else:
-                search_result = ddg_images(" ".join(args), max_results=5, safesearch='On')
-                image = choice(search_result)['image']
+            MAX_IMGS = 1
+            # if args[0].startswith('-n'):
+            #     if (n_image := int(args[1])) in range(1,MAX_IMGS):
+            #         search_result = DDGS().images(" ".join(args[2:]), safesearch='On', max_results=MAX_IMGS)
+            #         image = search_result[n_image-1]['image']
+            #     else:
+            #         raise ChatError("Argument '-n' must be an integer between 1-5")
+            # else:
+            #     search_result = DDGS().images(" ".join(args), safesearch='On', max_results=MAX_IMGS)
+            #     image = choice(search_result)['image']
+            #
+            def google_search(search_term, api_key, cse_id, **kwargs):
+                service = build("customsearch", "v1", developerKey=api_key)
+                res = service.cse().list(q=search_term, cx=cse_id, **kwargs).execute()
+                return res['items']
+
+            g_search = google_search(" ".join(args), self.google_api, self.google_id, safe='active', searchType='image', num=MAX_IMGS)
+            image = g_search[0]['link']
 
         except IndexError:
             raise ChatError("No results.")

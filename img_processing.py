@@ -82,7 +82,7 @@ class ImgProcessing(commands.Cog):
                         mmgm = Image.open("assets/mmgm.png")
                         # thinkbubble size 200x310, center 458x174, upper corner (332,9)
                         react_img = Image.open(requests.get(url, stream=True).raw)
-                        react_img = react_img.resize((200, 310), Image.ANTIALIAS)
+                        react_img = react_img.resize((200, 310), Image.LANCZOS)
                         react_img = react_img.convert("RGBA")
                         new_image = Image.new('RGBA', (mmgm.size), (255, 0, 255, 0))
                         new_image.paste(react_img, (332, 9), react_img)

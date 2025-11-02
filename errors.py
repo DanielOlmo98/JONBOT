@@ -1,6 +1,7 @@
 from discord.ext.commands import errors, bot
 from discord.ext import commands
 import discord
+import traceback
 
 class ErrorCog(commands.Cog):
 
