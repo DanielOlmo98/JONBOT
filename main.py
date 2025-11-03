@@ -68,6 +68,7 @@ async def startup():
     # rick_server_id = 94440780738854912
     intents = discord.Intents.default()
     intents.members = True
+    intents.message_content = True
     rick = commands.Bot(command_prefix=('.', 'rick '), help_command=None, case_insensitive=True, intents=intents)
 
 

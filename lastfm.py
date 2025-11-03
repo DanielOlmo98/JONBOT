@@ -28,10 +28,6 @@ class LastFM(commands.Cog):
                                                 'format': 'json'})
         self.session = requests.Session()
 
-    @app_commands.command(name="name", description="description")
-    async def slash_command(self, interaction: discord.Interaction):
-        await interaction.response.send_message("command")
-
     @app_commands.command(name="toptracks", description="Top 10 most listened tracks in a given period")
     @app_commands.choices(period=[
         app_commands.Choice(name='7 days', value='7day'),
@@ -47,9 +43,11 @@ class LastFM(commands.Cog):
         prepared = self.request.prepare()
         prepared.prepare_url(prepared.url, params)
         r = self.session.send(prepared)
-        
+
         top10 = [
-                 f'{track["name"]} - {track["artist"]["name"]} (**{track["playcount"]}** plays)'
-                 for track in r.json()['toptracks']['track']
+                 f'{index}. {track["name"]} - {track["artist"]["name"]} `{track["playcount"]} plays`'
+                 for index, track in enumerate(r.json()['toptracks']['track'])
                 ]
-        await interaction.response.send_message('\n'.join(top10))
+
+        embed = discord.Embed(title=f'Top tracks - {period.name}', description='\n'.join(top10))
+        await interaction.response.send_message(embed=embed)
