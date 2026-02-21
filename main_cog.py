@@ -297,7 +297,8 @@ class MainCog(commands.Cog):
     @commands.cooldown(1, 1)
     async def image_search(self, ctx, *args):
         from duckduckgo_search import DDGS
-        from googleapiclient.discovery import build
+        # from googleapiclient.discovery import build
+        image = None
 
         if not args:
             await ctx.send(await self.get_random_4chan_image('wg'))
@@ -305,23 +306,23 @@ class MainCog(commands.Cog):
 
         try:
             MAX_IMGS = 1
-            # if args[0].startswith('-n'):
-            #     if (n_image := int(args[1])) in range(1,MAX_IMGS):
-            #         search_result = DDGS().images(" ".join(args[2:]), safesearch='On', max_results=MAX_IMGS)
-            #         image = search_result[n_image-1]['image']
-            #     else:
-            #         raise ChatError("Argument '-n' must be an integer between 1-5")
-            # else:
-            #     search_result = DDGS().images(" ".join(args), safesearch='On', max_results=MAX_IMGS)
-            #     image = choice(search_result)['image']
-            #
-            def google_search(search_term, api_key, cse_id, **kwargs):
-                service = build("customsearch", "v1", developerKey=api_key)
-                res = service.cse().list(q=search_term, cx=cse_id, **kwargs).execute()
-                return res['items']
+            if args[0].startswith('-n'):
+                if (n_image := int(args[1])) in range(1,MAX_IMGS):
+                    search_result = DDGS().images(" ".join(args[2:]), safesearch='On', max_results=MAX_IMGS)
+                    image = search_result[n_image-1]['image']
+                else:
+                    raise ChatError("Argument '-n' must be an integer between 1-5")
+            else:
+                search_result = DDGS().images(" ".join(args), safesearch='On', max_results=MAX_IMGS)
+                image = choice(search_result)['image']
+            
+            # def google_search(search_term, api_key, cse_id, **kwargs):
+            #     service = build("customsearch", "v1", developerKey=api_key)
+            #     res = service.cse().list(q=search_term, cx=cse_id, **kwargs).execute()
+            #     return res['items']
 
-            g_search = google_search(" ".join(args), self.google_api, self.google_id, safe='active', searchType='image', num=MAX_IMGS)
-            image = g_search[0]['link']
+            # g_search = google_search(" ".join(args), self.google_api, self.google_id, safe='active', searchType='image', num=MAX_IMGS)
+            # image = g_search[0]['link']
 
         except IndexError:
             raise ChatError("No results.")

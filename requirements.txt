@@ -36,3 +36,4 @@ eyed3
 tinydb
 imagetext_py
 duckduckgo_search
+google-api-python-client
